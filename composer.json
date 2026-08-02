@@ -1,70 +1,49 @@
 {
-  "name": "php-pdnsmanager/php-pdnsmanager",
-  "description": "Enterprise DNS Management Web GUI for PowerDNS Authoritative Server",
-  "type": "project",
-  "license": "MIT",
-  "require": {
-    "php": ">=8.1",
-    "ext-json": "*",
-    "ext-pdo": "*",
-    "ext-sodium": "*",
-    "guzzlehttp/guzzle": "^7.5",
-    "nyholm/psr7": "^1.5",
-    "nyholm/psr7-server": "^1.0",
-    "psr/container": "^2.0",
-    "psr/event-dispatcher": "^1.0",
-    "psr/http-client": "^1.0",
-    "psr/http-factory": "^1.0",
-    "psr/http-message": "^1.0",
-    "psr/http-server-handler": "^1.0",
-    "psr/http-server-middleware": "^1.0",
-    "psr/log": "^3.0",
-    "symfony/event-dispatcher": "^6.0",
-    "symfony/validator": "^6.0",
-    "monolog/monolog": "^3.0",
-    "vlucas/phpdotenv": "^5.5",
-    "firebase/php-jwt": "^7.0"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^10.0",
-    "squizlabs/php_codesniffer": "^3.7",
-    "slevomat/coding-standard": "^8.14",
-    "phpstan/phpstan": "^1.10",
-    "vimeo/psalm": "^6.0",
-    "rector/rector": "^0.18",
-    "friendsofphp/php-cs-fixer": "^3.14",
-    "phpcompatibility/php-compatibility": "^9.3",
-    "roave/security-advisories": "dev-latest"
-  },
-  "autoload": {
-    "psr-4": {
-      "App\\": "app/",
-      "App\\Core\\Middleware\\": "app/Middleware/",
-      "App\\Core\\Exceptions\\": "app/Exceptions/",
-      "Database\\Seeders\\": "database/seeders/"
+    "name": "alsyundawy/php-pdnsmanager",
+    "description": "PHP PowerDNS Manager - Enterprise DNS Management",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.1",
+        "nyholm/psr7": "^1.8",
+        "nyholm/psr7-server": "^1.1",
+        "psr/http-message": "^2.0",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "guzzlehttp/guzzle": "^7.8",
+        "monolog/monolog": "^3.5",
+        "vlucas/phpdotenv": "^5.6",
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "ext-sodium": "*",
+        "ext-curl": "*"
     },
-    "files": [
-      "app/Core/helpers.php"
-    ]
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Tests\\": "tests/"
+    "require-dev": {
+        "phpunit/phpunit": "^11.0",
+        "phpstan/phpstan": "^1.11",
+        "vimeo/psalm": "^5.24",
+        "squizlabs/php_codesniffer": "^3.10",
+        "rector/rector": "^1.2",
+        "friendsofphp/php-cs-fixer": "^3.59"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "files": [
+            "app/Core/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "stan": "phpstan analyse --level=8",
+        "psalm": "psalm",
+        "cs": "phpcs --standard=PSR12",
+        "cs-fix": "php-cs-fixer fix"
     }
-  },
-  "scripts": {
-    "post-install-cmd": [
-      "App\\Console\\Kernel::postInstall"
-    ]
-  },
-  "config": {
-    "optimize-autoloader": true,
-    "preferred-install": "dist",
-    "sort-packages": true,
-    "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true
-    }
-  },
-  "minimum-stability": "stable",
-  "prefer-stable": true
 }

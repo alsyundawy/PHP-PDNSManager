@@ -2,4 +2,45 @@ openapi: 3.1.0
 info:
   title: PHP-PDNSManager API
   version: 1.0.0
-...
+  description: PowerDNS Manager REST API
+
+# SECURITY FIX: Added global security requirement (CKVOPENAPI4)
+security:
+  - ApiKeyAuth: []
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+paths:
+  /api/v1/zones:
+    get:
+      summary: List all zones
+      tags: [Zones]
+      responses:
+        '200':
+          description: List of zones
+    post:
+      summary: Create a zone
+      tags: [Zones]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                kind:
+                  type: string
+                  enum: [Native, Master, Slave]
+      responses:
+        '201':
+          description: Zone created
+        '422':
+          description: Validation error
