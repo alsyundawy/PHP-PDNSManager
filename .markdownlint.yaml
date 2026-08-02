@@ -1,0 +1,16 @@
+# Markdownlint configuration
+default: true
+MD013: false
+MD031: false
+MD024:
+  siblings_only: true
+MD033:
+  allowed_elements:
+    - p
+    - img
+    - h3
+    - a
+    - div
+    - span
+    - br
+MD007: false

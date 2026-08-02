@@ -1,7 +1,12 @@
 <?php
 return [
-    'default' => env('DB_DRIVER', 'mysql'),
+    'default' => env('DB_DRIVER', 'sqlite'),
     'connections' => [
+        'sqlite' => [
+            'driver' => 'sqlite',
+            'database' => env('DB_DATABASE', ':memory:'),
+            'prefix' => '',
+        ],
         'mysql' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST', '127.0.0.1'),

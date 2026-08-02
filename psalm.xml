@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="7"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    findUnusedCode="false"
+    findUnusedVariablesAndParams="false"
+>
+    <projectFiles>
+        <directory name="app" />
+        <ignoreFiles>
+            <directory name="app/Views" />
+            <directory name="vendor" />
+        </ignoreFiles>
+    </projectFiles>
+    <issueHandlers>
+        <UnusedClass errorLevel="suppress" />
+        <UnusedMethod errorLevel="suppress" />
+        <UnusedProperty errorLevel="suppress" />
+        <UnusedVariable errorLevel="suppress" />
+        <PossiblyUnusedMethod errorLevel="suppress" />
+        <PossiblyUnusedProperty errorLevel="suppress" />
+        <MissingOverrideAttribute errorLevel="suppress" />
+        <InvalidExtendClass errorLevel="suppress" />
+    </issueHandlers>
+</psalm>

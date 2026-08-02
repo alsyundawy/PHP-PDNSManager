@@ -13,13 +13,13 @@ class PowerDNSClient implements PowerDNSClientInterface
     private Config $config;
     private Logger $logger;
     private string $serverId = 'localhost';
-    public function __construct(Config $config, Logger $logger)
+    public function __construct(Config $config, Logger $logger, ?GuzzleClient $client = null)
     {
         $this->config = $config;
         $this->logger = $logger;
-        $baseUri = rtrim($config->get('powerdns.api_url', 'http://127.0.0.1:8081'), '/');
-        $apiKey = $config->get('powerdns.api_key');
-        $this->client = new GuzzleClient([
+        $baseUri = rtrim((string) ($config->get('powerdns.api_url') ?? 'http://127.0.0.1:8081'), '/');
+        $apiKey = (string) ($config->get('powerdns.api_key') ?? '');
+        $this->client = $client ?? new GuzzleClient([
             'base_uri' => $baseUri . '/api/v1/',
             'headers' => [
                 'X-API-Key' => $apiKey,
@@ -30,7 +30,7 @@ class PowerDNSClient implements PowerDNSClientInterface
             'verify' => (bool) $config->get('powerdns.verify_ssl', true),
             'http_errors' => false,
         ]);
-        $this->serverId = $config->get('powerdns.server_id', 'localhost');
+        $this->serverId = (string) ($config->get('powerdns.server_id') ?? 'localhost');
     }
     public function get(string $uri, array $query = []): array
     {

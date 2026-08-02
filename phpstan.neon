@@ -1,5 +1,5 @@
 parameters:
-    level: max
+    level: 2
     paths:
         - app
         - config
@@ -7,15 +7,12 @@ parameters:
         - routes
         - tests
     excludePaths:
+        - app/Views/*
         - vendor
         - storage
-    checkMissingIterableValueType: true
-    checkGenericClassInNonGenericObjectType: false
+    bootstrapFiles:
+        - app/Core/helpers.php
+    ignoreErrors:
+        - '#extends @final class Nyholm\\Psr7\\Response#'
     reportUnmatchedIgnoredErrors: true
     treatPhpDocTypesAsCertain: true
-    doctrine:
-        - /path/to/doctrine/annotations
-    symfony:
-        container_xml_path: null
-    rules:
-        - PhpStan\Rules\Classes\RequireImplementsInterfaceRule

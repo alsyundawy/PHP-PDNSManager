@@ -13,7 +13,7 @@ class DatabaseTest extends TestCase
         $this->db = new Database($config);
     }
     public function testExecute(): void {
-        $this->db->execute('CREATE TABLE test (id INTEGER PRIMARY KEY, name TEXT)');
+        $this->db->execute('CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, name TEXT)');
         $this->db->execute('INSERT INTO test (name) VALUES (:name)', ['name' => 'test']);
         $stmt = $this->db->execute('SELECT * FROM test');
         $result = $stmt->fetch(PDO::FETCH_ASSOC);

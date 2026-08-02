@@ -26,7 +26,8 @@ class PowerDNSClientTest extends TestCase
             ['powerdns.server_id', 'localhost'],
         ]);
         $logger = $this->createMock(Logger::class);
-        $this->client = new PowerDNSClient($config, $logger);
+        $guzzle = new \GuzzleHttp\Client(['handler' => $handlerStack]);
+        $this->client = new PowerDNSClient($config, $logger, $guzzle);
     }
     public function testGetRequest(): void {
         $this->mockHandler->append(new Response(200, [], json_encode(['zones' => []])));

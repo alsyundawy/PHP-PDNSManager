@@ -22,8 +22,8 @@ class RateLimitMiddleware implements MiddlewareInterface
         }
         $ip = $request->getServerParams()['REMOTE_ADDR'] ?? '0.0.0.0';
         $key = 'rate_limit:' . $ip;
-        $limit = $this->config->get('security.rate_limit.requests', 100);
-        $window = $this->config->get('security.rate_limit.window', 60);
+        $limit = (int) ($this->config->get('security.rate_limit.requests') ?? 100);
+        $window = (int) ($this->config->get('security.rate_limit.window') ?? 60);
         $current = $this->storage[$key] ?? ['count' => 0, 'reset' => time() + $window];
         if (time() > $current['reset']) {
             $current = ['count' => 0, 'reset' => time() + $window];

@@ -21,7 +21,12 @@ class Application implements RequestHandlerInterface
         $this->container = new Container();
         $this->config = new Config($basePath . '/config');
         $this->container->singleton(Container::class, $this->container);
+        $this->container->singleton(Application::class, $this);
+        $this->container->singleton(RequestHandlerInterface::class, $this);
         $this->container->singleton(Config::class, $this->config);
+        $this->container->singleton(Logger::class, function () {
+            return new Logger($this->config);
+        });
         $this->container->singleton(Router::class, function () {
             return new Router($this->container);
         });
@@ -40,6 +45,10 @@ class Application implements RequestHandlerInterface
                 $c->get(Psr17Factory::class)
             );
         });
+        $this->container->bind(\App\Repositories\Contracts\UserRepositoryInterface::class, \App\Repositories\UserRepository::class);
+        $this->container->bind(\App\Repositories\Contracts\RoleRepositoryInterface::class, \App\Repositories\RoleRepository::class);
+        $this->container->bind(\App\Repositories\Contracts\AuditLogRepositoryInterface::class, \App\Repositories\AuditLogRepository::class);
+        $this->container->bind(\App\Services\PowerDNS\PowerDNSClientInterface::class, \App\Services\PowerDNS\PowerDNSClient::class);
         $this->loadRoutes();
     }
 
@@ -60,6 +69,18 @@ class Application implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): Response
     {
         try {
+            if (!$request->getAttribute('middleware_processed')) {
+                $request = $request->withAttribute('middleware_processed', true);
+                $pipeline = new MiddlewarePipeline($this->container);
+                $pipeline->pipe(Middleware\ContentSecurityPolicyMiddleware::class);
+                $pipeline->pipe(Middleware\CsrfProtectionMiddleware::class);
+                $pipeline->pipe(Middleware\RateLimitMiddleware::class);
+                $pipeline->pipe(Middleware\AuthenticationMiddleware::class);
+                $pipeline->pipe(Middleware\RbacMiddleware::class);
+                $pipeline->pipe(Middleware\AuditLogMiddleware::class);
+                $res = $pipeline->process($request, $this);
+                return $res instanceof Response ? $res : new Response($res->getStatusCode(), $res->getHeaders(), $res->getBody());
+            }
             return $this->router->dispatch($request);
         } catch (HttpException $e) {
             return $this->errorResponse($e->getStatusCode(), $e->getMessage());
@@ -74,10 +95,9 @@ class Application implements RequestHandlerInterface
 
     private function errorResponse(int $status, string $message): Response
     {
-        $factory = $this->container->get(Psr17Factory::class);
-        $response = $factory->createResponse($status);
-        $response->getBody()->write(json_encode(['error' => ['code' => $status, 'message' => $message]]));
-        return $response->withHeader('Content-Type', 'application/json');
+        $response = new Response($status, ['Content-Type' => 'application/json']);
+        $response->getBody()->write((string) json_encode(['error' => ['code' => $status, 'message' => $message]]));
+        return $response;
     }
 
     private function loadRoutes(): void

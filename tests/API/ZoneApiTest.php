@@ -9,6 +9,7 @@ use Nyholm\Psr7\Uri;
 class ZoneApiTest extends TestCase
 {
     public function testGetZonesWithoutAuth(): void {
+        $_SESSION = [];
         $app = new Application(__DIR__ . '/../../');
         $request = new ServerRequest('GET', new Uri('/api/v1/zones'));
         $response = $app->handle($request);

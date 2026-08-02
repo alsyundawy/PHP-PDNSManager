@@ -53,6 +53,9 @@ class Container implements ContainerInterface
         if ($concrete instanceof \Closure) {
             return $concrete($this);
         }
+        if (is_object($concrete)) {
+            return $concrete;
+        }
         if (is_string($concrete)) {
             return $this->autowire($concrete);
         }
@@ -74,7 +77,7 @@ class Container implements ContainerInterface
             $dependencies = [];
             foreach ($parameters as $parameter) {
                 $type = $parameter->getType();
-                if ($type === null || $type->isBuiltin()) {
+                if (!$type instanceof \ReflectionNamedType || $type->isBuiltin()) {
                     if ($parameter->isDefaultValueAvailable()) {
                         $dependencies[] = $parameter->getDefaultValue();
                     } else {

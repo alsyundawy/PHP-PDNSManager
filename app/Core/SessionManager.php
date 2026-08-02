@@ -6,8 +6,8 @@ class SessionManager
 {
     public function __construct()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @session_start();
         }
     }
     public function set(string $key, $value): void
@@ -28,11 +28,15 @@ class SessionManager
     }
     public function regenerate(): void
     {
-        session_regenerate_id(true);
+        if (session_status() === PHP_SESSION_ACTIVE && !headers_sent()) {
+            @session_regenerate_id(true);
+        }
     }
     public function destroy(): void
     {
         $_SESSION = [];
-        session_destroy();
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            @session_destroy();
+        }
     }
 }

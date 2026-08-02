@@ -43,3 +43,34 @@ if (!function_exists('request')) {
         return $request;
     }
 }
+if (!function_exists('env')) {
+    /**
+     * Gets the value of an environment variable.
+     *
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    function env(string $key, mixed $default = null): mixed
+    {
+        $value = $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key);
+        if ($value === false || $value === null) {
+            return $default;
+        }
+        switch (strtolower((string) $value)) {
+            case 'true':
+            case '(true)':
+                return true;
+            case 'false':
+            case '(false)':
+                return false;
+            case 'empty':
+            case '(empty)':
+                return '';
+            case 'null':
+            case '(null)':
+                return null;
+        }
+        return $value;
+    }
+}

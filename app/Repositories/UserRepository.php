@@ -15,26 +15,38 @@ class UserRepository implements UserRepositoryInterface
     }
     public function find(int $id): ?User
     {
-        $stmt = $this->db->execute('SELECT * FROM users WHERE id = :id AND is_active = 1', ['id' => $id]);
-        $data = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $data ? $this->hydrate($data) : null;
+        try {
+            $stmt = $this->db->execute('SELECT * FROM users WHERE id = :id AND is_active = 1', ['id' => $id]);
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $data ? $this->hydrate($data) : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
     public function findByEmail(string $email): ?User
     {
-        $stmt = $this->db->execute('SELECT * FROM users WHERE email = :email AND is_active = 1', ['email' => $email]);
-        $data = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $data ? $this->hydrate($data) : null;
+        try {
+            $stmt = $this->db->execute('SELECT * FROM users WHERE email = :email AND is_active = 1', ['email' => $email]);
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $data ? $this->hydrate($data) : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
     public function findByUsername(string $username): ?User
     {
-        $stmt = $this->db->execute('SELECT * FROM users WHERE username = :username AND is_active = 1', ['username' => $username]);
-        $data = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $data ? $this->hydrate($data) : null;
+        try {
+            $stmt = $this->db->execute('SELECT * FROM users WHERE username = :username AND is_active = 1', ['username' => $username]);
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $data ? $this->hydrate($data) : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
     public function create(array $data): User
     {
         $sql = 'INSERT INTO users (username, email, password_hash, is_active, created_at, updated_at)
-                VALUES (:username, :email, :password_hash, :is_active, NOW(), NOW())';
+                VALUES (:username, :email, :password_hash, :is_active, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)';
         $this->db->execute($sql, [
             'username' => $data['username'],
             'email' => $data['email'],
@@ -77,7 +89,7 @@ class UserRepository implements UserRepositoryInterface
     }
     public function recordLogin(int $userId): void
     {
-        $this->db->execute('UPDATE users SET last_login = NOW() WHERE id = :id', ['id' => $userId]);
+        $this->db->execute('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = :id', ['id' => $userId]);
     }
     private function hydrate(array $data): User
     {

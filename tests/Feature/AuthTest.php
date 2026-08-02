@@ -18,9 +18,9 @@ class AuthTest extends TestCase
         $this->auth = $container->get(AuthenticationService::class);
     }
     private function setupDatabase(Database $db): void {
-        $db->execute('CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, email TEXT UNIQUE, password_hash TEXT, is_active INTEGER DEFAULT 1, last_login DATETIME, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)');
+        $db->execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, email TEXT UNIQUE, password_hash TEXT, is_active INTEGER DEFAULT 1, last_login DATETIME, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)');
         $hash = password_hash('password123', PASSWORD_ARGON2ID);
-        $db->execute('INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)', ['testuser', 'test@example.com', $hash]);
+        $db->execute('INSERT OR IGNORE INTO users (username, email, password_hash) VALUES (?, ?, ?)', ['testuser', 'test@example.com', $hash]);
     }
     public function testLoginSuccess(): void {
         $user = $this->auth->login('testuser', 'password123', '127.0.0.1');
