@@ -1,0 +1,21 @@
+parameters:
+    level: max
+    paths:
+        - app
+        - config
+        - public
+        - routes
+        - tests
+    excludePaths:
+        - vendor
+        - storage
+    checkMissingIterableValueType: true
+    checkGenericClassInNonGenericObjectType: false
+    reportUnmatchedIgnoredErrors: true
+    treatPhpDocTypesAsCertain: true
+    doctrine:
+        - /path/to/doctrine/annotations
+    symfony:
+        container_xml_path: null
+    rules:
+        - PhpStan\Rules\Classes\RequireImplementsInterfaceRule

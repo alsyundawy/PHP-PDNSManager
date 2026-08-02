@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         stopOnFailure="false"
+         cacheDirectory=".phpunit.cache"
+         backupGlobals="false"
+         processIsolation="false">
+    <testsuites>
+        <testsuite name="Unit"><directory suffix="Test.php">tests/Unit</directory></testsuite>
+        <testsuite name="Integration"><directory suffix="Test.php">tests/Integration</directory></testsuite>
+        <testsuite name="Feature"><directory suffix="Test.php">tests/Feature</directory></testsuite>
+        <testsuite name="API"><directory suffix="Test.php">tests/API</directory></testsuite>
+    </testsuites>
+    <source>
+        <include><directory suffix=".php">app</directory></include>
+        <exclude><directory suffix=".php">app/Views</directory><directory>app/Console/Commands</directory></exclude>
+    </source>
+    <coverage>
+        <report><html outputDirectory="coverage/"/><clover outputFile="coverage/clover.xml"/><text outputFile="coverage/coverage.txt"/></report>
+    </coverage>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="APP_DEBUG" value="true"/>
+        <env name="DB_DRIVER" value="sqlite"/>
+        <env name="DB_DATABASE" value=":memory:"/>
+        <env name="PDNS_API_URL" value="http://mock-pdns:8081"/>
+        <env name="PDNS_API_KEY" value="test-key"/>
+    </php>
+</phpunit>

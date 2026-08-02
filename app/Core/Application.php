@@ -1,0 +1,109 @@
+<?php
+declare(strict_types=1);
+namespace App\Core;
+use App\Core\Exceptions\HttpException;
+use App\Core\Middleware\MiddlewarePipeline;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7Server\ServerRequestCreator;
+
+class Application implements RequestHandlerInterface
+{
+    private Container $container;
+    private Router $router;
+    private Config $config;
+    private string $basePath;
+
+    public function __construct(string $basePath)
+    {
+        $this->basePath = $basePath;
+        $this->container = new Container();
+        $this->config = new Config($basePath . '/config');
+        $this->container->singleton(Container::class, $this->container);
+        $this->container->singleton(Config::class, $this->config);
+        $this->container->singleton(Router::class, function () {
+            return new Router($this->container);
+        });
+        $this->container->singleton(EventDispatcher::class, function () {
+            return new EventDispatcher();
+        });
+        $this->container->singleton(Database::class, function () {
+            return new Database($this->config->get('database'));
+        });
+        $this->container->singleton(Psr17Factory::class, new Psr17Factory());
+        $this->container->singleton(ServerRequestCreator::class, function (Container $c) {
+            return new ServerRequestCreator(
+                $c->get(Psr17Factory::class),
+                $c->get(Psr17Factory::class),
+                $c->get(Psr17Factory::class),
+                $c->get(Psr17Factory::class)
+            );
+        });
+        $this->loadRoutes();
+    }
+
+    public function run(): void
+    {
+        $request = $this->container->get(ServerRequestCreator::class)->fromGlobals();
+        $pipeline = new MiddlewarePipeline($this->container);
+        $pipeline->pipe(Middleware\ContentSecurityPolicyMiddleware::class);
+        $pipeline->pipe(Middleware\CsrfProtectionMiddleware::class);
+        $pipeline->pipe(Middleware\RateLimitMiddleware::class);
+        $pipeline->pipe(Middleware\AuthenticationMiddleware::class);
+        $pipeline->pipe(Middleware\RbacMiddleware::class);
+        $pipeline->pipe(Middleware\AuditLogMiddleware::class);
+        $response = $pipeline->process($request, $this);
+        $this->emit($response);
+    }
+
+    public function handle(ServerRequestInterface $request): Response
+    {
+        try {
+            return $this->router->dispatch($request);
+        } catch (HttpException $e) {
+            return $this->errorResponse($e->getStatusCode(), $e->getMessage());
+        } catch (\Throwable $e) {
+            $logger = $this->container->get(Logger::class);
+            $logger->error($e->getMessage(), ['exception' => $e]);
+            $status = 500;
+            $message = $this->config->get('app.debug') ? $e->getMessage() : 'Internal Server Error';
+            return $this->errorResponse($status, $message);
+        }
+    }
+
+    private function errorResponse(int $status, string $message): Response
+    {
+        $factory = $this->container->get(Psr17Factory::class);
+        $response = $factory->createResponse($status);
+        $response->getBody()->write(json_encode(['error' => ['code' => $status, 'message' => $message]]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    private function loadRoutes(): void
+    {
+        $router = $this->container->get(Router::class);
+        require_once $this->basePath . '/routes/web.php';
+        require_once $this->basePath . '/routes/api.php';
+    }
+
+    private function emit(Response $response): void
+    {
+        http_response_code($response->getStatusCode());
+        foreach ($response->getHeaders() as $name => $values) {
+            foreach ($values as $value) {
+                header("{$name}: {$value}", false);
+            }
+        }
+        echo $response->getBody()->getContents();
+    }
+
+    public function getContainer(): Container
+    {
+        return $this->container;
+    }
+    public function getBasePath(): string
+    {
+        return $this->basePath;
+    }
+}
