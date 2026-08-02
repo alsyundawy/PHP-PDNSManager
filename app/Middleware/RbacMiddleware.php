@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace App\Core\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use App\Core\Response;
+use Psr\Http\Message\ResponseInterface;
 use App\Core\Exceptions\AccessDeniedException;
 use App\Services\Auth\RbacService;
 
@@ -14,7 +14,7 @@ class RbacMiddleware implements MiddlewareInterface
     {
         $this->rbac = $rbac;
     }
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): Response
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $user = $request->getAttribute('user');
         if (!$user) {

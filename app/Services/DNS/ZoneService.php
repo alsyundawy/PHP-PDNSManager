@@ -105,8 +105,6 @@ class ZoneService
     }
     public function diffZones(string $zoneId1, string $zoneId2): array
     {
-        $zone1 = $this->getZone($zoneId1);
-        $zone2 = $this->getZone($zoneId2);
         $records1 = $this->recordResource->getForZone($zoneId1);
         $records2 = $this->recordResource->getForZone($zoneId2);
         $map1 = [];
@@ -150,8 +148,11 @@ class ZoneService
         $errors = [];
         if (empty($data['name'])) {
             $errors['name'] = 'Zone name is required';
-        } elseif (!filter_var($data['name'], FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
-            $errors['name'] = 'Invalid zone name (must be a valid domain)';
+        } else {
+            $domain = rtrim((string) $data['name'], '.');
+            if (!filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+                $errors['name'] = 'Invalid zone name (must be a valid domain)';
+            }
         }
         if (!empty($errors)) {
             throw new ValidationException($errors);

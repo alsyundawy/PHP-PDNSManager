@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace App\Core\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface;
 use App\Core\Response;
 use App\Core\Exceptions\HttpException;
 use App\Services\Auth\AuthenticationService;
@@ -14,7 +15,7 @@ class AuthenticationMiddleware implements MiddlewareInterface
     {
         $this->auth = $auth;
     }
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): Response
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $route = $request->getAttribute('route');
         if ($route && in_array($route, ['login', 'logout'])) {

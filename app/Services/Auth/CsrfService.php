@@ -12,13 +12,16 @@ class CsrfService
     }
     public function generateToken(): string
     {
-        $token = bin2hex(random_bytes(32));
-        $this->session->set('csrf_token', $token);
+        $token = $this->session->get('csrf_token');
+        if (!is_string($token) || $token === '') {
+            $token = bin2hex(random_bytes(32));
+            $this->session->set('csrf_token', $token);
+        }
         return $token;
     }
     public function validate(string $token): bool
     {
         $stored = $this->session->get('csrf_token');
-        return $stored && hash_equals($stored, $token);
+        return is_string($stored) && $stored !== '' && hash_equals($stored, $token);
     }
 }

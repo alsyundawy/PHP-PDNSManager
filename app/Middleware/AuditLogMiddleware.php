@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace App\Core\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use App\Core\Response;
+use Psr\Http\Message\ResponseInterface;
 use App\Services\AuditLogService;
 
 class AuditLogMiddleware implements MiddlewareInterface
@@ -13,7 +13,7 @@ class AuditLogMiddleware implements MiddlewareInterface
     {
         $this->auditLog = $auditLog;
     }
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): Response
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);
         if ($request->getMethod() !== 'GET' && $response->getStatusCode() < 400) {

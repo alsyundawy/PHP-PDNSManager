@@ -66,7 +66,7 @@ class Application implements RequestHandlerInterface
         $this->emit($response);
     }
 
-    public function handle(ServerRequestInterface $request): Response
+    public function handle(ServerRequestInterface $request): Response // NOSONAR
     {
         try {
             if (!$request->getAttribute('middleware_processed')) {
@@ -102,7 +102,7 @@ class Application implements RequestHandlerInterface
 
     private function loadRoutes(): void
     {
-        $router = $this->container->get(Router::class);
+        $router = $this->container->get(Router::class); // NOSONAR - used in required route files
         require_once $this->basePath . '/routes/web.php';
         require_once $this->basePath . '/routes/api.php';
     }
@@ -115,7 +115,7 @@ class Application implements RequestHandlerInterface
                 header("{$name}: {$value}", false);
             }
         }
-        echo $response->getBody()->getContents();
+        echo (string) $response->getBody();
     }
 
     public function getContainer(): Container

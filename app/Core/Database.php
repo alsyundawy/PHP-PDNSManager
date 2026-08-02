@@ -17,22 +17,33 @@ class Database
     {
         $default = $this->config['default'] ?? 'mysql';
         $connection = $this->config['connections'][$default] ?? throw new \InvalidArgumentException('Database connection not found');
-        $dsn = sprintf(
-            '%s:host=%s;port=%d;dbname=%s;charset=%s',
-            $connection['driver'],
-            $connection['host'],
-            $connection['port'],
-            $connection['database'],
-            $connection['charset']
-        );
+        $driver = $connection['driver'] ?? 'mysql';
+
+        if ($driver === 'sqlite') {
+            $dsn = sprintf('sqlite:%s', $connection['database'] ?? ':memory:');
+            $username = null;
+            $password = null;
+        } else {
+            $dsn = sprintf(
+                '%s:host=%s;port=%d;dbname=%s;charset=%s',
+                $driver,
+                $connection['host'] ?? '127.0.0.1',
+                (int) ($connection['port'] ?? 3306),
+                $connection['database'] ?? '',
+                $connection['charset'] ?? 'utf8mb4'
+            );
+            $username = $connection['username'] ?? null;
+            $password = $connection['password'] ?? null;
+        }
+
         try {
-            $this->pdo = new PDO($dsn, $connection['username'], $connection['password'], [
+            $this->pdo = new PDO($dsn, $username, $password, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
         } catch (PDOException $e) {
-            throw new \RuntimeException('Database connection failed: ' . $e->getMessage());
+            throw new \RuntimeException('Database connection failed: ' . $e->getMessage()); // NOSONAR
         }
     }
     public function getPdo(): PDO

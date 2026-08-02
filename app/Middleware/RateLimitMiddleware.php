@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace App\Core\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use App\Core\Response;
+use Psr\Http\Message\ResponseInterface;
 use App\Core\Exceptions\HttpException;
 use App\Core\Config;
 
@@ -15,7 +15,7 @@ class RateLimitMiddleware implements MiddlewareInterface
     {
         $this->config = $config;
     }
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): Response
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->config->get('security.rate_limit.enabled', true)) {
             return $handler->handle($request);

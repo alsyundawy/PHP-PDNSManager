@@ -44,6 +44,17 @@ Format berkas ini didasarkan pada [Keep a Changelog](https://keepachangelog.com/
     - Static Analysis ketat menggunakan PHPStan (level max), Psalm (level 1), PHP CodeSniffer (PSR-12), dan Rector.
     - Dukungan otomatisasi melalui `Makefile` dan Trunk.
 
+### Perbaikan Bug & Optimasi Kode (Refactoring)
+
+- **Database Core (`Database.php`)**: Memperbaiki masalah `Undefined array key` (`host`, `port`, `charset`, `username`, `password`) saat menggunakan driver SQLite / non-MySQL.
+- **CSRF Token Engine (`helpers.php` & `CsrfService.php`)**: Memperbaiki fungsi `csrf_token()` agar tidak menimpa token sesi aktif secara acak pada setiap pemanggilan, serta mencegah `TypeError` pada pembacaan token bernilai `null`.
+- **Handling Parsing Request Header (`CsrfProtectionMiddleware.php`)**: Menggunakan `getHeaderLine('X-CSRF-TOKEN')` yang aman sesuai standar PSR-7.
+- **Validasi Domain Zone (`ZoneService.php`)**: Menambahkan _trimming_ titik penutup (_trailing dot_) sebelum validasi domain FQDN.
+- **PowerDNS API Response Handling (`PowerDNSClient.php` & `RecordResource.php`)**: Memastikan hasil deserialisasi `json_decode` selalu bertipe array dan mendukung fallback `records`/`rrsets` sesuai skema REST API PowerDNS.
+- **Array Destructuring (`RecordController.php`)**: Menambahkan pemeriksaan kecukupan elemen `explode('|')` untuk mencegah peringatan array key saat melakukan aksi _bulk update_.
+- **Penanganan Error Login (`AuthController.php`)**: Menangkap `ValidationException` pada Web GUI login dan merender ulang tampilan dengan status HTTP 422.
+- **PSR-7 Response Emission (`Application.php`)**: Menggunakan `(string) $response->getBody()` untuk menjamin seluruh konten respon HTTP terpancar penuh.
+
 ### Kebijakan Keamanan Versi 1.0.0
 
 - Penerapan enkripsi Sodium dan CSRF token wajib untuk seluruh rute yang mengubah data (POST, PUT, PATCH, DELETE).

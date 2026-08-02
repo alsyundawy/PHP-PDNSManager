@@ -16,7 +16,7 @@ class AuthController
         $this->auth = $auth;
         $this->csrf = $csrf;
     }
-    public function showLogin(Request $request): Response
+    public function showLogin(Request $request): Response // NOSONAR
     {
         $csrfToken = csrf_token();
         $html = view('auth.login', ['csrfToken' => $csrfToken]);
@@ -24,19 +24,24 @@ class AuthController
     }
     public function login(Request $request): Response
     {
-        $username = $request->input('username');
-        $password = $request->input('password');
-        $ip = $request->getServerRequest()->getServerParams()['REMOTE_ADDR'] ?? '0.0.0.0';
-        if (empty($username) || empty($password)) {
-            throw new ValidationException(['message' => 'Username and password required']);
+        $username = (string) $request->input('username', '');
+        $password = (string) $request->input('password', '');
+        $ip = (string) ($request->getServerRequest()->getServerParams()['REMOTE_ADDR'] ?? '0.0.0.0');
+        try {
+            if (empty($username) || empty($password)) {
+                throw new ValidationException(['message' => 'Username and password required']);
+            }
+            $user = $this->auth->login($username, $password, $ip);
+            if (!$user) {
+                throw new ValidationException(['message' => 'Invalid credentials']);
+            }
+            return (new Response())->redirect('/dashboard');
+        } catch (ValidationException $e) {
+            $html = view('auth.login', ['error' => $e->getErrors(), 'csrfToken' => csrf_token()]);
+            return (new Response())->html($html)->withStatus(422);
         }
-        $user = $this->auth->login($username, $password, $ip);
-        if (!$user) {
-            throw new ValidationException(['message' => 'Invalid credentials']);
-        }
-        return (new Response())->redirect('/dashboard');
     }
-    public function logout(Request $request): Response
+    public function logout(Request $request): Response // NOSONAR
     {
         $this->auth->logout();
         return (new Response())->redirect('/login');

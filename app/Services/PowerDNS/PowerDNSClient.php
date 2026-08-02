@@ -65,7 +65,8 @@ class PowerDNSClient implements PowerDNSClientInterface
         try {
             $response = $this->client->request($method, $uri, $options);
             $body = (string) $response->getBody();
-            $data = json_decode($body, true) ?? [];
+            $decoded = json_decode($body, true);
+            $data = is_array($decoded) ? $decoded : [];
             $this->logRequest($method, $uri, $response->getStatusCode(), microtime(true) - $startTime);
             if ($response->getStatusCode() >= 400) {
                 $error = $data['error'] ?? $data['message'] ?? 'PowerDNS API error';

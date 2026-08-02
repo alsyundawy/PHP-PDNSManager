@@ -5,6 +5,7 @@ use App\Services\PowerDNS\PowerDNSClientInterface;
 
 class RecordResource
 {
+    private const ZONES_PATH = 'zones/';
     private PowerDNSClientInterface $client;
     public function __construct(PowerDNSClientInterface $client)
     {
@@ -12,8 +13,8 @@ class RecordResource
     }
     public function getForZone(string $zoneId): array
     {
-        $zone = $this->client->get('zones/' . urlencode($zoneId));
-        return $zone['records'] ?? [];
+        $zone = $this->client->get(self::ZONES_PATH . urlencode($zoneId));
+        return $zone['records'] ?? $zone['rrsets'] ?? [];
     }
     public function create(string $zoneId, array $record): array
     {
@@ -30,7 +31,7 @@ class RecordResource
                 ],
             ],
         ];
-        return $this->client->patch('zones/' . urlencode($zoneId), $payload);
+        return $this->client->patch(self::ZONES_PATH . urlencode($zoneId), $payload);
     }
     public function update(string $zoneId, string $recordName, string $recordType, array $newRecord): array
     {
@@ -47,7 +48,7 @@ class RecordResource
                 ],
             ],
         ];
-        return $this->client->patch('zones/' . urlencode($zoneId), $payload);
+        return $this->client->patch(self::ZONES_PATH . urlencode($zoneId), $payload);
     }
     public function delete(string $zoneId, string $recordName, string $recordType): void
     {
@@ -60,11 +61,11 @@ class RecordResource
                 ],
             ],
         ];
-        $this->client->patch('zones/' . urlencode($zoneId), $payload);
+        $this->client->patch(self::ZONES_PATH . urlencode($zoneId), $payload);
     }
     public function bulkUpdate(string $zoneId, array $rrsets): array
     {
         $payload = ['rrsets' => $rrsets];
-        return $this->client->patch('zones/' . urlencode($zoneId), $payload);
+        return $this->client->patch(self::ZONES_PATH . urlencode($zoneId), $payload);
     }
 }

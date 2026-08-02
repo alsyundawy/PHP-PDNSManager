@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace App\Core\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use App\Core\Response;
+use Psr\Http\Message\ResponseInterface;
 use App\Core\Config;
 
 class ContentSecurityPolicyMiddleware implements MiddlewareInterface
@@ -13,7 +13,7 @@ class ContentSecurityPolicyMiddleware implements MiddlewareInterface
     {
         $this->config = $config;
     }
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): Response
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);
         if ($this->config->get('security.csp_enabled', true)) {

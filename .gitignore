@@ -28,3 +28,7 @@ Thumbs.db
 *.crt
 *.key
 /config/local.php
+host=;port=0;dbname=:memory:;charset=
+host=;port=0;dbname=:memory:;charset=
+host=;port=0;dbname=:memory:;charset=
+host=localhost;port=3306;dbname=:memory:;charset=utf8mb4

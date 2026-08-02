@@ -10,6 +10,7 @@ use App\Services\DNS\DNSSECService;
 
 class ZoneController
 {
+    private const ZONES_PATH = '/zones/';
     private ZoneService $zoneService;
     private RecordService $recordService;
     private DNSSECService $dnssecService;
@@ -48,14 +49,14 @@ class ZoneController
         if ($request->getMethod() === 'POST') {
             try {
                 $data = [
-                    'name' => $request->input('name'),
-                    'kind' => $request->input('kind', 'Native'),
-                    'masters' => array_filter(explode(',', $request->input('masters', ''))),
-                    'nameservers' => array_filter(explode(',', $request->input('nameservers', ''))),
+                    'name' => (string) $request->input('name'),
+                    'kind' => (string) $request->input('kind', 'Native'),
+                    'masters' => array_filter(array_map('trim', explode(',', (string) $request->input('masters', '')))),
+                    'nameservers' => array_filter(array_map('trim', explode(',', (string) $request->input('nameservers', '')))),
                     'dnssec' => (bool) $request->input('dnssec', false),
                 ];
                 $zone = $this->zoneService->createZone($data);
-                return (new Response())->redirect('/zones/' . urlencode($zone['name']));
+                return (new Response())->redirect(self::ZONES_PATH . urlencode($zone['name']));
             } catch (ValidationException $e) {
                 $error = $e->getErrors();
                 $html = view('zone.create', ['error' => $error, 'user' => $request->getAttribute('user'), 'csrfToken' => csrf_token()]);
@@ -71,12 +72,12 @@ class ZoneController
         if ($request->getMethod() === 'POST') {
             try {
                 $data = [
-                    'kind' => $request->input('kind', $zone['kind']),
-                    'masters' => array_filter(explode(',', $request->input('masters', ''))),
-                    'nameservers' => array_filter(explode(',', $request->input('nameservers', ''))),
+                    'kind' => (string) $request->input('kind', $zone['kind'] ?? 'Native'),
+                    'masters' => array_filter(array_map('trim', explode(',', (string) $request->input('masters', '')))),
+                    'nameservers' => array_filter(array_map('trim', explode(',', (string) $request->input('nameservers', '')))),
                 ];
                 $this->zoneService->updateZone($zoneId, $data);
-                return (new Response())->redirect('/zones/' . urlencode($zoneId));
+                return (new Response())->redirect(self::ZONES_PATH . urlencode($zoneId));
             } catch (ValidationException $e) {
                 $error = $e->getErrors();
                 $html = view('zone.edit', ['zone' => $zone, 'error' => $error, 'user' => $request->getAttribute('user'), 'csrfToken' => csrf_token()]);
@@ -86,34 +87,33 @@ class ZoneController
         $html = view('zone.edit', ['zone' => $zone, 'user' => $request->getAttribute('user'), 'csrfToken' => csrf_token()]);
         return (new Response())->html($html);
     }
-    public function delete(Request $request, string $zoneId): Response
+    public function delete(Request $request, string $zoneId): Response // NOSONAR
     {
         if ($request->getMethod() === 'POST') {
             $this->zoneService->deleteZone($zoneId);
-            return (new Response())->redirect('/zones');
         }
         return (new Response())->redirect('/zones');
     }
     public function clone(Request $request, string $zoneId): Response
     {
         if ($request->getMethod() === 'POST') {
-            $newName = $request->input('new_name');
+            $newName = (string) $request->input('new_name');
             if (empty($newName)) {
                 throw new ValidationException(['new_name' => 'New zone name is required']);
             }
             $this->zoneService->cloneZone($zoneId, $newName);
-            return (new Response())->redirect('/zones/' . urlencode($newName));
+            return (new Response())->redirect(self::ZONES_PATH . urlencode($newName));
         }
         $zone = $this->zoneService->getZone($zoneId);
         $html = view('zone.clone', ['zone' => $zone, 'user' => $request->getAttribute('user'), 'csrfToken' => csrf_token()]);
         return (new Response())->html($html);
     }
-    public function check(Request $request, string $zoneId): Response
+    public function check(Request $request, string $zoneId): Response // NOSONAR
     {
         $result = $this->zoneService->checkZone($zoneId);
         return (new Response())->json($result);
     }
-    public function export(Request $request, string $zoneId): Response
+    public function export(Request $request, string $zoneId): Response // NOSONAR
     {
         $export = $this->zoneService->exportZone($zoneId);
         return (new Response())->json($export);

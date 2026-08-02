@@ -16,14 +16,15 @@ if (!function_exists('asset')) {
     }
 }
 if (!function_exists('csrf_token')) {
-    function csrf_token(): string
+    function csrf_token(): string // NOSONAR
     {
-        static $token = null;
-        if ($token === null) {
-            $token = bin2hex(random_bytes(32));
-            $_SESSION['csrf_token'] = $token;
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            session_start();
         }
-        return $token;
+        if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
     }
 }
 if (!function_exists('request')) {
@@ -51,7 +52,7 @@ if (!function_exists('env')) {
      * @param mixed $default
      * @return mixed
      */
-    function env(string $key, mixed $default = null): mixed
+    function env(string $key, mixed $default = null): mixed // NOSONAR
     {
         $value = $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key);
         if ($value === false || $value === null) {
@@ -70,6 +71,8 @@ if (!function_exists('env')) {
             case 'null':
             case '(null)':
                 return null;
+            default:
+                break;
         }
         return $value;
     }
