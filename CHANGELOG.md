@@ -67,11 +67,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
     - Interactive theme toggle button integrated in navigation bars and login views with instant icon switching.
 - **Comprehensive Production Tutorial (`TUTORIAL.md`)**:
     - End-to-end deployment guide for PowerDNS Authoritative Server with MySQL/MariaDB backend on Ubuntu 20.04/22.04 LTS and Rocky Linux 8/9.
-    - Setup guide for simple local recursive resolvers (Unbound / PowerDNS Recursor) strictly without Response Policy Zones (RPZ) for mail server DNSBL lookups.
-    - Master Zimbra Mail Server integration guide covering authoritative DNS records (`A`, `AAAA`, `MX`, `SPF`, `DKIM`, `DMARC`, `PTR` in `in-addr.arpa`, Autodiscover).
-    - Zimbra cross-OS migration runbook (CentOS to Rocky / Ubuntu) synthesizing official and Indonesian community best practices (Vavai/Excellent & Imanudin).
-    - Zimbra CVE timeline & mitigations (CVE-2018-6882 through CVE-2024-45519 Postjournal RCE).
-    - Production UFW, firewalld, iptables, Fail2ban, and Linux kernel sysctl hardening scripts.
+    - High-Availability Authoritative DNS Clustering with Native Database Replication and Primary/Secondary Supermaster setups.
+    - Authoritative DNS Zone and Record management best practices (`A`, `AAAA`, `CNAME`, `MX`, `TXT`, `NS`, `SRV`, `CAA`, `PTR`).
+    - Automated DNSSEC signing, KSK/ZSK key rollover, and DS record generation for parent zone delegation.
+    - RFC 1035 BIND zone file import, export, and cross-zone bulk record operations.
+    - Production UFW, firewalld, iptables, Fail2ban, and Linux kernel sysctl hardening scripts for DNS port 53 and web gateway ports.
 
 ### Changed
 

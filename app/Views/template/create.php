@@ -18,7 +18,7 @@
             <div class="row mb-4">
                 <div class="col-md-6 mb-3">
                     <label for="tplName" class="form-label fw-semibold">Template Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="tplName" name="name" placeholder="e.g. Mail Server (Zimbra)" required>
+                    <input type="text" class="form-control" id="tplName" name="name" placeholder="e.g. Standard Corporate Mail Cluster" required>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="tplDesc" class="form-label fw-semibold">Description</label>
