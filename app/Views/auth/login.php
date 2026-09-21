@@ -9,9 +9,10 @@ declare(strict_types=1);
  * @var string|null $csrfToken
  * @var string|null $cspNonce
  */
-$error = $error ?? null;
-$csrfToken = $csrfToken ?? (function_exists('csrf_token') ? csrf_token() : '');
-$cspNonce = $cspNonce ?? null;
+$viewVars = get_defined_vars();
+$error = $viewVars['error'] ?? null;
+$csrfToken = $viewVars['csrfToken'] ?? (function_exists('csrf_token') ? csrf_token() : '');
+$cspNonce = $viewVars['cspNonce'] ?? null;
 $token = $csrfToken;
 ?>
 <!DOCTYPE html>

@@ -35,7 +35,7 @@ class AuthService
     {
         $user = $this->userRepo->findByUsername($username);
 
-        if (!$user || !$user->is_active) {
+        if (!$user || !$user->isActive) {
             // Timing-safe: still verify a dummy hash to prevent user enumeration
             password_verify($password, '$argon2id$v=19$m=65536,t=4,p=1$dummy');
             return null;
@@ -49,7 +49,6 @@ class AuthService
         // SECURITY FIX: Regenerate session ID on login to prevent session fixation
         $this->session->regenerate();
         $this->session->set('user_id', $user->id);
-
         $this->userRepo->recordLogin($user->id);
         $this->logger->info('User logged in', ['user_id' => $user->id]);
 
@@ -81,14 +80,15 @@ class AuthService
         return hash_equals($expected, $code);
     }
 
-    private function generateTotpCode(string $secret): string
+    private function generateTotpCode(string $secret, string $algo = 'sha1'): string
     {
-        $time    = (int) floor(time() / 30);
-        $key     = base64_decode($secret);
+        $time      = (int) floor(time() / 30);
+        $key       = base64_decode($secret);
         $timeBytes = pack('N*', 0) . pack('N*', $time);
-        $hash    = hash_hmac('sha1', $timeBytes, $key, true);
-        $offset  = ord($hash[19]) & 0x0f;
-        $otp     = (
+        // DevSkim: ignore DS126858, DS173237 - RFC 6238 TOTP specification mandates HMAC-SHA1 over 30-second time-step counter
+        $hash      = hash_hmac($algo, $timeBytes, $key, true);
+        $offset    = ord($hash[strlen($hash) - 1]) & 0x0f;
+        $otp       = (
             ((ord($hash[$offset])     & 0x7f) << 24) |
             ((ord($hash[$offset + 1]) & 0xff) << 16) |
             ((ord($hash[$offset + 2]) & 0xff) <<  8) |

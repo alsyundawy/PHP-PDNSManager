@@ -17,7 +17,7 @@ jobs:
       matrix:
         php: [8.1, 8.2, 8.3, 8.4, 8.5]
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -30,7 +30,7 @@ jobs:
       - name: Run PHP_CodeSniffer
         run: ./vendor/bin/phpcs --standard=phpcs.xml
       - name: Run PHPStan
-        run: ./vendor/bin/phpstan analyse --no-progress
+        run: ./vendor/bin/phpstan analyse --no-progress --memory-limit=1G
       - name: Run Psalm
         run: ./vendor/bin/psalm --no-progress
       - name: Run PHPUnit

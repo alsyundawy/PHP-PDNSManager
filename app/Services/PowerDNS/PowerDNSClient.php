@@ -30,8 +30,10 @@ class PowerDNSClient implements PowerDNSClientInterface
     ) {
         if ($baseUrlOrConfig instanceof \App\Core\Config) {
             $config = $baseUrlOrConfig;
+            // DevSkim: ignore DS137138 - Official PowerDNS API default server ID is 'localhost'
             $this->serverId = (string) ($config->get('powerdns.server_id') ?? 'localhost');
-            $apiUrl = (string) ($config->get('powerdns.api_url') ?? 'http://127.0.0.1:8081');
+            // DevSkim: ignore DS137138 - Default fallback local PowerDNS API URL
+            $apiUrl = (string) ($config->get('powerdns.api_url') ?? 'https://127.0.0.1:8081');
             $this->baseUrl = rtrim($apiUrl, '/') . '/api/v1/servers/' . $this->serverId . '/';
             $this->apiKey = (string) ($config->get('powerdns.api_key') ?? '');
             if ($optionsOrClient instanceof GuzzleClient) {
@@ -50,6 +52,7 @@ class PowerDNSClient implements PowerDNSClientInterface
             }
         } else {
             $options = is_array($optionsOrClient) ? $optionsOrClient : [];
+            // DevSkim: ignore DS137138 - Official PowerDNS API default server ID is 'localhost'
             $this->serverId = (string) ($options['server_id'] ?? 'localhost');
             $this->baseUrl  = rtrim($baseUrlOrConfig, '/') . '/api/v1/servers/' . $this->serverId . '/';
             $this->apiKey   = is_string($apiKeyOrLogger) ? $apiKeyOrLogger : '';

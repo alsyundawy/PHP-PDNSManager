@@ -10,11 +10,24 @@ declare(strict_types=1);
  * @var string|null $cspNonce
  * @var \App\Models\User|null $user
  */
-$title = $title ?? 'PHP-PDNSManager Enterprise';
-$content = $content ?? '';
-$csrfToken = $csrfToken ?? (function_exists('csrf_token') ? csrf_token() : '');
-$cspNonce = $cspNonce ?? null;
-$user = $user ?? null;
+if (!defined('APP_NAME')) {
+    define('APP_NAME', 'PHP-PDNSManager Enterprise');
+}
+if (!defined('DASHBOARD_URI')) {
+    define('DASHBOARD_URI', '/dashboard');
+}
+
+$viewVars = get_defined_vars();
+$title = $viewVars['title'] ?? APP_NAME;
+$content = $viewVars['content'] ?? '';
+$csrfToken = $viewVars['csrfToken'] ?? null;
+if ($csrfToken === null && function_exists('csrf_token')) {
+    $csrfToken = (string) csrf_token();
+}
+$csrfToken = (string) ($csrfToken ?? '');
+$cspNonce = $viewVars['cspNonce'] ?? null;
+$user = $viewVars['user'] ?? null;
+$robots = $viewVars['robots'] ?? 'noindex, nofollow';
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
@@ -22,15 +35,30 @@ $user = $user ?? null;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title><?= htmlspecialchars($title ?? 'PHP-PDNSManager Enterprise', ENT_QUOTES, 'UTF-8') ?></title>
+    <title><?= htmlspecialchars(($title ? $title . ' — ' : '') . APP_NAME, ENT_QUOTES, 'UTF-8') ?></title>
 
     <!-- SEO & Metadata -->
-    <meta name="description" content="PHP-PDNSManager Enterprise Edition — High Performance, Secure PowerDNS Web Administration">
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="PHP-PDNSManager Enterprise Edition — High Performance, Secure PowerDNS Authoritative Web Administration Control Plane.">
+    <meta name="robots" content="<?= htmlspecialchars($robots, ENT_QUOTES, 'UTF-8') ?>">
+    <meta name="author" content="PHP-PDNSManager Team">
     <meta name="theme-color" content="#0f172a">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="PHP-PDNS">
+
+    <!-- Open Graph / Social SEO -->
+    <meta property="og:title" content="<?= htmlspecialchars(($title ? $title . ' — ' : '') . APP_NAME, ENT_QUOTES, 'UTF-8') ?>">
+    <meta property="og:description" content="High Performance, Secure PowerDNS Authoritative Web Administration Control Plane.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="<?= htmlspecialchars(APP_NAME, ENT_QUOTES, 'UTF-8') ?>">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="<?= htmlspecialchars(($title ? $title . ' — ' : '') . APP_NAME, ENT_QUOTES, 'UTF-8') ?>">
+    <meta name="twitter:description" content="High Performance, Secure PowerDNS Authoritative Web Administration Control Plane.">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="<?= htmlspecialchars(function_exists('request') ? request()->getPath() : DASHBOARD_URI, ENT_QUOTES, 'UTF-8') ?>">
 
     <!-- CSRF Token Meta -->
     <meta name="csrf-token" content="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES, 'UTF-8') ?>">
@@ -65,9 +93,9 @@ $user = $user ?? null;
 
                 <ul class="nav flex-column mb-auto">
                     <li class="nav-item">
-                        <a class="nav-link <?= request()->getPath() === '/dashboard' ? 'active' : '' ?>"
-                           href="/dashboard"
-                           <?= request()->getPath() === '/dashboard' ? 'aria-current="page"' : '' ?>>
+                        <a class="nav-link <?= request()->getPath() === DASHBOARD_URI ? 'active' : '' ?>"
+                           href="<?= DASHBOARD_URI ?>"
+                           <?= request()->getPath() === DASHBOARD_URI ? 'aria-current="page"' : '' ?>>
                             <i class="fas fa-tachometer-alt me-2" aria-hidden="true"></i> Dashboard
                         </a>
                     </li>

@@ -69,28 +69,31 @@ The design system incorporates the aesthetic architecture of `https://alsyundawy
 
 ### 4.1 Resolution of Xiaomi, Redmi, & POCO Display Clipping
 
-Extensive testing on MIUI and HyperOS default browsers (Mi Browser and Chromium derivatives) identified four root causes for UI truncation and clipping, resolved as follows:
+Extensive testing on MIUI and HyperOS default browsers (Mi Browser and Chromium derivatives) identified five root causes for UI truncation and clipping, resolved as follows:
 
 1. **Dynamic Viewport Shrinkage (`100vh` Bug)**:
     - Dynamic address bars and gesture bars caused the bottom 56px–80px of views (such as form submission buttons and pagination) to be clipped.
     - **Resolution**: Implemented CSS `100dvh` (Dynamic Viewport Height) with `100svh` fallbacks and dynamic `--vh` JavaScript calculations.
 2. **System Font Inflation / Text Scaling**:
     - MIUI's font enlargement feature caused button text and badge labels to wrap unpredictably and clip table containers.
-    - **Resolution**: Enforced `-webkit-text-size-adjust: 100%;` and `text-size-adjust: 100%;` on the root HTML document.
+    - **Resolution**: Utilized standard `viewport-fit=cover` and `width=device-width` viewport definitions alongside fluid typography tokens to eliminate artificial font boost without non-standard property conflicts.
 3. **Camera Punch-Hole & Notch Safe Area Insets**:
     - Hardware cutouts on POCO and Redmi flagships collided with header navigation titles and drawer toggle icons.
     - **Resolution**: Added `viewport-fit=cover` and applied `env(safe-area-inset-*)` CSS padding constraints to headers, sidebars, and main wrappers.
 4. **DNS Record & Cryptokey Table Overflow**:
     - Long continuous strings (SPF rules, DKIM 2048-bit base64 keys, DNSSEC DS records) distorted page geometry on mobile devices.
-    - **Resolution**: Integrated automated `.table-responsive` touch-scrolling wrappers with `-webkit-overflow-scrolling: touch` and CSS `word-break: break-all; overflow-wrap: anywhere;`.
+    - **Resolution**: Integrated automated `.table-responsive` touch-scrolling wrappers with W3C standard `overflow-wrap: anywhere; word-wrap: break-word;` (eliminating the deprecated `word-break: break-word` keyword).
+5. **Mobile Button Over-Expansion Bug**:
+    - A legacy `.btn { width: 100%; }` rule inside `@media (max-width: 640px)` caused buttons in headers, flex bars, and toolbars to expand to 100% width, overflowing parent containers and pushing layout elements off-screen.
+    - **Resolution**: Removed the indiscriminate 100% width rule and provided `.btn-mobile-block` for explicitly desired full-width actions.
 
 ### 4.2 Breakpoint Matrix (VGA to 2K/4K)
 
-- **VGA / Legacy Mobile (`< 640px`)**: Compact fluid padding (`0.5rem`), clamped typography (`clamp(1.1rem, 4vw, 1.35rem)`), stacked form controls.
-- **Smartphones (`320px - 767px`)**: Hardware-accelerated sliding offcanvas drawer with backdrop dismissal. Minimum touch target size of 44x44px.
-- **Tablets & Small Displays (`768px - 991px`)**: Adaptive collapsible sidebar with persistent header icons.
-- **Desktops & Laptops (`992px - 1439px`)**: 2-column layout (260px fixed sidebar + fluid content canvas).
-- **2K / Ultra-wide (`>= 1440px`)**: Centered layout restraint with a max-width of `1920px`, preventing visual distortion on wide displays.
+- **Ultra-Compact / VGA (`<= 480px`)**: Compact fluid padding (`0.625rem`), font size scaling (14px base), user profile badge text truncation with ellipsis (`max-width: 110px`), touch-padded action buttons.
+- **Smartphones (`481px - 640px`)**: Hardware-accelerated sliding offcanvas drawer with backdrop dismissal. Minimum touch target size of 44x44px. Clamped typography (`clamp(1.25rem, 5vw, 1.625rem)`).
+- **Tablets & Small Displays (`641px - 1024px`)**: Adaptive collapsible sidebar with persistent header badges and 2-column card layouts.
+- **Desktops & Laptops (`1025px - 1599px`)**: 2-column layout (sticky sidebar + fluid content canvas).
+- **2K / Ultra-wide (`>= 1600px`)**: Centered layout restraint with a max-width of `2560px`, preventing visual distortion on wide displays.
 
 ---
 
@@ -98,16 +101,26 @@ Extensive testing on MIUI and HyperOS default browsers (Mi Browser and Chromium 
 
 ### 5.1 DevSkim Localhost Scanning Alerts (`DS162092`, `DS137138`)
 
-DevSkim flags `localhost` bindings as potential indicators of debug code. The alerts were addressed with inline suppressions and validated architectural boundaries:
+DevSkim flags `localhost` and `127.0.0.1` bindings as potential indicators of debug code or anti-scaling patterns. The alerts were addressed through:
 
-- `config/app.php`: `APP_URL` default fallback explicitly documented and marked with `// DevSkim: ignore DS162092, DS137138`.
-- `tests/Integration/DatabaseTest.php`: In-memory SQLite host config annotated with `/* DevSkim: ignore DS162092 */`.
-- `PowerDNSClient.php`: Validated internal REST API loopback binding (`127.0.0.1:8081`).
+- **RFC 2606 & RFC 5737 Sanitization**: Replaced `admin@localhost` with `admin@example.com` in `InitialSeeder.php`, and replaced `127.0.0.1` with `192.0.2.1` in `AuthTest.php` and `PowerDNSClientTest.php`.
+- **PowerDNS API Protocol Compliance**: PowerDNS Authoritative Server HTTP API officially uses `localhost` as the canonical default server identifier (`/api/v1/servers/localhost`). Documented with inline suppressions (`// DevSkim: ignore DS137138 - PowerDNS standard default server ID`) across `Database.php`, `config/database.php`, `config/powerdns.php`, `PowerDNSClient.php`, `ServerClusterService.php`, `PdnsServer.php`, `ServerController.php`, `ServerApiController.php`, `create.php`, and `002_roadmap_features.sql`.
 
-### 5.2 View Template Strict Types & Parser Fixes
+### 5.2 RFC 6238 TOTP Hashing & Cryptographic Safety (`DS126858`, `DS173237`)
 
-- `app/Views/auth/login.php` and `app/Views/layouts/admin.php`: Prepended with `<?php declare(strict_types=1); ?>` to resolve PHP static analysis parse errors.
-- Added context-aware escaping with `htmlspecialchars(..., ENT_QUOTES, 'UTF-8')` across all dynamic tokens.
+- **Root Cause**: DevSkim flags hashing time values as low entropy and flags `sha1` as weak cryptography.
+- **Resolution**: Under RFC 6238 (TOTP), HMAC-SHA1 computed over the 30-second Unix time counter `floor(time() / 30)` is the required cryptographic specification. Added inline suppression (`// DevSkim: ignore DS126858, DS173237`) with standard justification and added SHA-256 fallback capability in `AuthService.php`.
+
+### 5.3 Third-Party Minified Script Exclusions (`DS172411`)
+
+- **Root Cause**: DevSkim flags `setTimeout` in JavaScript files due to potential code injection risks if untrusted strings are evaluated.
+- **Resolution**: Configured `ignore-globs: "**/*.min.js,**/*.min.css,**/vendor/**,**/node_modules/**"` in `.github/workflows/devskim.yml` to prevent false-positive scanning of upstream minified Bootstrap 5 and jQuery 3 bundles.
+
+### 5.4 CI/CD & MegaLinter Modernization
+
+- **Action Version Fixes**: Corrected invalid action tags (`@v7` and `@v8`) across `megalinter.yml`, `devskim.yml`, `ci.yml`, and `super-linter.yml` to stable releases (`actions/checkout@v4`, `actions/upload-artifact@v4`, `peter-evans/create-pull-request@v7`, `stefanzweifel/git-auto-commit-action@v5`, `super-linter/super-linter@v7`).
+- **MegaLinter Config (`.mega-linter.yml`)**: Added root configuration with path regex exclusions for vendor assets, cache, and test artifacts, and mapped project-level linters (`phpcs.xml`, `phpstan.neon`, `psalm.xml`).
+- **PHPStan CI Memory Allocation**: Added `--memory-limit=1G` in `ci.yml` to prevent 128MB worker crashes during full codebase AST analysis.
 
 ---
 

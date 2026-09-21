@@ -10,6 +10,7 @@ class PdnsServer
     public string $name;
     public string $apiUrl;
     public string $apiKey;
+    // DevSkim: ignore DS137138 - PowerDNS API default server ID is 'localhost'
     public string $serverId = 'localhost';
     public bool $isActive = true;
     public bool $isDefault = false;

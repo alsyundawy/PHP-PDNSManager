@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS pdns_servers (
     name VARCHAR(128) NOT NULL UNIQUE,
     api_url VARCHAR(255) NOT NULL,
     api_key VARCHAR(255) NOT NULL,
+    -- DevSkim: ignore DS137138 - PowerDNS API default server ID is 'localhost'
     server_id VARCHAR(64) NOT NULL DEFAULT 'localhost',
     is_active TINYINT(1) NOT NULL DEFAULT 1,
     is_default TINYINT(1) NOT NULL DEFAULT 0,

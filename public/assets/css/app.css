@@ -167,10 +167,6 @@
 }
 
 html {
-  -webkit-text-size-adjust: 100%;
-  -moz-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  text-size-adjust: 100%;
   font-size: 16px;
   scroll-behavior: smooth;
   height: 100%;
@@ -254,8 +250,13 @@ body {
     height: 100dvh;
     overflow-y: auto;
     overflow-x: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: var(--sidebar-hover) transparent;
+  }
+
+  @supports (scrollbar-width: thin) {
+    .sidebar {
+      scrollbar-width: thin;
+      scrollbar-color: var(--sidebar-hover) transparent;
+    }
   }
 
   .sidebar::-webkit-scrollbar {
@@ -547,7 +548,6 @@ main {
 .table td .font-monospace {
   white-space: normal !important;
   word-wrap: break-word !important;
-  word-break: break-word !important;
   overflow-wrap: anywhere !important;
   min-width: 140px;
   max-width: 380px;
@@ -632,13 +632,44 @@ main {
 }
 
 /* --------------------------------------------------------------------------
-   9. Multi-Resolution Media Queries (VGA 640px to 2K 2560px+)
+   9. Multi-Resolution Media Queries (VGA 320px-640px to 2K 2560px+)
    -------------------------------------------------------------------------- */
-@media (max-width: 640px) {
+/* Ultra-Compact & VGA Mobile (320px - 480px, e.g. iPhone SE, entry POCO C, Redmi A) */
+@media (max-width: 480px) {
   html {
-    font-size: 15px;
+    font-size: 14px;
   }
 
+  main {
+    padding: 0.625rem !important;
+  }
+
+  .top-navbar {
+    padding: 0.5rem 0.625rem;
+    margin-bottom: 0.875rem;
+  }
+
+  .top-navbar .navbar-text span {
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .card-body {
+    padding: 0.875rem !important;
+  }
+
+  .btn {
+    padding: 0.4375rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* General Mobile & Phablets (481px - 640px, e.g. Redmi Note, POCO X/F, Galaxy A) */
+@media (max-width: 640px) {
   main {
     padding: 0.875rem !important;
   }
@@ -662,8 +693,9 @@ main {
     width: 100% !important;
   }
 
-  .btn {
-    width: 100%;
+  /* Do NOT force all buttons to 100% width; allow natural flex sizing with optional block modifier */
+  .btn-mobile-block {
+    width: 100% !important;
   }
 
   .table td .btn,
@@ -672,15 +704,60 @@ main {
   }
 }
 
+/* Tablets & Foldables (641px - 1024px, e.g. iPad, Xiaomi Pad, Galaxy Tab) */
+@media (min-width: 641px) and (max-width: 1024px) {
+  main {
+    padding: 1.25rem 1.5rem !important;
+  }
+
+  .dashboard-card h2 {
+    font-size: 1.625rem;
+  }
+}
+
+/* Desktops & Laptops (1025px - 1599px, e.g. MacBook, ThinkPad, 1080p FHD) */
+@media (min-width: 1025px) and (max-width: 1599px) {
+  main {
+    padding: 1.5rem 2rem !important;
+  }
+}
+
+/* Ultra-Wide & 2K Displays (1600px - 2560px+) */
 @media (min-width: 1600px) {
   .container-fluid {
-    max-width: 2400px;
+    max-width: 2560px;
     margin-left: auto;
     margin-right: auto;
   }
 
   main {
     padding: 2rem 2.5rem !important;
+  }
+
+  .dashboard-card h2 {
+    font-size: 2.25rem;
+  }
+}
+
+/* Xiaomi, Redmi, POCO & MIUI/HyperOS Anti-Clipping & Safe-Area Inset Enforcement */
+body,
+.container-fluid,
+main,
+.content-wrapper {
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.table-responsive {
+  overflow-x: auto !important;
+  overscroll-behavior-x: contain !important;
+  max-width: 100% !important;
+}
+
+@supports (scrollbar-width: thin) {
+  .table-responsive {
+    scrollbar-width: thin;
   }
 }
 

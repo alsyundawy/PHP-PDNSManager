@@ -10,6 +10,7 @@ return [
         ],
         'mysql' => [
             'driver' => 'mysql',
+            // DevSkim: ignore DS137138 - Default local database host
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => (int) env('DB_PORT', 3306),
             'database' => env('DB_DATABASE', 'pdnsmanager'),

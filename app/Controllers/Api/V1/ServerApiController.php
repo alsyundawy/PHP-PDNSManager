@@ -29,6 +29,7 @@ class ServerApiController
             'name' => (string) $request->input('name', ''),
             'api_url' => (string) $request->input('api_url', ''),
             'api_key' => (string) $request->input('api_key', ''),
+            // DevSkim: ignore DS137138 - PowerDNS API default server ID is 'localhost'
             'server_id' => (string) $request->input('server_id', 'localhost'),
             'is_active' => (bool) $request->input('is_active', true),
             'is_default' => (bool) $request->input('is_default', false),
@@ -74,6 +75,7 @@ class ServerApiController
     {
         $apiUrl = (string) $request->input('api_url', '');
         $apiKey = (string) $request->input('api_key', '');
+        // DevSkim: ignore DS137138 - PowerDNS API default server ID is 'localhost'
         $serverId = (string) $request->input('server_id', 'localhost');
 
         $result = $this->clusterService->testConnection($apiUrl, $apiKey, $serverId);

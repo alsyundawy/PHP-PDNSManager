@@ -28,13 +28,13 @@ class AuthTest extends TestCase
     }
     public function testLoginSuccess(): void
     {
-        $user = $this->auth->login('testuser', 'password123', '127.0.0.1');
+        $user = $this->auth->login('testuser', 'password123', '192.0.2.1');
         $this->assertNotNull($user);
         $this->assertEquals('testuser', $user->username);
     }
     public function testLoginFailure(): void
     {
-        $user = $this->auth->login('testuser', 'wrong', '127.0.0.1');
+        $user = $this->auth->login('testuser', 'wrong', '192.0.2.1');
         $this->assertNull($user);
     }
 }

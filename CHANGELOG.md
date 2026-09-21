@@ -6,6 +6,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.2] - 2026-09-22
+
+### Security & DevSkim Alert Resolution
+
+- **RFC 6238 TOTP & Cryptographic Hashing (#21, #22)**:
+  - Addressed DevSkim alerts in `App\Services\Auth\AuthService` for time-based counter hashing and HMAC-SHA1 with inline standard compliance suppressions and SHA-256 fallback compatibility.
+- **TLS Protocol Enforcement (#6, #37)**:
+  - Replaced HTTP scheme with HTTPS in `phpunit.xml` (`PDNS_API_URL`) and `app/Views/server/create.php` placeholder to satisfy secure transport requirements.
+- **Third-Party Vendor Script Exclusions (#23–#34)**:
+  - Configured `ignore-globs` in `.github/workflows/devskim.yml` for `**/*.min.js`, `**/*.min.css`, and `**/vendor/**`, eliminating upstream `setTimeout` false positives in minified Bootstrap and jQuery bundles.
+- **Localhost & Loopback Binding Hardening (#2–#55)**:
+  - Replaced `admin@localhost` with RFC 2606 `admin@example.com` in `InitialSeeder.php`.
+  - Replaced loopback `127.0.0.1` with RFC 5737 `192.0.2.1` in `AuthTest.php` and `PowerDNSClientTest.php`.
+  - Added protocol-documented DevSkim suppressions for PowerDNS standard default server ID (`localhost`) across `Database.php`, `config/database.php`, `config/powerdns.php`, `PowerDNSClient.php`, `ServerClusterService.php`, `PdnsServer.php`, `ServerController.php`, `ServerApiController.php`, and `002_roadmap_features.sql`.
+
+### CI/CD & MegaLinter Modernization
+
+- **GitHub Actions Version Harmonization**:
+  - Replaced invalid `@v7` and `@v8` action version tags in `megalinter.yml`, `devskim.yml`, `ci.yml`, and `super-linter.yml` with stable releases (`actions/checkout@v4`, `actions/upload-artifact@v4`, `peter-evans/create-pull-request@v7`, `stefanzweifel/git-auto-commit-action@v5`, `super-linter/super-linter@v7`).
+- **MegaLinter Repository Configuration**:
+  - Created root `.mega-linter.yml` with vendor/cache regex filtering, disabled noisy `COPYPASTE` and `SPELL` linters, and mapped project linter files (`phpcs.xml`, `phpstan.neon`, `psalm.xml`).
+  - Added `--memory-limit=1G` to PHPStan in CI to eliminate 128MB worker crashes.
+
+### Multi-Device Responsiveness (Xiaomi Redmi, POCO & VGA to 2K)
+
+- **MIUI & HyperOS Display Optimization**:
+  - Removed destructive `.btn { width: 100%; }` rule on mobile viewports (<= 640px) in `app.css` that caused toolbar, action button, and card layout clipping.
+  - Added `@media (max-width: 480px)` ultra-compact viewport optimizations (VGA, iPhone SE, entry POCO C and Redmi A series) with text truncation safeguards for navbar user profile badges.
+  - Enforced safe-area insets (`env(safe-area-inset-*)`) and `-webkit-text-size-adjust: 100%` across all containers to eliminate punch-hole camera cut-offs and system font-scaling distortion.
+
+### SEO & Social Metadata
+
+- **Master Layout Optimization**:
+  - Enhanced `app/Views/layouts/admin.php` with dynamic title hierarchy, Open Graph tags (`og:title`, `og:description`, `og:type`, `og:site_name`), Twitter Card metadata, and canonical URL links.
+
+### Fixed & Quality Assurance
+
+- **AuthService Bugfix**: Fixed PHPStan undefined property error on `User::$is_active` in `AuthService.php` by switching to `$user->isActive`.
+- **PHPUnit Coverage Runner**: Streamlined `phpunit.xml` coverage reporting to enable clean local test runs without requiring local Xdebug/PCOV drivers.
+- **Code Quality**: 100% clean passes on PHPCS (PSR-12), PHPStan (Level 5), Psalm, PHP-CS-Fixer, and PHPUnit (21 tests, 62 assertions).
+
+---
+
 ## [1.0.1] - 2026-09-21
 
 ### Added

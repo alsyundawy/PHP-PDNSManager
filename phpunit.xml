@@ -6,6 +6,7 @@
          stopOnFailure="false"
          cacheDirectory=".phpunit.cache"
          backupGlobals="false"
+         failOnWarning="false"
          processIsolation="false">
     <testsuites>
         <testsuite name="Unit"><directory suffix="Test.php">tests/Unit</directory></testsuite>
@@ -17,15 +18,13 @@
         <include><directory suffix=".php">app</directory></include>
         <exclude><directory suffix=".php">app/Views</directory><directory>app/Console/Commands</directory></exclude>
     </source>
-    <coverage>
-        <report><html outputDirectory="coverage/"/><clover outputFile="coverage/clover.xml"/><text outputFile="coverage/coverage.txt"/></report>
-    </coverage>
+    <coverage />
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_DEBUG" value="true"/>
         <env name="DB_DRIVER" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
-        <env name="PDNS_API_URL" value="http://mock-pdns:8081"/>
+        <env name="PDNS_API_URL" value="https://mock-pdns:8081"/>
         <env name="PDNS_API_KEY" value="test-key"/>
     </php>
 </phpunit>

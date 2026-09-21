@@ -35,6 +35,7 @@ class ServerClusterServiceTest extends TestCase
                 name TEXT NOT NULL UNIQUE,
                 api_url TEXT NOT NULL,
                 api_key TEXT NOT NULL,
+                -- DevSkim: ignore DS137138 - PowerDNS API default server ID
                 server_id TEXT NOT NULL DEFAULT "localhost",
                 is_active INTEGER NOT NULL DEFAULT 1,
                 is_default INTEGER NOT NULL DEFAULT 0,

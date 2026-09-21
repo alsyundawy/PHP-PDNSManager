@@ -32,7 +32,7 @@ class InitialSeeder
         $hash = $this->auth->hashPassword('admin123');
         $this->db->execute(
             'INSERT IGNORE INTO users (username, email, password_hash, is_active) VALUES (:username, :email, :hash, 1)',
-            ['username' => 'admin', 'email' => 'admin@localhost', 'hash' => $hash]
+            ['username' => 'admin', 'email' => 'admin@example.com', 'hash' => $hash]
         );
         $adminUser = $this->db->execute('SELECT id FROM users WHERE username = "admin"')->fetch()['id'];
         $this->db->execute('INSERT IGNORE INTO user_role (user_id, role_id) VALUES (:uid, :rid)', ['uid' => $adminUser, 'rid' => $adminRole]);

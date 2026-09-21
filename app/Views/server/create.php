@@ -1,3 +1,16 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * @var string|null $csrfToken
+ */
+$viewVars = get_defined_vars();
+$csrfToken = $viewVars['csrfToken'] ?? null;
+if ($csrfToken === null && function_exists('csrf_token')) {
+    $csrfToken = (string) csrf_token();
+}
+$csrfToken = (string) ($csrfToken ?? '');
+?>
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
         <h1 class="h3 mb-0 text-gray-800">Add PowerDNS Server</h1>
@@ -24,7 +37,7 @@
 
                     <div class="mb-3">
                         <label for="apiUrl" class="form-label fw-semibold">PowerDNS API URL <span class="text-danger">*</span></label>
-                        <input type="url" class="form-control" id="apiUrl" name="api_url" placeholder="http://10.0.0.1:8081" required>
+                        <input type="url" class="form-control" id="apiUrl" name="api_url" placeholder="https://10.0.0.1:8081" required>
                         <div class="form-text">Base HTTP/HTTPS URL where PowerDNS API is listening.</div>
                     </div>
 
@@ -36,6 +49,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="serverId" class="form-label fw-semibold">Server ID</label>
+                            <!-- DevSkim: ignore DS137138 - PowerDNS API default server ID is 'localhost' -->
                             <input type="text" class="form-control" id="serverId" name="server_id" value="localhost">
                             <div class="form-text">Default server ID in PowerDNS API is usually <code>localhost</code>.</div>
                         </div>

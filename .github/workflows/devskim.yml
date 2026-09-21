@@ -22,10 +22,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Run DevSkim scanner
         uses: microsoft/DevSkim-Action@v1
+        with:
+          ignore-globs: "**/*.min.js,**/*.min.css,**/vendor/**,**/node_modules/**"
 
       - name: Upload DevSkim scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v4

@@ -75,6 +75,7 @@ class ServerClusterService
         $name = trim((string) ($data['name'] ?? ''));
         $apiUrl = rtrim(trim((string) ($data['api_url'] ?? '')), '/');
         $apiKey = trim((string) ($data['api_key'] ?? ''));
+        // DevSkim: ignore DS137138 - PowerDNS API default server ID is 'localhost'
         $serverId = trim((string) ($data['server_id'] ?? 'localhost')) ?: 'localhost';
         $isActive = !empty($data['is_active']) ? 1 : 0;
         $isDefault = !empty($data['is_default']) ? 1 : 0;
@@ -132,6 +133,7 @@ class ServerClusterService
         return true;
     }
 
+    // DevSkim: ignore DS137138 - PowerDNS API default server ID is 'localhost'
     public function testConnection(string $apiUrl, string $apiKey, string $serverId = 'localhost'): array
     {
         $client = new PowerDNSClient($apiUrl, $apiKey, ['server_id' => $serverId, 'timeout' => 5.0]);
@@ -166,8 +168,10 @@ class ServerClusterService
         $server = new PdnsServer();
         $server->id = 0;
         $server->name = 'Default PowerDNS (Config)';
-        $server->apiUrl = (string) ($this->config->get('powerdns.api_url') ?? 'http://127.0.0.1:8081');
+        // DevSkim: ignore DS137138 - Default fallback local PowerDNS API URL
+        $server->apiUrl = (string) ($this->config->get('powerdns.api_url') ?? 'https://127.0.0.1:8081');
         $server->apiKey = (string) ($this->config->get('powerdns.api_key') ?? '');
+        // DevSkim: ignore DS137138 - PowerDNS API default server ID is 'localhost'
         $server->serverId = (string) ($this->config->get('powerdns.server_id') ?? 'localhost');
         $server->isActive = true;
         $server->isDefault = true;
@@ -181,6 +185,7 @@ class ServerClusterService
         $server->name = (string) ($row['name'] ?? '');
         $server->apiUrl = (string) ($row['api_url'] ?? '');
         $server->apiKey = (string) ($row['api_key'] ?? '');
+        // DevSkim: ignore DS137138 - PowerDNS API default server ID is 'localhost'
         $server->serverId = (string) ($row['server_id'] ?? 'localhost');
         $server->isActive = (bool) ($row['is_active'] ?? true);
         $server->isDefault = (bool) ($row['is_default'] ?? false);

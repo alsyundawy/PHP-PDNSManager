@@ -15,18 +15,22 @@ use GuzzleHttp\Psr7\Response;
 
 class PowerDNSClientTest extends TestCase
 {
-    private $mockHandler;
-    private $client;
+    /** @var MockHandler */
+    private MockHandler $mockHandler;
+
+    /** @var PowerDNSClient */
+    private PowerDNSClient $client;
     protected function setUp(): void
     {
         $this->mockHandler = new MockHandler();
         $handlerStack = HandlerStack::create($this->mockHandler);
         $config = $this->createMock(Config::class);
         $config->method('get')->willReturnMap([
-            ['powerdns.api_url', 'http://127.0.0.1:8081'],
+            ['powerdns.api_url', 'https://192.0.2.1:8081'],
             ['powerdns.api_key', 'test-key'],
             ['powerdns.timeout', 30.0],
             ['powerdns.verify_ssl', true],
+            // DevSkim: ignore DS137138 - PowerDNS standard default server ID
             ['powerdns.server_id', 'localhost'],
         ]);
         $logger = $this->createMock(Logger::class);

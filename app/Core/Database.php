@@ -30,6 +30,7 @@ class Database
             $dsn = sprintf(
                 '%s:host=%s;port=%d;dbname=%s;charset=%s',
                 $driver,
+                // DevSkim: ignore DS137138 - Default local database host
                 $connection['host'] ?? '127.0.0.1',
                 (int) ($connection['port'] ?? 3306),
                 $connection['database'] ?? '',
