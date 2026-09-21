@@ -360,7 +360,7 @@ php bin/seed.php
 >
 > - **Username**: `admin`
 > - **Password**: `ChangeMe@2026!`
-> - *(Important: You will be prompted to change this password immediately upon first login).*
+> - _(Important: You will be prompted to change this password immediately upon first login)._
 
 ### 4. File Permissions
 
@@ -490,24 +490,24 @@ curl -X POST https://pdns.example.com/api/v1/zones/example.com/records \
 
 ```graphql
 query GetSystemOverview {
-  health {
-    status
-    database
-    pdnsLatencyMs
-  }
-  zones {
-    id
-    name
-    kind
-    serial
-  }
-  servers {
-    id
-    name
-    apiUrl
-    isActive
-    isDefault
-  }
+    health {
+        status
+        database
+        pdnsLatencyMs
+    }
+    zones {
+        id
+        name
+        kind
+        serial
+    }
+    servers {
+        id
+        name
+        apiUrl
+        isActive
+        isDefault
+    }
 }
 ```
 
@@ -517,14 +517,14 @@ query GetSystemOverview {
 
 Every commit of PHP-PDNSManager is validated against comprehensive automated quality gates:
 
-| Quality Gate             | Verification Engine                                               | Target / Standard                   | Pass Criteria              |        Status       |
+| Quality Gate             | Verification Engine                                               | Target / Standard                   | Pass Criteria              |       Status        |
 | :----------------------- | :---------------------------------------------------------------- | :---------------------------------- | :------------------------- | :-----------------: |
-| **Unit & Service Tests** | [`PHPUnit 10.5`](https://phpunit.de)                              | Core models, services, repositories | 100% assertions pass       |   **✔ 21/21 PASS**  |
+| **Unit & Service Tests** | [`PHPUnit 10.5`](https://phpunit.de)                              | Core models, services, repositories | 100% assertions pass       |  **✔ 21/21 PASS**   |
 | **Static Analysis**      | [`PHPStan`](https://phpstan.org)                                  | Strict Level 5 analysis             | 0 errors                   | **✔ LEVEL 5 CLEAN** |
 | **Type Inference**       | [`Psalm`](https://psalm.dev)                                      | Level 4 strict type safety          | 0 errors                   |     **✔ CLEAN**     |
 | **Coding Standards**     | [`PHP_CodeSniffer`](https://github.com/squizlabs/PHP_CodeSniffer) | PSR-12 strict compliance            | 0 errors, 0 warnings       |  **✔ PSR-12 PASS**  |
 | **Code Formatting**      | [`PHP-CS-Fixer`](https://cs.symfony.com)                          | Strict rule set                     | 0 fixable files remaining  |     **✔ CLEAN**     |
-| **Security Scanning**    | GitHub Code Scanning & SonarLint                                  | OWASP Top 10, CWE checks            | 0 security vulnerabilities |    **✔ 0 ISSUES**   |
+| **Security Scanning**    | GitHub Code Scanning & SonarLint                                  | OWASP Top 10, CWE checks            | 0 security vulnerabilities |   **✔ 0 ISSUES**    |
 
 ---
 

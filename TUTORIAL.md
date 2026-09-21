@@ -30,15 +30,15 @@ PHP-PDNSManager is an enterprise-grade web management suite and REST API gateway
 ### Core Architecture Components
 
 1. **PowerDNS Authoritative Daemon (`pdns_server`)**:
-   - Binds to public interfaces (`0.0.0.0:53` and `[::]:53`).
-   - Serves authoritative zone answers without recursion.
-   - Communicates with MySQL/MariaDB via the `gmysql` backend.
-   - Exposes an internal REST API on `127.0.0.1:8081` secured by an API key.
+    - Binds to public interfaces (`0.0.0.0:53` and `[::]:53`).
+    - Serves authoritative zone answers without recursion.
+    - Communicates with MySQL/MariaDB via the `gmysql` backend.
+    - Exposes an internal REST API on `127.0.0.1:8081` secured by an API key.
 
 2. **PHP-PDNSManager Web GUI & REST API**:
-   - Interacts with PowerDNS via its internal REST API client.
-   - Stores user accounts, RBAC roles, audit logs, server cluster nodes, zone templates, and webhooks in a dedicated database.
-   - Provides an enterprise Web GUI and modern REST/GraphQL API for automation.
+    - Interacts with PowerDNS via its internal REST API client.
+    - Stores user accounts, RBAC roles, audit logs, server cluster nodes, zone templates, and webhooks in a dedicated database.
+    - Provides an enterprise Web GUI and modern REST/GraphQL API for automation.
 
 ---
 
@@ -269,21 +269,21 @@ In a Native setup, all PowerDNS nodes share or replicate the MySQL/MariaDB datab
 For geographically distributed clusters where database replication is not viable:
 
 1. **On Primary Node (`pdns.conf`)**:
-   ```ini
-   master=yes
-   slave=no
-   ```
+    ```ini
+    master=yes
+    slave=no
+    ```
 2. **On Secondary Node (`pdns.conf`)**:
-   ```ini
-   slave=yes
-   master=no
-   autosecondary=yes
-   ```
+    ```ini
+    slave=yes
+    master=no
+    autosecondary=yes
+    ```
 3. **Register Supermaster**:
    On the secondary node, register the primary node's IP in the `supermasters` table:
-   ```sql
-   INSERT INTO supermasters (ip, nameserver, account) VALUES ('198.51.100.10', 'ns1.example.com', 'admin');
-   ```
+    ```sql
+    INSERT INTO supermasters (ip, nameserver, account) VALUES ('198.51.100.10', 'ns1.example.com', 'admin');
+    ```
 4. When a new zone is created on the primary node with an `NS` record pointing to `ns1.example.com`, the secondary automatically provisions the slave zone via AXFR.
 
 ---
@@ -442,27 +442,27 @@ In PHP-PDNSManager, navigate to **Zones** (`/zones`) to manage your authoritativ
 
 ### 6.1 Supported Record Types
 
-| Record Type | Description & Usage | Example Content |
-| :--- | :--- | :--- |
-| **A** | Host IPv4 address | `198.51.100.10` |
-| **AAAA** | Host IPv6 address | `2001:db8::10` |
-| **CNAME** | Canonical name alias (FQDN) | `host.example.com.` |
-| **MX** | Mail exchange server with priority | `10 mail.example.com.` |
-| **TXT** | Arbitrary text (SPF, DKIM, DMARC, verification) | `"v=spf1 mx ~all"` |
-| **NS** | Authoritative nameserver for the zone/delegation | `ns1.example.com.` |
-| **SRV** | Service locator with priority, weight, port, target | `0 5 5060 sip.example.com.` |
-| **CAA** | Certificate Authority Authorization | `0 issue "letsencrypt.org"` |
-| **PTR** | Reverse DNS pointer (in `in-addr.arpa` or `ip6.arpa`) | `host.example.com.` |
-| **NAPTR** | Naming Authority Pointer | `100 10 "s" "SIP+D2T" "" _sip._tcp.example.com.` |
+| Record Type | Description & Usage                                   | Example Content                                  |
+| :---------- | :---------------------------------------------------- | :----------------------------------------------- |
+| **A**       | Host IPv4 address                                     | `198.51.100.10`                                  |
+| **AAAA**    | Host IPv6 address                                     | `2001:db8::10`                                   |
+| **CNAME**   | Canonical name alias (FQDN)                           | `host.example.com.`                              |
+| **MX**      | Mail exchange server with priority                    | `10 mail.example.com.`                           |
+| **TXT**     | Arbitrary text (SPF, DKIM, DMARC, verification)       | `"v=spf1 mx ~all"`                               |
+| **NS**      | Authoritative nameserver for the zone/delegation      | `ns1.example.com.`                               |
+| **SRV**     | Service locator with priority, weight, port, target   | `0 5 5060 sip.example.com.`                      |
+| **CAA**     | Certificate Authority Authorization                   | `0 issue "letsencrypt.org"`                      |
+| **PTR**     | Reverse DNS pointer (in `in-addr.arpa` or `ip6.arpa`) | `host.example.com.`                              |
+| **NAPTR**   | Naming Authority Pointer                              | `100 10 "s" "SIP+D2T" "" _sip._tcp.example.com.` |
 
 ### 6.2 Reverse DNS Management (`in-addr.arpa` & `ip6.arpa`)
 
 1. **IPv4 Reverse Zone**:
-   - For subnet `198.51.100.0/24`, create zone `100.51.198.in-addr.arpa`.
-   - Add `PTR` record: Name `10.100.51.198.in-addr.arpa.`, Content `ns1.example.com.`.
+    - For subnet `198.51.100.0/24`, create zone `100.51.198.in-addr.arpa`.
+    - Add `PTR` record: Name `10.100.51.198.in-addr.arpa.`, Content `ns1.example.com.`.
 2. **IPv6 Reverse Zone**:
-   - For prefix `2001:db8::/32`, create zone `0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa`.
-   - Add `PTR` record with nibble format for the target IPv6 address.
+    - For prefix `2001:db8::/32`, create zone `0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa`.
+    - Add `PTR` record with nibble format for the target IPv6 address.
 
 ---
 
@@ -471,17 +471,17 @@ In PHP-PDNSManager, navigate to **Zones** (`/zones`) to manage your authoritativ
 PHP-PDNSManager integrates directly with PowerDNS's native DNSSEC engine:
 
 1. **Enabling DNSSEC for a Zone**:
-   - Open zone details at `/zones/{id}`.
-   - Click **Enable DNSSEC** or view **DNSSEC Keys**.
-   - PHP-PDNSManager instructs PowerDNS to generate a Key Signing Key (KSK) and Zone Signing Key (ZSK) using modern cryptographic algorithms (e.g., Algorithm 13 - ECDSAP256SHA256).
+    - Open zone details at `/zones/{id}`.
+    - Click **Enable DNSSEC** or view **DNSSEC Keys**.
+    - PHP-PDNSManager instructs PowerDNS to generate a Key Signing Key (KSK) and Zone Signing Key (ZSK) using modern cryptographic algorithms (e.g., Algorithm 13 - ECDSAP256SHA256).
 2. **Delegation Signer (DS) Record**:
-   - PHP-PDNSManager extracts the DS record generated by PowerDNS.
-   - Copy the DS record (Key Tag, Algorithm, Digest Type, Digest) and submit it to your domain registrar to establish the cryptographic chain of trust.
+    - PHP-PDNSManager extracts the DS record generated by PowerDNS.
+    - Copy the DS record (Key Tag, Algorithm, Digest Type, Digest) and submit it to your domain registrar to establish the cryptographic chain of trust.
 3. **Verifying DNSSEC**:
-   ```bash
-   dig @127.0.0.1 example.com DNSKEY +dnssec
-   delv @127.0.0.1 example.com
-   ```
+    ```bash
+    dig @127.0.0.1 example.com DNSKEY +dnssec
+    delv @127.0.0.1 example.com
+    ```
 
 ---
 
@@ -577,29 +577,33 @@ sudo sysctl --system
 Execute these commands to confirm complete operational readiness:
 
 1. **Verify PowerDNS Authoritative Query Response**:
-   ```bash
-   dig @127.0.0.1 example.com SOA +short
-   dig @127.0.0.1 example.com NS +short
-   dig @127.0.0.1 example.com A +short
-   ```
+
+    ```bash
+    dig @127.0.0.1 example.com SOA +short
+    dig @127.0.0.1 example.com NS +short
+    dig @127.0.0.1 example.com A +short
+    ```
 
 2. **Verify PowerDNS DNSSEC Keys**:
-   ```bash
-   dig @127.0.0.1 example.com DNSKEY +dnssec
-   ```
+
+    ```bash
+    dig @127.0.0.1 example.com DNSKEY +dnssec
+    ```
 
 3. **Verify PowerDNS Authoritative Zone Integrity**:
-   ```bash
-   pdnsutil check-all-zones
-   ```
+
+    ```bash
+    pdnsutil check-all-zones
+    ```
 
 4. **Verify PowerDNS REST API**:
-   ```bash
-   curl -s -H 'X-API-Key: StrongPowerDnsApiKeyGenerated2026!' http://127.0.0.1:8081/api/v1/servers/localhost | jq .
-   ```
+
+    ```bash
+    curl -s -H 'X-API-Key: StrongPowerDnsApiKeyGenerated2026!' http://127.0.0.1:8081/api/v1/servers/localhost | jq .
+    ```
 
 5. **Verify PHP-PDNSManager Web Application**:
-   ```bash
-   curl -I https://dns.example.com/login
-   # Expected HTTP/2 200 OK with strict Content-Security-Policy and security headers
-   ```
+    ```bash
+    curl -I https://dns.example.com/login
+    # Expected HTTP/2 200 OK with strict Content-Security-Policy and security headers
+    ```
