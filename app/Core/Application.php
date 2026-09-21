@@ -1,12 +1,29 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Core;
+
 use App\Core\Exceptions\HttpException;
+use App\Core\Middleware\AuditLogMiddleware;
+use App\Core\Middleware\AuthenticationMiddleware;
+use App\Core\Middleware\ContentSecurityPolicyMiddleware;
+use App\Core\Middleware\CsrfProtectionMiddleware;
 use App\Core\Middleware\MiddlewarePipeline;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
+use App\Core\Middleware\RateLimitMiddleware;
+use App\Core\Middleware\RbacMiddleware;
+use App\Repositories\AuditLogRepository;
+use App\Repositories\Contracts\AuditLogRepositoryInterface;
+use App\Repositories\Contracts\RoleRepositoryInterface;
+use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\RoleRepository;
+use App\Repositories\UserRepository;
+use App\Services\PowerDNS\PowerDNSClient;
+use App\Services\PowerDNS\PowerDNSClientInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class Application implements RequestHandlerInterface
 {
@@ -27,9 +44,8 @@ class Application implements RequestHandlerInterface
         $this->container->singleton(Logger::class, function () {
             return new Logger($this->config);
         });
-        $this->container->singleton(Router::class, function () {
-            return new Router($this->container);
-        });
+        $this->router = new Router($this->container);
+        $this->container->singleton(Router::class, $this->router);
         $this->container->singleton(EventDispatcher::class, function () {
             return new EventDispatcher();
         });
@@ -45,10 +61,15 @@ class Application implements RequestHandlerInterface
                 $c->get(Psr17Factory::class)
             );
         });
-        $this->container->bind(\App\Repositories\Contracts\UserRepositoryInterface::class, \App\Repositories\UserRepository::class);
-        $this->container->bind(\App\Repositories\Contracts\RoleRepositoryInterface::class, \App\Repositories\RoleRepository::class);
-        $this->container->bind(\App\Repositories\Contracts\AuditLogRepositoryInterface::class, \App\Repositories\AuditLogRepository::class);
-        $this->container->bind(\App\Services\PowerDNS\PowerDNSClientInterface::class, \App\Services\PowerDNS\PowerDNSClient::class);
+        $this->container->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->container->bind(RoleRepositoryInterface::class, RoleRepository::class);
+        $this->container->bind(AuditLogRepositoryInterface::class, AuditLogRepository::class);
+        $this->container->singleton(PowerDNSClient::class, function (Container $c) {
+            return new PowerDNSClient($c->get(Config::class), $c->get(Logger::class));
+        });
+        $this->container->bind(PowerDNSClientInterface::class, function (Container $c) {
+            return $c->get(PowerDNSClient::class);
+        });
         $this->loadRoutes();
     }
 
@@ -56,12 +77,12 @@ class Application implements RequestHandlerInterface
     {
         $request = $this->container->get(ServerRequestCreator::class)->fromGlobals();
         $pipeline = new MiddlewarePipeline($this->container);
-        $pipeline->pipe(Middleware\ContentSecurityPolicyMiddleware::class);
-        $pipeline->pipe(Middleware\CsrfProtectionMiddleware::class);
-        $pipeline->pipe(Middleware\RateLimitMiddleware::class);
-        $pipeline->pipe(Middleware\AuthenticationMiddleware::class);
-        $pipeline->pipe(Middleware\RbacMiddleware::class);
-        $pipeline->pipe(Middleware\AuditLogMiddleware::class);
+        $pipeline->pipe(ContentSecurityPolicyMiddleware::class);
+        $pipeline->pipe(CsrfProtectionMiddleware::class);
+        $pipeline->pipe(RateLimitMiddleware::class);
+        $pipeline->pipe(AuthenticationMiddleware::class);
+        $pipeline->pipe(RbacMiddleware::class);
+        $pipeline->pipe(AuditLogMiddleware::class);
         $response = $pipeline->process($request, $this);
         $this->emit($response);
     }
@@ -72,14 +93,13 @@ class Application implements RequestHandlerInterface
             if (!$request->getAttribute('middleware_processed')) {
                 $request = $request->withAttribute('middleware_processed', true);
                 $pipeline = new MiddlewarePipeline($this->container);
-                $pipeline->pipe(Middleware\ContentSecurityPolicyMiddleware::class);
-                $pipeline->pipe(Middleware\CsrfProtectionMiddleware::class);
-                $pipeline->pipe(Middleware\RateLimitMiddleware::class);
-                $pipeline->pipe(Middleware\AuthenticationMiddleware::class);
-                $pipeline->pipe(Middleware\RbacMiddleware::class);
-                $pipeline->pipe(Middleware\AuditLogMiddleware::class);
-                $res = $pipeline->process($request, $this);
-                return $res instanceof Response ? $res : new Response($res->getStatusCode(), $res->getHeaders(), $res->getBody());
+                $pipeline->pipe(ContentSecurityPolicyMiddleware::class);
+                $pipeline->pipe(CsrfProtectionMiddleware::class);
+                $pipeline->pipe(RateLimitMiddleware::class);
+                $pipeline->pipe(AuthenticationMiddleware::class);
+                $pipeline->pipe(RbacMiddleware::class);
+                $pipeline->pipe(AuditLogMiddleware::class);
+                return $pipeline->process($request, $this);
             }
             return $this->router->dispatch($request);
         } catch (HttpException $e) {

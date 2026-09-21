@@ -1,10 +1,15 @@
 <?php
+
+declare(strict_types=1);
+
+use App\Core\View;
+
 if (!function_exists('view')) {
     function view(string $view, array $data = []): string
     {
         static $viewRenderer = null;
         if ($viewRenderer === null) {
-            $viewRenderer = new \App\Core\View(__DIR__ . '/../../');
+            $viewRenderer = new View(__DIR__ . '/../../');
         }
         return $viewRenderer->render($view, $data);
     }
@@ -12,7 +17,7 @@ if (!function_exists('view')) {
 if (!function_exists('asset')) {
     function asset(string $path): string
     {
-        return \App\Core\View::asset($path);
+        return View::asset($path);
     }
 }
 if (!function_exists('csrf_token')) {
@@ -54,26 +59,19 @@ if (!function_exists('env')) {
      */
     function env(string $key, mixed $default = null): mixed // NOSONAR
     {
-        $value = $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key);
-        if ($value === false || $value === null) {
+        $value = $_ENV[$key] ?? $_SERVER[$key] ?? false;
+        if ($value === false) {
+            $value = getenv($key);
+        }
+        if ($value === false) {
             return $default;
         }
-        switch (strtolower((string) $value)) {
-            case 'true':
-            case '(true)':
-                return true;
-            case 'false':
-            case '(false)':
-                return false;
-            case 'empty':
-            case '(empty)':
-                return '';
-            case 'null':
-            case '(null)':
-                return null;
-            default:
-                break;
-        }
-        return $value;
+        return match (strtolower((string) $value)) {
+            'true', '(true)' => true,
+            'false', '(false)' => false,
+            'empty', '(empty)' => '',
+            'null', '(null)' => null,
+            default => $value,
+        };
     }
 }

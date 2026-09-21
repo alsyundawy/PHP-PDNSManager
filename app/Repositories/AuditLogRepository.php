@@ -1,8 +1,11 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Repositories;
 
 use App\Core\Database;
+use App\Core\Exceptions\AuditLogNotFoundException;
 use App\Models\AuditLog;
 use App\Repositories\Contracts\AuditLogRepositoryInterface;
 use PDO;
@@ -58,21 +61,98 @@ class AuditLogRepository implements AuditLogRepositoryInterface
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function search(array $filters = [], int $limit = 50, int $offset = 0): array
+    {
+        $limit = max(1, min(200, $limit));
+        $offset = max(0, $offset);
+        $conditions = [];
+        $params = [];
+
+        if (!empty($filters['user_id'])) {
+            $conditions[] = 'user_id = :user_id';
+            $params['user_id'] = (int) $filters['user_id'];
+        }
+        if (!empty($filters['action'])) {
+            $conditions[] = 'action LIKE :action';
+            $params['action'] = '%' . $filters['action'] . '%';
+        }
+        if (!empty($filters['status_code'])) {
+            $conditions[] = 'status_code = :status_code';
+            $params['status_code'] = (int) $filters['status_code'];
+        }
+        if (!empty($filters['date_from'])) {
+            $conditions[] = 'created_at >= :date_from';
+            $params['date_from'] = $filters['date_from'];
+        }
+        if (!empty($filters['date_to'])) {
+            $conditions[] = 'created_at <= :date_to';
+            $params['date_to'] = $filters['date_to'];
+        }
+        if (!empty($filters['keyword'])) {
+            $conditions[] = '(action LIKE :keyword OR ip_address LIKE :keyword)';
+            $params['keyword'] = '%' . $filters['keyword'] . '%';
+        }
+
+        $whereClause = !empty($conditions) ? ' WHERE ' . implode(' AND ', $conditions) : '';
+        $sql = 'SELECT * FROM audit_logs' . $whereClause . ' ORDER BY created_at DESC LIMIT ' . $limit . ' OFFSET ' . $offset;
+
+        $stmt = $this->db->execute($sql, $params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function count(array $filters = []): int
+    {
+        $conditions = [];
+        $params = [];
+
+        if (!empty($filters['user_id'])) {
+            $conditions[] = 'user_id = :user_id';
+            $params['user_id'] = (int) $filters['user_id'];
+        }
+        if (!empty($filters['action'])) {
+            $conditions[] = 'action LIKE :action';
+            $params['action'] = '%' . $filters['action'] . '%';
+        }
+        if (!empty($filters['status_code'])) {
+            $conditions[] = 'status_code = :status_code';
+            $params['status_code'] = (int) $filters['status_code'];
+        }
+        if (!empty($filters['date_from'])) {
+            $conditions[] = 'created_at >= :date_from';
+            $params['date_from'] = $filters['date_from'];
+        }
+        if (!empty($filters['date_to'])) {
+            $conditions[] = 'created_at <= :date_to';
+            $params['date_to'] = $filters['date_to'];
+        }
+        if (!empty($filters['keyword'])) {
+            $conditions[] = '(action LIKE :keyword OR ip_address LIKE :keyword)';
+            $params['keyword'] = '%' . $filters['keyword'] . '%';
+        }
+
+        $whereClause = !empty($conditions) ? ' WHERE ' . implode(' AND ', $conditions) : '';
+        $sql = 'SELECT COUNT(*) as total FROM audit_logs' . $whereClause;
+
+        $stmt = $this->db->execute($sql, $params);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int) ($row['total'] ?? 0);
+    }
+
     private function find(int $id): AuditLog
     {
         $stmt = $this->db->execute('SELECT * FROM audit_logs WHERE id = :id', ['id' => $id]);
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$data) {
-            throw new \RuntimeException('Audit log not found after insert');
+            throw new AuditLogNotFoundException('Audit log not found with ID: ' . $id);
         }
         $log              = new AuditLog();
-        $log->id          = (int) $data['id'];
-        $log->user_id     = $data['user_id'] ? (int) $data['user_id'] : null;
-        $log->action      = $data['action'];
-        $log->payload     = $data['payload'] ? json_decode($data['payload'], true) : null;
-        $log->status_code = (int) $data['status_code'];
-        $log->ip_address  = $data['ip_address'];
-        $log->created_at  = new \DateTimeImmutable($data['created_at']);
+        $log->id         = (int) $data['id'];
+        $log->userId     = $data['user_id'] ? (int) $data['user_id'] : null;
+        $log->action     = $data['action'];
+        $log->payload    = $data['payload'] ? json_decode($data['payload'], true) : null;
+        $log->statusCode = (int) $data['status_code'];
+        $log->ipAddress  = $data['ip_address'];
+        $log->createdAt  = new \DateTimeImmutable($data['created_at']);
         return $log;
     }
 }

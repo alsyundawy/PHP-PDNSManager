@@ -1,6 +1,9 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Core;
+
 use Psr\Http\Message\ServerRequestInterface;
 
 class Request
@@ -24,13 +27,20 @@ class Request
     }
     public function getParsedBody(): array
     {
-        return $this->request->getParsedBody() ?? [];
+        $body = $this->request->getParsedBody();
+        if (is_array($body)) {
+            return $body;
+        }
+        if (is_object($body)) {
+            return (array) $body;
+        }
+        return [];
     }
-    public function getAttribute(string $name, $default = null)
+    public function getAttribute(string $name, mixed $default = null): mixed
     {
         return $this->request->getAttribute($name, $default);
     }
-    public function withAttribute(string $name, $value): self
+    public function withAttribute(string $name, mixed $value): self
     {
         $new = clone $this;
         $new->request = $this->request->withAttribute($name, $value);
@@ -40,7 +50,7 @@ class Request
     {
         return $this->request;
     }
-    public function input(string $key, $default = null)
+    public function input(string $key, mixed $default = null): mixed
     {
         $body = $this->getParsedBody();
         return $body[$key] ?? $this->getQueryParams()[$key] ?? $default;

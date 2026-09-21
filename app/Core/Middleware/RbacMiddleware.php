@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Core\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -38,7 +40,7 @@ class RbacMiddleware implements MiddlewareInterface
         return $handler->handle($request);
     }
 
-    private function inferPermission(ServerRequestInterface $request): ?string
+    private function inferPermission(ServerRequestInterface $request): string
     {
         $path   = $request->getUri()->getPath();
         $method = $request->getMethod();

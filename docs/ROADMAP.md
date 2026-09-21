@@ -38,22 +38,22 @@ gantt
 
 ### 🔵 Versi 1.1.0 (Q4 2026) - _Multi-Server Cluster & High Availability_
 
-- [ ] **Multi-PowerDNS Server Management**: Kemampuan mengelola multiple kluster PowerDNS Authoritative Server dari satu Web GUI terpusat.
-- [ ] **Health Check Monitoring**: Pengujian otomatis status ketersediaan (_uptime_) server PowerDNS dan notifikasi via email/Telegram saat server offline.
-- [ ] **Zone Templating**: Pembuatan template DNS record standar untuk mempercepat provisioning zone baru (misal: Template Web Hosting, Template Mail Server).
+- [x] **Multi-PowerDNS Server Management**: Kemampuan mengelola multiple kluster PowerDNS Authoritative Server dari satu Web GUI terpusat (`ServerClusterService`, `ServerController`, `ServerApiController`).
+- [x] **Health Check Monitoring**: Pengujian otomatis status ketersediaan (_uptime_) server PowerDNS, database, dan resource sistem via Web UI dan JSON API endpoint `/health` (`HealthCheckService`, `HealthController`).
+- [x] **Zone Templating**: Pembuatan template DNS record standar untuk mempercepat provisioning zone baru (Template Web Hosting, Template Google Workspace, custom templates) (`ZoneTemplateService`, `ZoneTemplateController`).
 
 ---
 
 ### 🟡 Versi 1.2.0 (Q1 2027) - _Migration & BIND Tools_
 
-- [ ] **BIND Zone File Import/Export**: Fitur pengunggah berkas BIND zone format (`.db`) untuk migrasi instan dari server DNS lama.
-- [ ] **Bulk Record Operations**: Fasilitas pengubahan/penghapusan record secara serentak (_batch processing_) pada banyak zone sekaligus.
-- [ ] **Advanced Audit Log Search**: Pencarian dan filter log audit tingkat lanjut dengan fitur ekspor data ke CSV/JSON.
+- [x] **BIND Zone File Import/Export**: Fitur pengunggah berkas BIND zone format (`.db`/`.zone`) berbasis RFC 1035 untuk migrasi instan dari server DNS lama serta fitur ekspor format BIND (`BindZoneService`, `ZoneController`).
+- [x] **Bulk Record Operations**: Fasilitas pencarian, pengubahan, dan penghapusan record secara serentak (_batch processing_) pada banyak zone sekaligus (`BulkRecordService`, `/zones/bulk-records`).
+- [x] **Advanced Audit Log Search**: Pencarian dan filter log audit tingkat lanjut berdasarkan action, user, tanggal, status code, serta fitur ekspor data ke format CSV dan JSON (`AuditLogRepository`, `AuditLogController`).
 
 ---
 
 ### 🔴 Versi 2.0.0 Enterprise (Q2 2027) - _Next-Gen Integration_
 
-- [ ] **GraphQL API Endpoint**: Penyediaan antarmuka GraphQL API sebagai alternatif REST API V1.
-- [ ] **Webhook System**: Mengirimkan notifikasi real-time ke sistem eksternal (Slack, Discord, Custom HTTP Webhook) saat terjadi perubahan DNS Zone/Record.
-- [ ] **Multi-Tenant RBAC & Organizations**: Pengelompokan pengguna berdasarkan Organisasi / Tim dengan batasan akses zone spesifik (_Zone-level Permissions_).
+- [x] **GraphQL API Endpoint**: Penyediaan antarmuka GraphQL API (`/graphql`) untuk query zones, zone records, servers, templates, health status, audit logs, serta mutasi zona (`GraphQLController`).
+- [x] **Webhook System**: Pengiriman notifikasi real-time terenkripsi tanda tangan HMAC-SHA256 ke webhook eksternal saat terjadi peristiwa mutasi zona/record (`WebhookService`).
+- [x] **Multi-Tenant RBAC & Organizations**: Pengelompokan pengguna berdasarkan Organisasi / Tim dengan batasan akses zone spesifik (_Zone-level Permissions_) (`OrganizationService`, schema multi-tenant).

@@ -1,5 +1,7 @@
 <?php
+
 namespace Database\Seeders;
+
 use App\Core\Database;
 use App\Services\Auth\AuthenticationService;
 
@@ -28,8 +30,10 @@ class InitialSeeder
             $this->db->execute('INSERT IGNORE INTO permission_role (permission_id, role_id) VALUES (:pid, :rid)', ['pid' => $p['id'], 'rid' => $adminRole]);
         }
         $hash = $this->auth->hashPassword('admin123');
-        $this->db->execute('INSERT IGNORE INTO users (username, email, password_hash, is_active) VALUES (:username, :email, :hash, 1)',
-            ['username' => 'admin', 'email' => 'admin@localhost', 'hash' => $hash]);
+        $this->db->execute(
+            'INSERT IGNORE INTO users (username, email, password_hash, is_active) VALUES (:username, :email, :hash, 1)',
+            ['username' => 'admin', 'email' => 'admin@localhost', 'hash' => $hash]
+        );
         $adminUser = $this->db->execute('SELECT id FROM users WHERE username = "admin"')->fetch()['id'];
         $this->db->execute('INSERT IGNORE INTO user_role (user_id, role_id) VALUES (:uid, :rid)', ['uid' => $adminUser, 'rid' => $adminRole]);
         echo "Initial data seeded successfully.\n";

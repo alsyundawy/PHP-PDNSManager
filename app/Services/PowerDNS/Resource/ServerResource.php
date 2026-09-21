@@ -1,6 +1,9 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Services\PowerDNS\Resource;
+
 use App\Services\PowerDNS\PowerDNSClientInterface;
 
 class ServerResource

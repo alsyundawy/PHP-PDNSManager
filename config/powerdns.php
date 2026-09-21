@@ -1,4 +1,5 @@
 <?php
+
 return [
     'api_url' => env('PDNS_API_URL', 'http://127.0.0.1:8081'),
     'api_key' => env('PDNS_API_KEY'),

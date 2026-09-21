@@ -1,6 +1,9 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Controllers;
+
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Exceptions\ValidationException;
@@ -18,7 +21,7 @@ class AuthController
     }
     public function showLogin(Request $request): Response // NOSONAR
     {
-        $csrfToken = csrf_token();
+        $csrfToken = $this->csrf->generateToken();
         $html = view('auth.login', ['csrfToken' => $csrfToken]);
         return (new Response())->html($html);
     }

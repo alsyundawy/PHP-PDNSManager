@@ -6,13 +6,13 @@
     <a href="/zones/<?= urlencode($zone['name']) ?>/export" class="btn btn-info"><i class="fas fa-file-export"></i> Export</a></div>
 </div>
 <div class="row mb-4"><div class="col-md-6"><div class="card"><div class="card-header">Zone Info</div><div class="card-body">
-    <p><strong>Kind:</strong> <?= htmlspecialchars($zone['kind']??'Native') ?></p>
-    <p><strong>DNSSEC:</strong> <?= ($zone['dnssec']??false)?'Enabled':'Disabled' ?></p>
-    <p><strong>Masters:</strong> <?= htmlspecialchars(implode(', ', $zone['masters']??[])) ?></p>
+    <p><strong>Kind:</strong> <?= htmlspecialchars($zone['kind'] ?? 'Native') ?></p>
+    <p><strong>DNSSEC:</strong> <?= ($zone['dnssec'] ?? false) ? 'Enabled' : 'Disabled' ?></p>
+    <p><strong>Masters:</strong> <?= htmlspecialchars(implode(', ', $zone['masters'] ?? [])) ?></p>
 </div></div></div>
 <div class="col-md-6"><div class="card"><div class="card-header">DNSSEC Keys</div><div class="card-body">
     <?php if (empty($keys)): ?><p>No DNSSEC keys.</p><?php else: ?><table class="table table-sm"><thead><tr><th>ID</th><th>Type</th><th>Active</th><th>Actions</th></tr></thead><tbody>
-    <?php foreach ($keys as $key): ?><tr><td><?= htmlspecialchars($key['id']) ?></td><td><?= htmlspecialchars($key['keytype']) ?></td><td><?= $key['active']?'Yes':'No' ?></td><td>
+    <?php foreach ($keys as $key): ?><tr><td><?= htmlspecialchars($key['id']) ?></td><td><?= htmlspecialchars($key['keytype']) ?></td><td><?= $key['active'] ? 'Yes' : 'No' ?></td><td>
         <form method="POST" action="/zones/<?= urlencode($zone['name']) ?>/dnssec/keys/<?= urlencode($key['id']) ?>/delete" style="display:inline;"><input type="hidden" name="_csrf" value="<?= $csrfToken ?>"><button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete key?')">Delete</button></form>
     </td></tr><?php endforeach; ?></tbody></table><?php endif; ?>
     <form method="POST" action="/zones/<?= urlencode($zone['name']) ?>/dnssec/keys"><input type="hidden" name="_csrf" value="<?= $csrfToken ?>">
@@ -28,9 +28,9 @@
         <?php foreach ($records as $record): ?><tr>
             <td><input type="checkbox" name="selected[]" value="<?= htmlspecialchars($record['name']) . '|' . htmlspecialchars($record['type']) ?>"></td>
             <td><?= htmlspecialchars($record['name']) ?></td><td><?= htmlspecialchars($record['type']) ?></td>
-            <td><?= htmlspecialchars(implode(', ', array_column($record['records']??[], 'content'))) ?></td>
+            <td><?= htmlspecialchars(implode(', ', array_column($record['records'] ?? [], 'content'))) ?></td>
             <td><?= htmlspecialchars($record['ttl']) ?></td>
-            <td><button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editRecordModal" data-name="<?= htmlspecialchars($record['name']) ?>" data-type="<?= htmlspecialchars($record['type']) ?>" data-content="<?= htmlspecialchars(implode(', ', array_column($record['records']??[], 'content'))) ?>" data-ttl="<?= htmlspecialchars($record['ttl']) ?>"><i class="fas fa-edit"></i></button>
+            <td><button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editRecordModal" data-name="<?= htmlspecialchars($record['name']) ?>" data-type="<?= htmlspecialchars($record['type']) ?>" data-content="<?= htmlspecialchars(implode(', ', array_column($record['records'] ?? [], 'content'))) ?>" data-ttl="<?= htmlspecialchars($record['ttl']) ?>"><i class="fas fa-edit"></i></button>
                 <form method="POST" action="/zones/<?= urlencode($zone['name']) ?>/records/<?= urlencode($record['name']) ?>/<?= urlencode($record['type']) ?>/delete" style="display:inline;"><input type="hidden" name="_csrf" value="<?= $csrfToken ?>"><button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete record?')"><i class="fas fa-trash"></i></button></form>
             </td>
         </tr><?php endforeach; ?>

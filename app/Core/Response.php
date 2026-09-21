@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Core;
 
 use Nyholm\Psr7\Response as Psr7Response;

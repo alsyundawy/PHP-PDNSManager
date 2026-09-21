@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Services\Auth;
 
 use App\Models\User;
@@ -39,7 +41,7 @@ class AuthService
             return null;
         }
 
-        if (!password_verify($password, $user->password_hash)) {
+        if (!password_verify($password, $user->passwordHash)) {
             $this->logger->warning('Failed login attempt', ['username' => $username]);
             return null;
         }
@@ -48,7 +50,7 @@ class AuthService
         $this->session->regenerate();
         $this->session->set('user_id', $user->id);
 
-        $this->userRepo->updateLastLogin($user->id);
+        $this->userRepo->recordLogin($user->id);
         $this->logger->info('User logged in', ['user_id' => $user->id]);
 
         return $user;
@@ -71,10 +73,10 @@ class AuthService
 
     public function verifyTotp(User $user, string $code): bool
     {
-        if ($user->totp_secret === null) {
+        if ($user->totpSecret === null) {
             return false;
         }
-        $expected = $this->generateTotpCode($user->totp_secret);
+        $expected = $this->generateTotpCode($user->totpSecret);
         // BUGFIX: Use hash_equals() instead of == to prevent timing attacks
         return hash_equals($expected, $code);
     }

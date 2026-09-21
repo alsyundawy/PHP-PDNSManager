@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Models;
 
 class User
@@ -7,12 +9,40 @@ class User
     public int $id;
     public string $username;
     public string $email;
-    public string $password_hash;
-    public bool $is_active;
+    public string $passwordHash;
+    public bool $isActive;
     public array $roles = [];
     public array $permissions = [];
-    public ?string $totp_secret = null;
-    public ?\DateTimeImmutable $last_login = null;
-    public \DateTimeImmutable $created_at;
-    public \DateTimeImmutable $updated_at;
+    public ?string $totpSecret = null;
+    public ?\DateTimeImmutable $lastLogin = null;
+    public \DateTimeImmutable $createdAt;
+    public \DateTimeImmutable $updatedAt;
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function __get(string $name): mixed
+    {
+        $camel = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $name))));
+        if (property_exists($this, $camel)) {
+            return $this->$camel;
+        }
+        return null;
+    }
+
+    public function __set(string $name, mixed $value): void
+    {
+        $camel = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $name))));
+        if (property_exists($this, $camel)) {
+            $this->$camel = $value;
+        }
+    }
+
+    public function __isset(string $name): bool
+    {
+        $camel = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $name))));
+        return property_exists($this, $camel) && isset($this->$camel);
+    }
 }

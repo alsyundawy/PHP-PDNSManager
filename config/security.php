@@ -1,4 +1,5 @@
 <?php
+
 return [
     'csp_enabled' => (bool) env('SECURITY_CSP_ENABLED', true),
     'rate_limit' => [

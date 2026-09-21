@@ -23,12 +23,9 @@ Thumbs.db
 .phpunit.cache/
 /public/assets/css/*.min.css
 /public/assets/js/*.min.js
-/public/assets/vendor/
 *.pem
 *.crt
 *.key
 /config/local.php
-host=;port=0;dbname=:memory:;charset=
-host=;port=0;dbname=:memory:;charset=
-host=;port=0;dbname=:memory:;charset=
-host=localhost;port=3306;dbname=:memory:;charset=utf8mb4
+.kilo/
+.php-cs-fixer.cache

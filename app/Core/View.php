@@ -1,25 +1,36 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Core;
 
 class View
 {
     private string $basePath;
-    private string $layout = 'admin';
+    private ?string $layout = 'admin';
     private array $sharedData = [];
+    private static array $globalShared = [];
+
+    public static function setGlobal(string $key, mixed $value): void
+    {
+        self::$globalShared[$key] = $value;
+    }
+
     public function __construct(string $basePath)
     {
         $this->basePath = $basePath;
     }
-    public function share(string $key, $value): void
+
+    public function share(string $key, mixed $value): void
     {
         $this->sharedData[$key] = $value;
     }
+
     public function render(string $view, array $data = []): string
     {
-        $data = array_merge($this->sharedData, $data);
+        $data = array_merge(self::$globalShared, $this->sharedData, $data);
         $content = $this->renderView($view, $data);
-        if ($this->layout) {
+        if ($this->layout !== null && $this->layout !== '') {
             $layoutData = array_merge($data, ['content' => $content]);
             return $this->renderView('layouts/' . $this->layout, $layoutData);
         }
@@ -29,10 +40,11 @@ class View
     {
         extract($data, EXTR_SKIP);
         ob_start();
-        include $this->basePath . '/app/Views/' . str_replace('.', '/', $view) . '.php';
-        return ob_get_clean();
+        include_once $this->basePath . '/app/Views/' . str_replace('.', '/', $view) . '.php';
+        $output = ob_get_clean();
+        return is_string($output) ? $output : '';
     }
-    public function setLayout(string $layout): void
+    public function setLayout(?string $layout): void
     {
         $this->layout = $layout;
     }

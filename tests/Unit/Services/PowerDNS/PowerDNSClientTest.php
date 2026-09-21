@@ -1,6 +1,9 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Tests\Unit\Services\PowerDNS;
+
 use PHPUnit\Framework\TestCase;
 use App\Services\PowerDNS\PowerDNSClient;
 use App\Core\Config;
@@ -14,7 +17,8 @@ class PowerDNSClientTest extends TestCase
 {
     private $mockHandler;
     private $client;
-    protected function setUp(): void {
+    protected function setUp(): void
+    {
         $this->mockHandler = new MockHandler();
         $handlerStack = HandlerStack::create($this->mockHandler);
         $config = $this->createMock(Config::class);
@@ -29,12 +33,14 @@ class PowerDNSClientTest extends TestCase
         $guzzle = new \GuzzleHttp\Client(['handler' => $handlerStack]);
         $this->client = new PowerDNSClient($config, $logger, $guzzle);
     }
-    public function testGetRequest(): void {
+    public function testGetRequest(): void
+    {
         $this->mockHandler->append(new Response(200, [], json_encode(['zones' => []])));
         $result = $this->client->get('zones');
         $this->assertIsArray($result);
     }
-    public function testErrorResponse(): void {
+    public function testErrorResponse(): void
+    {
         $this->mockHandler->append(new Response(404, [], json_encode(['error' => 'Not found'])));
         $this->expectException(PowerApiException::class);
         $this->client->get('zones/nonexistent');

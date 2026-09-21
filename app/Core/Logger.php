@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Core;
 
 use Monolog\Logger as MonologLogger;
-use Monolog\Handler\StreamHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Formatter\LineFormatter;
+use Monolog\Level;
 
 /**
  * BUGFIX: PHPStan errors — class aliasing was missing, causing
@@ -18,9 +20,14 @@ class Logger
     private array $channels = [];
     private string $logPath;
 
-    public function __construct(string $logPath, string $channel = 'app', string $level = 'debug')
+    public function __construct(string|\App\Core\Config $logPathOrConfig, string $channel = 'app', string $level = 'debug')
     {
-        $this->logPath = $logPath;
+        if ($logPathOrConfig instanceof \App\Core\Config) {
+            $this->logPath = (string) ($logPathOrConfig->get('app.log_path') ?? dirname(__DIR__, 2) . '/storage/logs');
+            $level = (string) ($logPathOrConfig->get('app.log_level') ?? $level);
+        } else {
+            $this->logPath = $logPathOrConfig;
+        }
         $this->logger = $this->createChannel($channel, $level);
     }
 
@@ -37,18 +44,18 @@ class Logger
         return $log;
     }
 
-    private function parseLevel(string $level): int
+    private function parseLevel(string $level): Level
     {
         return match (strtolower($level)) {
-            'debug'     => MonologLogger::DEBUG,
-            'info'      => MonologLogger::INFO,
-            'notice'    => MonologLogger::NOTICE,
-            'warning'   => MonologLogger::WARNING,
-            'error'     => MonologLogger::ERROR,
-            'critical'  => MonologLogger::CRITICAL,
-            'alert'     => MonologLogger::ALERT,
-            'emergency' => MonologLogger::EMERGENCY,
-            default      => MonologLogger::DEBUG,
+            'debug'     => Level::Debug,
+            'info'      => Level::Info,
+            'notice'    => Level::Notice,
+            'warning'   => Level::Warning,
+            'error'     => Level::Error,
+            'critical'  => Level::Critical,
+            'alert'     => Level::Alert,
+            'emergency' => Level::Emergency,
+            default     => Level::Debug,
         };
     }
 

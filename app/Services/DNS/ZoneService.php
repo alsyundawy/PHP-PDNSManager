@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Services\DNS;
 
 use App\Services\PowerDNS\Resource\ZoneResource;
 use App\Services\PowerDNS\Resource\RecordResource;
 use App\Services\PowerDNS\Resource\CryptokeyResource;
 use App\Core\Logger;
-use App\Core\Exceptions\PowerApiException;
 use App\Core\Exceptions\ValidationException;
 
 class ZoneService
@@ -148,6 +149,11 @@ class ZoneService
     public function exportZone(string $zoneId): array
     {
         return $this->zoneResource->export($zoneId);
+    }
+
+    public function getCryptokeys(string $zoneId): array
+    {
+        return $this->cryptokeyResource->getAll($zoneId);
     }
 
     private function validateZoneData(array $data): void

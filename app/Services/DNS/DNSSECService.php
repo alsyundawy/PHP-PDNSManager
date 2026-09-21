@@ -1,6 +1,9 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Services\DNS;
+
 use App\Services\PowerDNS\Resource\CryptokeyResource;
 use App\Core\Logger;
 

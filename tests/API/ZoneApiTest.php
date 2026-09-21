@@ -1,6 +1,9 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Tests\API;
+
 use PHPUnit\Framework\TestCase;
 use App\Core\Application;
 use Nyholm\Psr7\ServerRequest;
@@ -8,7 +11,8 @@ use Nyholm\Psr7\Uri;
 
 class ZoneApiTest extends TestCase
 {
-    public function testGetZonesWithoutAuth(): void {
+    public function testGetZonesWithoutAuth(): void
+    {
         $_SESSION = [];
         $app = new Application(__DIR__ . '/../../');
         $request = new ServerRequest('GET', new Uri('/api/v1/zones'));

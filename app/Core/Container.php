@@ -1,6 +1,9 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Core;
+
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -48,7 +51,7 @@ class Container implements ContainerInterface
         return isset($this->bindings[$id]);
     }
 
-    private function resolve($concrete): object
+    private function resolve(callable|object|string $concrete): object
     {
         if ($concrete instanceof \Closure) {
             return $concrete($this);

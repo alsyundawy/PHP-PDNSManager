@@ -1,15 +1,23 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Services\PowerDNS\Resource;
+
 use App\Services\PowerDNS\PowerDNSClientInterface;
 
 class ZoneResource
 {
+    private const ZONES_PREFIX = 'zones/';
+    private const ZONES_ENDPOINT = 'zones';
+
     private PowerDNSClientInterface $client;
+
     public function __construct(PowerDNSClientInterface $client)
     {
         $this->client = $client;
     }
+
     public function getAll(array $filters = []): array
     {
         $query = [];
@@ -19,42 +27,52 @@ class ZoneResource
         if (isset($filters['type'])) {
             $query['type'] = $filters['type'];
         }
-        return $this->client->get('zones', $query);
+        return $this->client->get(self::ZONES_ENDPOINT, $query);
     }
+
     public function get(string $zoneId): array
     {
-        return $this->client->get('zones/' . urlencode($zoneId));
+        return $this->client->get(self::ZONES_PREFIX . urlencode($zoneId));
     }
+
     public function create(array $data): array
     {
-        return $this->client->post('zones', $data);
+        return $this->client->post(self::ZONES_ENDPOINT, $data);
     }
+
     public function update(string $zoneId, array $data): array
     {
-        return $this->client->put('zones/' . urlencode($zoneId), $data);
+        return $this->client->put(self::ZONES_PREFIX . urlencode($zoneId), $data);
     }
+
     public function patch(string $zoneId, array $data): array
     {
-        return $this->client->patch('zones/' . urlencode($zoneId), $data);
+        return $this->client->patch(self::ZONES_PREFIX . urlencode($zoneId), $data);
     }
+
     public function delete(string $zoneId): void
     {
-        $this->client->delete('zones/' . urlencode($zoneId));
+        $this->client->delete(self::ZONES_PREFIX . urlencode($zoneId));
     }
+
     public function export(string $zoneId): array
     {
-        return $this->client->get('zones/' . urlencode($zoneId) . '/export');
+        $raw = $this->client->getRaw(self::ZONES_PREFIX . urlencode($zoneId) . '/export');
+        return ['zone' => $zoneId, 'raw' => $raw];
     }
+
     public function check(string $zoneId): array
     {
-        return $this->client->get('zones/' . urlencode($zoneId) . '/check');
+        return $this->client->get(self::ZONES_PREFIX . urlencode($zoneId) . '/check');
     }
+
     public function notify(string $zoneId): void
     {
-        $this->client->put('zones/' . urlencode($zoneId) . '/notify');
+        $this->client->put(self::ZONES_PREFIX . urlencode($zoneId) . '/notify');
     }
+
     public function getCryptokeys(string $zoneId): array
     {
-        return $this->client->get('zones/' . urlencode($zoneId) . '/cryptokeys');
+        return $this->client->get(self::ZONES_PREFIX . urlencode($zoneId) . '/cryptokeys');
     }
 }

@@ -1,5 +1,9 @@
 name: PHP-CI
 on: [push, pull_request]
+
+permissions:
+  contents: read
+
 jobs:
   quality-assurance:
     runs-on: ubuntu-latest
@@ -13,21 +17,21 @@ jobs:
       matrix:
         php: [8.1, 8.2, 8.3, 8.4, 8.5]
     steps:
-    - uses: actions/checkout@v7
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php }}
-        extensions: pdo, sqlite, mbstring, json, sodium, curl
-        coverage: xdebug
-        tools: composer:v2
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
-    - name: Run PHP_CodeSniffer
-      run: ./vendor/bin/phpcs --standard=phpcs.xml
-    - name: Run PHPStan
-      run: ./vendor/bin/phpstan analyse --no-progress
-    - name: Run Psalm
-      run: ./vendor/bin/psalm --no-progress
-    - name: Run PHPUnit
-      run: ./vendor/bin/phpunit --coverage-clover coverage.xml
+      - uses: actions/checkout@v7
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo, sqlite, mbstring, json, sodium, curl
+          coverage: xdebug
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+      - name: Run PHP_CodeSniffer
+        run: ./vendor/bin/phpcs --standard=phpcs.xml
+      - name: Run PHPStan
+        run: ./vendor/bin/phpstan analyse --no-progress
+      - name: Run Psalm
+        run: ./vendor/bin/psalm --no-progress
+      - name: Run PHPUnit
+        run: ./vendor/bin/phpunit --coverage-clover coverage.xml

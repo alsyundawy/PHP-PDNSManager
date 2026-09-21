@@ -1,6 +1,9 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Repositories;
+
 use App\Core\Database;
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
@@ -97,12 +100,12 @@ class UserRepository implements UserRepositoryInterface
         $user->id = (int) $data['id'];
         $user->username = $data['username'];
         $user->email = $data['email'];
-        $user->password_hash = $data['password_hash'];
-        $user->is_active = (bool) $data['is_active'];
-        $user->totp_secret = $data['totp_secret'] ?? null;
-        $user->last_login = $data['last_login'] ? new \DateTimeImmutable($data['last_login']) : null;
-        $user->created_at = new \DateTimeImmutable($data['created_at']);
-        $user->updated_at = new \DateTimeImmutable($data['updated_at']);
+        $user->passwordHash = $data['password_hash'];
+        $user->isActive = (bool) $data['is_active'];
+        $user->totpSecret = $data['totp_secret'] ?? null;
+        $user->lastLogin = $data['last_login'] ? new \DateTimeImmutable($data['last_login']) : null;
+        $user->createdAt = new \DateTimeImmutable($data['created_at']);
+        $user->updatedAt = new \DateTimeImmutable($data['updated_at']);
         return $user;
     }
 }

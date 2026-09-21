@@ -1,6 +1,9 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Services\Auth;
+
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Core\Logger;
@@ -27,7 +30,7 @@ class AuthenticationService
             $this->logger->channel('security')->warning('Login failed: user not found', ['username' => $username, 'ip' => $ip]);
             return null;
         }
-        if (!password_verify($password, $user->password_hash)) {
+        if (!password_verify($password, $user->passwordHash)) {
             $this->logger->channel('security')->warning('Login failed: invalid password', ['username' => $username, 'ip' => $ip]);
             return null;
         }
