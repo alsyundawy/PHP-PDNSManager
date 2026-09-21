@@ -27,7 +27,8 @@ PHP-PDNSManager is an enterprise-grade web management suite and REST API gateway
                  +-------------------+
 ```
 
-### Core Architecture Components:
+### Core Architecture Components
+
 1. **PowerDNS Authoritative Daemon (`pdns_server`)**:
    - Binds to public interfaces (`0.0.0.0:53` and `[::]:53`).
    - Serves authoritative zone answers without recursion.

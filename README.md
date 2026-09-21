@@ -132,21 +132,21 @@ modern PowerDNS administration:
 
 ## 🎯 Key Features
 
-| Capability Area             | Highlights & Implementations                                                                                                                              |
-|:----------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Multi-Server Clustering** | Manage multiple PowerDNS nodes (`pdns_servers`), cluster failover, connection latency testing, and dedicated REST routes (`/servers`).                    |
-| **Zone Management**         | Native, Master, and Slave zones; auto-increment SOA serial (`YYYYMMDDNN`); instant search, filtering, and RFC 1035 BIND import/export.                   |
-| **Authoritative Records**   | Full CRUD for `A`, `AAAA`, `CNAME`, `MX`, `TXT`, `NS`, `SRV`, `CAA`, `PTR`, `NAPTR`, and `SOA` with real-time FQDN syntax validation.                    |
-| **DNSSEC Automation**       | Cryptographic key management (KSK / ZSK generation), automatic zone signing, key rollover, and DS record generation for parent delegation.                |
-| **Zone Templating Engine**  | Preconfigured DNS profiles for instant 1-click zone provisioning and record deployment (`/templates`).                                                    |
-| **Bulk Record Operations**  | Cross-zone search and replace for batch IP/target migrations and mass record deletion (`/zones/bulk-records`).                                            |
-| **Identity & RBAC**         | Role-Based Access Control (`admin`, `operator`, `viewer`), Multi-Tenant Organizations, TOTP Two-Factor Authentication, and scoped API tokens.             |
-| **REST API Gateway**        | Versioned REST API (`/api/v1`) with JSON-Schema validation and Bearer token authentication for Terraform, Ansible, and CI/CD pipelines.                  |
-| **GraphQL Endpoint**        | Zero-dependency GraphQL execution engine (`/graphql`) supporting flexible queries (`zones`, `servers`, `health`) and mutations.                           |
-| **Signed Webhooks**         | HMAC-SHA256 payload signing with `X-PDNS-Signature` headers for event-driven integration upon zone and record modifications.                             |
-| **Audit Logging & Trail**   | Granular audit logs tracking user ID, IP address, exact action, target zone, HTTP status, and timestamp with CSV/JSON export (`/audit-logs`).             |
-| **System Telemetry**        | Health telemetry dashboard (`/health`) monitoring PowerDNS latency, database connectivity, storage permissions, and PHP runtime metrics.                 |
-| **Offline UI & Theming**    | Visual Subnet Calculator dark/light palette, 100% offline local vendor assets, glassmorphism navigation, and mobile anti-clipping viewport engine.         |
+| Capability Area             | Highlights & Implementations                                                                                                                       |
+| :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Multi-Server Clustering** | Manage multiple PowerDNS nodes (`pdns_servers`), cluster failover, connection latency testing, and dedicated REST routes (`/servers`).             |
+| **Zone Management**         | Native, Master, and Slave zones; auto-increment SOA serial (`YYYYMMDDNN`); instant search, filtering, and RFC 1035 BIND import/export.             |
+| **Authoritative Records**   | Full CRUD for `A`, `AAAA`, `CNAME`, `MX`, `TXT`, `NS`, `SRV`, `CAA`, `PTR`, `NAPTR`, and `SOA` with real-time FQDN syntax validation.              |
+| **DNSSEC Automation**       | Cryptographic key management (KSK / ZSK generation), automatic zone signing, key rollover, and DS record generation for parent delegation.         |
+| **Zone Templating Engine**  | Preconfigured DNS profiles for instant 1-click zone provisioning and record deployment (`/templates`).                                             |
+| **Bulk Record Operations**  | Cross-zone search and replace for batch IP/target migrations and mass record deletion (`/zones/bulk-records`).                                     |
+| **Identity & RBAC**         | Role-Based Access Control (`admin`, `operator`, `viewer`), Multi-Tenant Organizations, TOTP Two-Factor Authentication, and scoped API tokens.      |
+| **REST API Gateway**        | Versioned REST API (`/api/v1`) with JSON-Schema validation and Bearer token authentication for Terraform, Ansible, and CI/CD pipelines.            |
+| **GraphQL Endpoint**        | Zero-dependency GraphQL execution engine (`/graphql`) supporting flexible queries (`zones`, `servers`, `health`) and mutations.                    |
+| **Signed Webhooks**         | HMAC-SHA256 payload signing with `X-PDNS-Signature` headers for event-driven integration upon zone and record modifications.                       |
+| **Audit Logging & Trail**   | Granular audit logs tracking user ID, IP address, exact action, target zone, HTTP status, and timestamp with CSV/JSON export (`/audit-logs`).      |
+| **System Telemetry**        | Health telemetry dashboard (`/health`) monitoring PowerDNS latency, database connectivity, storage permissions, and PHP runtime metrics.           |
+| **Offline UI & Theming**    | Visual Subnet Calculator dark/light palette, 100% offline local vendor assets, glassmorphism navigation, and mobile anti-clipping viewport engine. |
 
 ---
 
@@ -202,20 +202,20 @@ flowchart TB
 
 PHP-PDNSManager validates, formats, and provisions all standard DNS Resource Records:
 
-| Record Type | Description                           | RFC Standard       | Syntax Validation & RDATA Schema                               |
-|:------------|:--------------------------------------|:-------------------|:---------------------------------------------------------------|
-| **`A`**     | IPv4 Host Address                     | RFC 1035           | Dotted-decimal `0.0.0.0` – `255.255.255.255`                   |
-| **`AAAA`**  | IPv6 Host Address                     | RFC 3596           | Standard compressed or uncompressed RFC 4291 IPv6              |
-| **`CNAME`** | Canonical Name (Alias)                | RFC 1035           | Fully Qualified Domain Name (FQDN)                             |
-| **`MX`**    | Mail Exchange Server                  | RFC 1035, RFC 7505 | Priority integer (`0–65535`) + mail exchanger FQDN             |
-| **`NS`**    | Authoritative Name Server             | RFC 1035           | Authoritative nameserver FQDN                                  |
-| **`TXT`**   | Text Annotations (SPF, DKIM, DMARC)   | RFC 1464, RFC 7208 | Character-string (supports multi-string chunks & quotation)    |
-| **`PTR`**   | Pointer Record (Reverse DNS)          | RFC 1035           | Target host FQDN in `in-addr.arpa` or `ip6.arpa`               |
-| **`SRV`**   | Service Location Record               | RFC 2782           | Priority, weight, port (`1–65535`), target hostname            |
-| **`CAA`**   | Certification Authority Authorization | RFC 6844, RFC 8659 | Flag byte, tag (`issue`, `issuewild`, `iodef`), CA domain      |
-| **`NAPTR`** | Naming Authority Pointer              | RFC 2915, RFC 3403 | Order, preference, flags, service, regexp, replacement         |
-| **`SOA`**   | Start of Authority                    | RFC 1035, RFC 2181 | Primary NS, contact email, serial, refresh, retry, expire, TTL |
-| **`DNSSEC`**| DS & DNSKEY Records                   | RFC 4034, RFC 4035 | Key tag, algorithm, digest type, cryptographic digest          |
+| Record Type  | Description                           | RFC Standard       | Syntax Validation & RDATA Schema                               |
+| :----------- | :------------------------------------ | :----------------- | :------------------------------------------------------------- |
+| **`A`**      | IPv4 Host Address                     | RFC 1035           | Dotted-decimal `0.0.0.0` – `255.255.255.255`                   |
+| **`AAAA`**   | IPv6 Host Address                     | RFC 3596           | Standard compressed or uncompressed RFC 4291 IPv6              |
+| **`CNAME`**  | Canonical Name (Alias)                | RFC 1035           | Fully Qualified Domain Name (FQDN)                             |
+| **`MX`**     | Mail Exchange Server                  | RFC 1035, RFC 7505 | Priority integer (`0–65535`) + mail exchanger FQDN             |
+| **`NS`**     | Authoritative Name Server             | RFC 1035           | Authoritative nameserver FQDN                                  |
+| **`TXT`**    | Text Annotations (SPF, DKIM, DMARC)   | RFC 1464, RFC 7208 | Character-string (supports multi-string chunks & quotation)    |
+| **`PTR`**    | Pointer Record (Reverse DNS)          | RFC 1035           | Target host FQDN in `in-addr.arpa` or `ip6.arpa`               |
+| **`SRV`**    | Service Location Record               | RFC 2782           | Priority, weight, port (`1–65535`), target hostname            |
+| **`CAA`**    | Certification Authority Authorization | RFC 6844, RFC 8659 | Flag byte, tag (`issue`, `issuewild`, `iodef`), CA domain      |
+| **`NAPTR`**  | Naming Authority Pointer              | RFC 2915, RFC 3403 | Order, preference, flags, service, regexp, replacement         |
+| **`SOA`**    | Start of Authority                    | RFC 1035, RFC 2181 | Primary NS, contact email, serial, refresh, retry, expire, TTL |
+| **`DNSSEC`** | DS & DNSKEY Records                   | RFC 4034, RFC 4035 | Key tag, algorithm, digest type, cryptographic digest          |
 
 ---
 
@@ -244,15 +244,15 @@ the package names and service configurations vary slightly:
 
 ### Distribution Paths & Configuration Mapping
 
-| Component / Setting      | Ubuntu 20.04 / 22.04 / 24.04 & Debian 11 / 12 | Rocky Linux 8 / 9 & AlmaLinux 8 / 9       |
-|:-------------------------|:----------------------------------------------|:------------------------------------------|
-| **PowerDNS Packages**    | `pdns-server`, `pdns-backend-mysql`           | `pdns`, `pdns-backend-mysql` (via EPEL)   |
-| **Systemd Service**      | `pdns.service`                                | `pdns.service`                            |
-| **Main Config File**     | `/etc/powerdns/pdns.conf`                     | `/etc/pdns/pdns.conf`                     |
-| **Schema Definition**    | `/usr/share/doc/pdns-backend-mysql/schema.sql`| `/usr/share/doc/pdns-backend-mysql/schema.sql` |
-| **PHP Runtime**          | `php8.2-fpm`, `php8.3-fpm`, `php8.4-fpm`     | `php-fpm` (Remi repository)               |
-| **Web Server**           | `nginx`                                       | `nginx`                                   |
-| **Firewall System**      | `ufw` (Uncomplicated Firewall)                | `firewalld` or `nftables` / `iptables`    |
+| Component / Setting   | Ubuntu 20.04 / 22.04 / 24.04 & Debian 11 / 12  | Rocky Linux 8 / 9 & AlmaLinux 8 / 9            |
+| :-------------------- | :--------------------------------------------- | :--------------------------------------------- |
+| **PowerDNS Packages** | `pdns-server`, `pdns-backend-mysql`            | `pdns`, `pdns-backend-mysql` (via EPEL)        |
+| **Systemd Service**   | `pdns.service`                                 | `pdns.service`                                 |
+| **Main Config File**  | `/etc/powerdns/pdns.conf`                      | `/etc/pdns/pdns.conf`                          |
+| **Schema Definition** | `/usr/share/doc/pdns-backend-mysql/schema.sql` | `/usr/share/doc/pdns-backend-mysql/schema.sql` |
+| **PHP Runtime**       | `php8.2-fpm`, `php8.3-fpm`, `php8.4-fpm`       | `php-fpm` (Remi repository)                    |
+| **Web Server**        | `nginx`                                        | `nginx`                                        |
+| **Firewall System**   | `ufw` (Uncomplicated Firewall)                 | `firewalld` or `nftables` / `iptables`         |
 
 ### Hardened PowerDNS Authoritative Configuration (`pdns.conf`)
 
@@ -424,25 +424,25 @@ server {
 
 Key configuration settings available in your `.env` file:
 
-| Setting Key                 | Default Value                  | Description                                                    |
-|:----------------------------|:-------------------------------|:---------------------------------------------------------------|
-| `APP_NAME`                  | `"PHP-PDNSManager"`            | Application title displayed across headers and metadata.       |
-| `APP_ENV`                   | `"production"`                 | Environment profile (`production`, `local`, `testing`).        |
-| `APP_DEBUG`                 | `false`                        | Enable detailed error traces (Must be `false` in production).  |
-| `APP_URL`                   | `"https://pdns.example.com"`   | Canonical base URL of the control plane.                       |
-| `DB_CONNECTION`             | `"mysql"`                      | Database engine (`mysql`, `sqlite`).                           |
-| `DB_HOST`                   | `"127.0.0.1"`                  | Database hostname or IP address.                               |
-| `DB_PORT`                   | `3306`                         | Database port.                                                 |
-| `DB_DATABASE`               | `"pdns_manager"`               | Database name for application state and metadata.              |
-| `DB_USERNAME`               | `"pdns_user"`                  | Database username.                                             |
-| `DB_PASSWORD`               | `"secret"`                     | Database password.                                             |
-| `PDNS_API_URL`              | `"http://127.0.0.1:8081"`       | PowerDNS daemon internal REST API URL.                         |
-| `PDNS_API_KEY`              | `""`                           | PowerDNS daemon `api-key` secret configured in `pdns.conf`.    |
-| `PDNS_SERVER_ID`            | `"localhost"`                  | PowerDNS server identifier (`localhost`).                      |
-| `SESSION_SECURE`            | `true`                         | Enforces HTTPS-only session cookies.                           |
-| `SESSION_LIFETIME`          | `7200`                         | Idle session expiration in seconds (2 hours).                  |
-| `SESSION_SAMESITE`          | `"Strict"`                     | Cross-site cookie isolation policy (`Strict`, `Lax`).          |
-| `SECURITY_RATE_LIMIT_LOGIN` | `5`                            | Maximum failed login attempts before temporary IP lock.        |
+| Setting Key                 | Default Value                | Description                                                   |
+| :-------------------------- | :--------------------------- | :------------------------------------------------------------ |
+| `APP_NAME`                  | `"PHP-PDNSManager"`          | Application title displayed across headers and metadata.      |
+| `APP_ENV`                   | `"production"`               | Environment profile (`production`, `local`, `testing`).       |
+| `APP_DEBUG`                 | `false`                      | Enable detailed error traces (Must be `false` in production). |
+| `APP_URL`                   | `"https://pdns.example.com"` | Canonical base URL of the control plane.                      |
+| `DB_CONNECTION`             | `"mysql"`                    | Database engine (`mysql`, `sqlite`).                          |
+| `DB_HOST`                   | `"127.0.0.1"`                | Database hostname or IP address.                              |
+| `DB_PORT`                   | `3306`                       | Database port.                                                |
+| `DB_DATABASE`               | `"pdns_manager"`             | Database name for application state and metadata.             |
+| `DB_USERNAME`               | `"pdns_user"`                | Database username.                                            |
+| `DB_PASSWORD`               | `"secret"`                   | Database password.                                            |
+| `PDNS_API_URL`              | `"http://127.0.0.1:8081"`    | PowerDNS daemon internal REST API URL.                        |
+| `PDNS_API_KEY`              | `""`                         | PowerDNS daemon `api-key` secret configured in `pdns.conf`.   |
+| `PDNS_SERVER_ID`            | `"localhost"`                | PowerDNS server identifier (`localhost`).                     |
+| `SESSION_SECURE`            | `true`                       | Enforces HTTPS-only session cookies.                          |
+| `SESSION_LIFETIME`          | `7200`                       | Idle session expiration in seconds (2 hours).                 |
+| `SESSION_SAMESITE`          | `"Strict"`                   | Cross-site cookie isolation policy (`Strict`, `Lax`).         |
+| `SECURITY_RATE_LIMIT_LOGIN` | `5`                          | Maximum failed login attempts before temporary IP lock.       |
 
 ---
 
@@ -460,17 +460,17 @@ Authorization: Bearer pdns_sec_your_generated_api_token_here
 
 ### Core REST Endpoints
 
-| Method | Endpoint                        | Required Scope   | Description                                       |
-|:-------|:--------------------------------|:-----------------|:--------------------------------------------------|
-| `GET`  | `/api/v1/zones`                 | `zones:read`     | List all managed authoritative DNS zones.         |
-| `POST` | `/api/v1/zones`                 | `zones:write`    | Create a new Native, Master, or Slave DNS zone.   |
-| `GET`  | `/api/v1/zones/{id}/records`    | `records:read`   | Fetch all resource records for a given zone.      |
-| `POST` | `/api/v1/zones/{id}/records`    | `records:write`  | Add or update a resource record.                  |
-| `DELETE`| `/api/v1/zones/{id}/records/{rId}`| `records:write`| Delete a resource record.                         |
-| `GET`  | `/api/v1/servers`               | `servers:read`   | List configured PowerDNS server nodes.            |
-| `POST` | `/api/v1/servers/{id}/test`     | `servers:read`   | Test connection and measure node latency.         |
-| `GET`  | `/api/v1/templates`             | `templates:read` | List reusable DNS zone blueprints.                |
-| `GET`  | `/health`                       | None / Public    | System and PowerDNS daemon health telemetry.      |
+| Method   | Endpoint                           | Required Scope   | Description                                     |
+| :------- | :--------------------------------- | :--------------- | :---------------------------------------------- |
+| `GET`    | `/api/v1/zones`                    | `zones:read`     | List all managed authoritative DNS zones.       |
+| `POST`   | `/api/v1/zones`                    | `zones:write`    | Create a new Native, Master, or Slave DNS zone. |
+| `GET`    | `/api/v1/zones/{id}/records`       | `records:read`   | Fetch all resource records for a given zone.    |
+| `POST`   | `/api/v1/zones/{id}/records`       | `records:write`  | Add or update a resource record.                |
+| `DELETE` | `/api/v1/zones/{id}/records/{rId}` | `records:write`  | Delete a resource record.                       |
+| `GET`    | `/api/v1/servers`                  | `servers:read`   | List configured PowerDNS server nodes.          |
+| `POST`   | `/api/v1/servers/{id}/test`        | `servers:read`   | Test connection and measure node latency.       |
+| `GET`    | `/api/v1/templates`                | `templates:read` | List reusable DNS zone blueprints.              |
+| `GET`    | `/health`                          | None / Public    | System and PowerDNS daemon health telemetry.    |
 
 ### Example REST cURL Request
 
@@ -517,14 +517,14 @@ query GetSystemOverview {
 
 Every commit of PHP-PDNSManager is validated against comprehensive automated quality gates:
 
-| Quality Gate             | Verification Engine                                               | Target / Standard                   | Pass Criteria               |       Status        |
-|:-------------------------|:------------------------------------------------------------------|:------------------------------------|:----------------------------|:-------------------:|
-| **Unit & Service Tests** | [`PHPUnit 10.5`](https://phpunit.de)                              | Core models, services, repositories | 100% assertions pass        |  **✔ 21/21 PASS**   |
-| **Static Analysis**      | [`PHPStan`](https://phpstan.org)                                  | Strict Level 5 analysis             | 0 errors                    | **✔ LEVEL 5 CLEAN** |
-| **Type Inference**       | [`Psalm`](https://psalm.dev)                                      | Level 4 strict type safety          | 0 errors                    |     **✔ CLEAN**     |
-| **Coding Standards**     | [`PHP_CodeSniffer`](https://github.com/squizlabs/PHP_CodeSniffer) | PSR-12 strict compliance            | 0 errors, 0 warnings        |  **✔ PSR-12 PASS**  |
-| **Code Formatting**      | [`PHP-CS-Fixer`](https://cs.symfony.com)                          | Strict rule set                     | 0 fixable files remaining   |     **✔ CLEAN**     |
-| **Security Scanning**    | GitHub Code Scanning & SonarLint                                  | OWASP Top 10, CWE checks            | 0 security vulnerabilities  |   **✔ 0 ISSUES**    |
+| Quality Gate             | Verification Engine                                               | Target / Standard                   | Pass Criteria              |        Status       |
+| :----------------------- | :---------------------------------------------------------------- | :---------------------------------- | :------------------------- | :-----------------: |
+| **Unit & Service Tests** | [`PHPUnit 10.5`](https://phpunit.de)                              | Core models, services, repositories | 100% assertions pass       |   **✔ 21/21 PASS**  |
+| **Static Analysis**      | [`PHPStan`](https://phpstan.org)                                  | Strict Level 5 analysis             | 0 errors                   | **✔ LEVEL 5 CLEAN** |
+| **Type Inference**       | [`Psalm`](https://psalm.dev)                                      | Level 4 strict type safety          | 0 errors                   |     **✔ CLEAN**     |
+| **Coding Standards**     | [`PHP_CodeSniffer`](https://github.com/squizlabs/PHP_CodeSniffer) | PSR-12 strict compliance            | 0 errors, 0 warnings       |  **✔ PSR-12 PASS**  |
+| **Code Formatting**      | [`PHP-CS-Fixer`](https://cs.symfony.com)                          | Strict rule set                     | 0 fixable files remaining  |     **✔ CLEAN**     |
+| **Security Scanning**    | GitHub Code Scanning & SonarLint                                  | OWASP Top 10, CWE checks            | 0 security vulnerabilities |    **✔ 0 ISSUES**   |
 
 ---
 
