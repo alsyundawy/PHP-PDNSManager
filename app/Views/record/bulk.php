@@ -90,7 +90,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th scope="col" style="width: 40px;">
-                                    <input type="checkbox" class="form-check-input" id="selectAll" onclick="toggleAll(this)">
+                                    <input type="checkbox" class="form-check-input" id="selectAll" aria-label="Select all records" onclick="toggleAll(this)" onkeydown="if(event.key===' '||event.key==='Enter'){this.checked=!this.checked;toggleAll(this);}">
                                 </th>
                                 <th scope="col">Zone</th>
                                 <th scope="col">Record Name</th>
@@ -103,7 +103,7 @@
                             <?php foreach ($records as $i => $rec): ?>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" class="form-check-input row-select" name="updates[<?= $i ?>][selected]" value="1" checked>
+                                        <input type="checkbox" class="form-check-input row-select" id="row-select-<?= $i ?>" aria-label="Select record <?= htmlspecialchars($rec['name'], ENT_QUOTES, 'UTF-8') ?>" name="updates[<?= $i ?>][selected]" value="1" checked>
                                         <input type="hidden" name="updates[<?= $i ?>][zone_id]" value="<?= htmlspecialchars($rec['zone_id'], ENT_QUOTES, 'UTF-8') ?>">
                                         <input type="hidden" name="updates[<?= $i ?>][name]" value="<?= htmlspecialchars($rec['name'], ENT_QUOTES, 'UTF-8') ?>">
                                         <input type="hidden" name="updates[<?= $i ?>][type]" value="<?= htmlspecialchars($rec['type'], ENT_QUOTES, 'UTF-8') ?>">
@@ -114,7 +114,7 @@
                                     <td><span class="badge bg-secondary"><?= htmlspecialchars($rec['type'], ENT_QUOTES, 'UTF-8') ?></span></td>
                                     <td><small class="text-muted font-monospace"><?= htmlspecialchars($rec['content'], ENT_QUOTES, 'UTF-8') ?></small></td>
                                     <td>
-                                        <input type="text" class="form-control form-control-sm" name="updates[<?= $i ?>][new_content]" value="<?= htmlspecialchars($rec['content'], ENT_QUOTES, 'UTF-8') ?>">
+                                        <input type="text" class="form-control form-control-sm" id="new-content-<?= $i ?>" aria-label="New content for <?= htmlspecialchars($rec['name'], ENT_QUOTES, 'UTF-8') ?>" name="updates[<?= $i ?>][new_content]" value="<?= htmlspecialchars($rec['content'], ENT_QUOTES, 'UTF-8') ?>">
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

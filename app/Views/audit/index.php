@@ -81,8 +81,16 @@
                                 </td>
                                 <td><code><?= htmlspecialchars($log['action'] ?? '', ENT_QUOTES, 'UTF-8') ?></code></td>
                                 <td>
-                                    <?php $code = (int) ($log['status_code'] ?? 200); ?>
-                                    <span class="badge bg-<?= $code < 300 ? 'success' : ($code < 400 ? 'info' : 'danger') ?>">
+                                    <?php
+                                    $code = (int) ($log['status_code'] ?? 200);
+                                    $badgeClass = 'danger';
+                                    if ($code < 300) {
+                                        $badgeClass = 'success';
+                                    } elseif ($code < 400) {
+                                        $badgeClass = 'info';
+                                    }
+                                    ?>
+                                    <span class="badge bg-<?= $badgeClass ?>">
                                         <?= $code ?>
                                     </span>
                                 </td>

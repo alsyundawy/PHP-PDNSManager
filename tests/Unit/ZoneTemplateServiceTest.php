@@ -70,6 +70,7 @@ class ZoneTemplateServiceTest extends TestCase
 
         $this->assertNotNull($template);
         $this->assertEquals('Web App Template', $template->name);
+        $this->assertTrue($template->isDefault);
         $this->assertTrue($template->is_default);
         $this->assertCount(3, $template->records);
 

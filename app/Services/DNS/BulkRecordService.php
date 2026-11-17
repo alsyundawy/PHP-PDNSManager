@@ -31,38 +31,55 @@ class BulkRecordService
 
         foreach ($zones as $zone) {
             $zoneId = $zone['id'] ?? '';
+            $zoneName = $zone['name'] ?? $zoneId;
             try {
                 $records = $this->recordService->getRecordsForZone($zoneId);
-                foreach ($records as $record) {
-                    $recType = strtoupper((string) ($record['type'] ?? ''));
-                    if ($typeUpper !== null && $typeUpper !== '' && $recType !== $typeUpper) {
-                        continue;
-                    }
-
-                    $recName = (string) ($record['name'] ?? '');
-                    $recordsList = $record['records'] ?? [];
-
-                    foreach ($recordsList as $contentItem) {
-                        $content = (string) ($contentItem['content'] ?? '');
-                        if (
-                            $queryLower === '' ||
-                            str_contains(strtolower($recName), $queryLower) ||
-                            str_contains(strtolower($content), $queryLower)
-                        ) {
-                            $results[] = [
-                                'zone_id' => $zoneId,
-                                'zone_name' => $zone['name'] ?? $zoneId,
-                                'name' => $recName,
-                                'type' => $recType,
-                                'ttl' => $record['ttl'] ?? 3600,
-                                'content' => $content,
-                                'disabled' => (bool) ($contentItem['disabled'] ?? false),
-                            ];
-                        }
-                    }
+                $zoneResults = $this->filterZoneRecords($zoneId, $zoneName, $records, $queryLower, $typeUpper);
+                if (!empty($zoneResults)) {
+                    $results = array_merge($results, $zoneResults);
                 }
             } catch (\Throwable $e) {
                 $this->logger->warning("Could not search records in zone {$zoneId}: " . $e->getMessage());
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $records
+     * @return array<int, array{zone_id: string, zone_name: string, name: string, type: string, ttl: int, content: string, disabled: bool}>
+     */
+    private function filterZoneRecords(string $zoneId, string $zoneName, array $records, string $queryLower, ?string $typeUpper): array
+    {
+        $results = [];
+
+        foreach ($records as $record) {
+            $recType = strtoupper((string) ($record['type'] ?? ''));
+            if ($typeUpper !== null && $typeUpper !== '' && $recType !== $typeUpper) {
+                continue;
+            }
+
+            $recName = (string) ($record['name'] ?? '');
+            $recordsList = $record['records'] ?? [];
+
+            foreach ($recordsList as $contentItem) {
+                $content = (string) ($contentItem['content'] ?? '');
+                if (
+                    $queryLower === '' ||
+                    str_contains(strtolower($recName), $queryLower) ||
+                    str_contains(strtolower($content), $queryLower)
+                ) {
+                    $results[] = [
+                        'zone_id' => $zoneId,
+                        'zone_name' => $zoneName,
+                        'name' => $recName,
+                        'type' => $recType,
+                        'ttl' => (int) ($record['ttl'] ?? 3600),
+                        'content' => $content,
+                        'disabled' => (bool) ($contentItem['disabled'] ?? false),
+                    ];
+                }
             }
         }
 

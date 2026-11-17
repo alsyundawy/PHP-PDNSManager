@@ -23,12 +23,16 @@ $token = $csrfToken;
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Login — PHP-PDNSManager Enterprise</title>
 
-    <!-- SEO & Identity -->
+    <!-- SEO & Identity (Standard 2026) -->
     <meta name="description" content="Secure authentication console for PHP-PDNSManager Enterprise DNS Suite">
+    <meta name="keywords" content="PowerDNS Login, Enterprise DNS, Authoritative DNS Administration, DNSSEC Console">
     <meta name="robots" content="noindex, nofollow">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="author" content="PHP-PDNSManager Team">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#0284c7" media="(prefers-color-scheme: light)">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
 
     <!-- 100% Offline Local Assets (Strict Zero CDN) -->
     <link rel="stylesheet" href="<?= asset('assets/vendor/bootstrap/bootstrap.min.css') ?>">

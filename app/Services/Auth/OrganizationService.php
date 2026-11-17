@@ -131,22 +131,24 @@ class OrganizationService
 
             if ($totalAssigned === 0) {
                 // Zone is globally accessible
-                return true;
+                $hasAccess = true;
+            } else {
+                // Check if user belongs to an org assigned to this zone
+                $stmt = $this->db->execute(
+                    'SELECT COUNT(*) as cnt FROM zone_organizations zo
+                     JOIN organization_user ou ON zo.organization_id = ou.organization_id
+                     WHERE zo.zone_id = ? AND ou.user_id = ?',
+                    [$zoneId, $userId]
+                );
+                $userAccess = $stmt->fetch(PDO::FETCH_ASSOC);
+                $hasAccess = ((int) ($userAccess['cnt'] ?? 0)) > 0;
             }
-
-            // Check if user belongs to an org assigned to this zone
-            $stmt = $this->db->execute(
-                'SELECT COUNT(*) as cnt FROM zone_organizations zo
-                 JOIN organization_user ou ON zo.organization_id = ou.organization_id
-                 WHERE zo.zone_id = ? AND ou.user_id = ?',
-                [$zoneId, $userId]
-            );
-            $userAccess = $stmt->fetch(PDO::FETCH_ASSOC);
-            return ((int) ($userAccess['cnt'] ?? 0)) > 0;
         } catch (\Throwable $e) {
             $this->logger->error('Error checking zone access: ' . $e->getMessage());
-            return true;
+            $hasAccess = true;
         }
+
+        return $hasAccess;
     }
 
     private function hydrateOrganization(array $row): Organization
@@ -156,8 +158,8 @@ class OrganizationService
         $org->name = (string) ($row['name'] ?? '');
         $org->slug = (string) ($row['slug'] ?? '');
         $org->description = isset($row['description']) ? (string) $row['description'] : null;
-        $org->created_at = isset($row['created_at']) ? (string) $row['created_at'] : null;
-        $org->updated_at = isset($row['updated_at']) ? (string) $row['updated_at'] : null;
+        $org->createdAt = isset($row['created_at']) ? (string) $row['created_at'] : null;
+        $org->updatedAt = isset($row['updated_at']) ? (string) $row['updated_at'] : null;
         return $org;
     }
 }

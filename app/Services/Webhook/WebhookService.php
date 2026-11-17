@@ -80,8 +80,15 @@ class WebhookService
         $name = isset($data['name']) ? trim((string) $data['name']) : $webhook->name;
         $url = isset($data['url']) ? trim((string) $data['url']) : $webhook->url;
         $secret = isset($data['secret']) ? (string) $data['secret'] : $webhook->secret;
-        $events = isset($data['events']) ? (is_array($data['events']) ? json_encode($data['events']) : (string) $data['events']) : json_encode($webhook->events);
-        $isActive = isset($data['is_active']) ? (!empty($data['is_active']) ? 1 : 0) : ($webhook->is_active ? 1 : 0);
+        $events = json_encode($webhook->events);
+        if (isset($data['events'])) {
+            $events = is_array($data['events']) ? json_encode($data['events']) : (string) $data['events'];
+        }
+
+        $isActive = $webhook->isActive ? 1 : 0;
+        if (isset($data['is_active'])) {
+            $isActive = !empty($data['is_active']) ? 1 : 0;
+        }
 
         $this->db->execute(
             'UPDATE webhooks SET name = ?, url = ?, secret = ?, events = ?, is_active = ?, updated_at = datetime("now") WHERE id = ?',
@@ -113,7 +120,7 @@ class WebhookService
         $jsonPayload = (string) json_encode($body);
 
         foreach ($webhooks as $webhook) {
-            if (!$webhook->is_active) {
+            if (!$webhook->isActive) {
                 continue;
             }
 
@@ -162,10 +169,10 @@ class WebhookService
         $decoded = is_string($rawEvents) ? json_decode($rawEvents, true) : [];
         $webhook->events = is_array($decoded) ? $decoded : ['*'];
 
-        $webhook->is_active = (bool) ($row['is_active'] ?? true);
-        $webhook->last_triggered_at = isset($row['last_triggered_at']) ? (string) $row['last_triggered_at'] : null;
-        $webhook->created_at = isset($row['created_at']) ? (string) $row['created_at'] : null;
-        $webhook->updated_at = isset($row['updated_at']) ? (string) $row['updated_at'] : null;
+        $webhook->isActive = (bool) ($row['is_active'] ?? true);
+        $webhook->lastTriggeredAt = isset($row['last_triggered_at']) ? (string) $row['last_triggered_at'] : null;
+        $webhook->createdAt = isset($row['created_at']) ? (string) $row['created_at'] : null;
+        $webhook->updatedAt = isset($row['updated_at']) ? (string) $row['updated_at'] : null;
         return $webhook;
     }
 }

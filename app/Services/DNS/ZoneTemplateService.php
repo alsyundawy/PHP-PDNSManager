@@ -183,9 +183,9 @@ class ZoneTemplateService
         $template->id = (int) ($row['id'] ?? 0);
         $template->name = (string) ($row['name'] ?? '');
         $template->description = isset($row['description']) ? (string) $row['description'] : null;
-        $template->is_default = (bool) ($row['is_default'] ?? false);
-        $template->created_at = isset($row['created_at']) ? (string) $row['created_at'] : null;
-        $template->updated_at = isset($row['updated_at']) ? (string) $row['updated_at'] : null;
+        $template->isDefault = (bool) ($row['is_default'] ?? false);
+        $template->createdAt = isset($row['created_at']) ? (string) $row['created_at'] : null;
+        $template->updatedAt = isset($row['updated_at']) ? (string) $row['updated_at'] : null;
         return $template;
     }
 
@@ -193,13 +193,13 @@ class ZoneTemplateService
     {
         $rec = new ZoneTemplateRecord();
         $rec->id = (int) ($row['id'] ?? 0);
-        $rec->template_id = (int) ($row['template_id'] ?? 0);
+        $rec->templateId = (int) ($row['template_id'] ?? 0);
         $rec->name = (string) ($row['name'] ?? '@');
         $rec->type = (string) ($row['type'] ?? 'A');
         $rec->content = (string) ($row['content'] ?? '');
         $rec->ttl = (int) ($row['ttl'] ?? 3600);
         $rec->priority = isset($row['priority']) ? (int) $row['priority'] : null;
-        $rec->created_at = isset($row['created_at']) ? (string) $row['created_at'] : null;
+        $rec->createdAt = isset($row['created_at']) ? (string) $row['created_at'] : null;
         return $rec;
     }
 }

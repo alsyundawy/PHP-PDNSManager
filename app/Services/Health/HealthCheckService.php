@@ -34,7 +34,12 @@ class HealthCheckService
         $isHealthy = $dbCheck['status'] === 'healthy' && $pdnsCheck['status'] === 'healthy';
         $isDegraded = !$isHealthy && ($dbCheck['status'] === 'healthy' || $pdnsCheck['status'] === 'healthy');
 
-        $overallStatus = $isHealthy ? 'healthy' : ($isDegraded ? 'degraded' : 'unhealthy');
+        $overallStatus = 'unhealthy';
+        if ($isHealthy) {
+            $overallStatus = 'healthy';
+        } elseif ($isDegraded) {
+            $overallStatus = 'degraded';
+        }
 
         return [
             'status' => $overallStatus,

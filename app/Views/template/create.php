@@ -38,10 +38,10 @@
             <div id="recordsContainer">
                 <div class="row g-2 mb-2 align-items-center record-row">
                     <div class="col-md-2">
-                        <input type="text" class="form-control" name="rec_name[]" value="@" placeholder="Name (@)" required>
+                        <input type="text" class="form-control" id="recName0" aria-label="Record Name" name="rec_name[]" value="@" placeholder="Name (@)" required>
                     </div>
                     <div class="col-md-2">
-                        <select class="form-select" name="rec_type[]">
+                        <select class="form-select" id="recType0" aria-label="Record Type" name="rec_type[]">
                             <option value="A">A</option>
                             <option value="AAAA">AAAA</option>
                             <option value="CNAME">CNAME</option>
@@ -53,16 +53,16 @@
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <input type="text" class="form-control" name="rec_content[]" placeholder="Content / Value (e.g. 192.0.2.1)" required>
+                        <input type="text" class="form-control" id="recContent0" aria-label="Record Content" name="rec_content[]" placeholder="Content / Value (e.g. 192.0.2.1)" required>
                     </div>
                     <div class="col-md-2">
-                        <input type="number" class="form-control" name="rec_ttl[]" value="3600" placeholder="TTL">
+                        <input type="number" class="form-control" id="recTtl0" aria-label="Record TTL" name="rec_ttl[]" value="3600" placeholder="TTL">
                     </div>
                     <div class="col-md-1">
-                        <input type="number" class="form-control" name="rec_priority[]" placeholder="Prio">
+                        <input type="number" class="form-control" id="recPriority0" aria-label="Record Priority" name="rec_priority[]" placeholder="Prio">
                     </div>
                     <div class="col-md-1 text-center">
-                        <button type="button" class="btn btn-outline-danger btn-sm remove-row-btn" title="Remove Record">
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-row-btn" title="Remove Record" aria-label="Remove Record">
                             <i class="fas fa-times" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -87,16 +87,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('recordsContainer');
     const addBtn = document.getElementById('addRowBtn');
+    let rowCount = 1;
 
     addBtn.addEventListener('click', function() {
         const row = document.createElement('div');
         row.className = 'row g-2 mb-2 align-items-center record-row';
         row.innerHTML = `
             <div class="col-md-2">
-                <input type="text" class="form-control" name="rec_name[]" value="" placeholder="Name (e.g. www)" required>
+                <input type="text" class="form-control" id="recName` + rowCount + `" aria-label="Record Name" name="rec_name[]" value="" placeholder="Name (e.g. www)" required>
             </div>
             <div class="col-md-2">
-                <select class="form-select" name="rec_type[]">
+                <select class="form-select" id="recType` + rowCount + `" aria-label="Record Type" name="rec_type[]">
                     <option value="A">A</option>
                     <option value="AAAA">AAAA</option>
                     <option value="CNAME">CNAME</option>
@@ -108,21 +109,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 </select>
             </div>
             <div class="col-md-4">
-                <input type="text" class="form-control" name="rec_content[]" placeholder="Content" required>
+                <input type="text" class="form-control" id="recContent` + rowCount + `" aria-label="Record Content" name="rec_content[]" placeholder="Content" required>
             </div>
             <div class="col-md-2">
-                <input type="number" class="form-control" name="rec_ttl[]" value="3600" placeholder="TTL">
+                <input type="number" class="form-control" id="recTtl` + rowCount + `" aria-label="Record TTL" name="rec_ttl[]" value="3600" placeholder="TTL">
             </div>
             <div class="col-md-1">
-                <input type="number" class="form-control" name="rec_priority[]" placeholder="Prio">
+                <input type="number" class="form-control" id="recPriority` + rowCount + `" aria-label="Record Priority" name="rec_priority[]" placeholder="Prio">
             </div>
             <div class="col-md-1 text-center">
-                <button type="button" class="btn btn-outline-danger btn-sm remove-row-btn" title="Remove Record">
+                <button type="button" class="btn btn-outline-danger btn-sm remove-row-btn" title="Remove Record" aria-label="Remove Record">
                     <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
             </div>
         `;
         container.appendChild(row);
+        rowCount++;
     });
 
     container.addEventListener('click', function(e) {

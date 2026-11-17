@@ -9,6 +9,8 @@ use App\Core\Logger;
 
 class BindZoneService
 {
+    private const RECORD_FORMAT = "%-24s %-6d IN %-6s %s";
+
     private Logger $logger;
 
     public function __construct(Logger $logger)
@@ -30,81 +32,17 @@ class BindZoneService
         $records = [];
         $lastName = $origin;
 
-        // Normalize newlines and strip comments while handling quotes
-        $lines = explode("\n", str_replace(["\r\n", "\r"], "\n", $zoneContent));
-        $unrolledLines = [];
-        $multilineBuffer = '';
-        $inMultiline = false;
-
-        foreach ($lines as $line) {
-            $cleaned = $this->stripComments($line);
-            if (trim($cleaned) === '') {
-                continue;
-            }
-
-            if (!$inMultiline) {
-                if (str_contains($cleaned, '(')) {
-                    $inMultiline = true;
-                    $multilineBuffer = str_replace('(', ' ', $cleaned);
-                    if (str_contains($multilineBuffer, ')')) {
-                        $inMultiline = false;
-                        $unrolledLines[] = trim(str_replace(')', ' ', $multilineBuffer));
-                        $multilineBuffer = '';
-                    }
-                } else {
-                    $unrolledLines[] = trim($cleaned);
-                }
-            } else {
-                if (str_contains($cleaned, ')')) {
-                    $inMultiline = false;
-                    $multilineBuffer .= ' ' . str_replace(')', ' ', $cleaned);
-                    $unrolledLines[] = trim($multilineBuffer);
-                    $multilineBuffer = '';
-                } else {
-                    $multilineBuffer .= ' ' . $cleaned;
-                }
-            }
-        }
+        $unrolledLines = $this->unrollZoneLines($zoneContent);
 
         foreach ($unrolledLines as $line) {
             $tokens = preg_split('/\s+/', trim($line));
-            if (empty($tokens)) {
-                continue;
-            }
-
-            $firstToken = strtoupper($tokens[0]);
-
-            // Handle control directives
-            if ($firstToken === '$ORIGIN') {
-                if (isset($tokens[1])) {
-                    $origin = rtrim($tokens[1], '.') . '.';
-                    $lastName = $origin;
-                }
-                continue;
-            }
-
-            if ($firstToken === '$TTL') {
-                if (isset($tokens[1])) {
-                    $currentTtl = $this->parseTtl($tokens[1]);
-                }
-                continue;
-            }
-
-            // Parse RR line
-            $record = $this->parseRecordLine($tokens, $origin, $currentTtl, $lastName);
-            if ($record !== null) {
-                $lastName = $record['name'];
-                $records[] = $record;
+            if (!empty($tokens)) {
+                $this->processLineTokens($tokens, $origin, $currentTtl, $lastName, $records);
             }
         }
 
         if ($origin === '') {
-            foreach ($records as $r) {
-                if ($r['type'] === 'SOA') {
-                    $origin = $r['name'];
-                    break;
-                }
-            }
+            $origin = $this->resolveOriginFromRecords($records);
         }
 
         if ($origin === '') {
@@ -153,11 +91,11 @@ class BindZoneService
         }
 
         if ($soa !== null) {
-            $output[] = sprintf("%-24s %-6d IN %-6s %s", $soa['name'] ?? '@', $soa['ttl'] ?? $defaultTtl, 'SOA', $soa['content'] ?? '');
+            $output[] = sprintf(self::RECORD_FORMAT, $soa['name'] ?? '@', $soa['ttl'] ?? $defaultTtl, 'SOA', $soa['content'] ?? '');
         }
 
         foreach ($nsList as $ns) {
-            $output[] = sprintf("%-24s %-6d IN %-6s %s", $ns['name'] ?? '@', $ns['ttl'] ?? $defaultTtl, 'NS', $ns['content'] ?? '');
+            $output[] = sprintf(self::RECORD_FORMAT, $ns['name'] ?? '@', $ns['ttl'] ?? $defaultTtl, 'NS', $ns['content'] ?? '');
         }
 
         if (!empty($nsList)) {
@@ -170,11 +108,112 @@ class BindZoneService
             if ($type === 'TXT' && !str_starts_with($content, '"')) {
                 $content = '"' . addcslashes($content, '"\\') . '"';
             }
-            $output[] = sprintf("%-24s %-6d IN %-6s %s", $rec['name'] ?? '@', $rec['ttl'] ?? $defaultTtl, $type, $content);
+            $output[] = sprintf(self::RECORD_FORMAT, $rec['name'] ?? '@', $rec['ttl'] ?? $defaultTtl, $type, $content);
         }
 
         $output[] = "";
         return implode("\n", $output);
+    }
+
+    /**
+     * Normalizes newlines and unrolls multi-line parentheses while stripping comments.
+     *
+     * @return string[]
+     */
+    private function unrollZoneLines(string $zoneContent): array
+    {
+        $lines = explode("\n", str_replace(["\r\n", "\r"], "\n", $zoneContent));
+        $unrolledLines = [];
+        $multilineBuffer = '';
+        $inMultiline = false;
+
+        foreach ($lines as $line) {
+            $cleaned = $this->stripComments($line);
+            if (trim($cleaned) !== '') {
+                $this->processSingleZoneLine($cleaned, $inMultiline, $multilineBuffer, $unrolledLines);
+            }
+        }
+
+        return $unrolledLines;
+    }
+
+    /**
+     * Processes directives or record entries for a single tokenized line.
+     *
+     * @param string[] $tokens
+     * @param array<int, array{name: string, type: string, ttl: int, content: string}> $records
+     */
+    private function processLineTokens(
+        array $tokens,
+        string &$origin,
+        int &$currentTtl,
+        string &$lastName,
+        array &$records
+    ): void {
+        $firstToken = strtoupper($tokens[0]);
+
+        if ($firstToken === '$ORIGIN') {
+            if (isset($tokens[1])) {
+                $origin = rtrim($tokens[1], '.') . '.';
+                $lastName = $origin;
+            }
+            return;
+        }
+
+        if ($firstToken === '$TTL') {
+            if (isset($tokens[1])) {
+                $currentTtl = $this->parseTtl($tokens[1]);
+            }
+            return;
+        }
+
+        $record = $this->parseRecordLine($tokens, $origin, $currentTtl, $lastName);
+        if ($record !== null) {
+            $lastName = $record['name'];
+            $records[] = $record;
+        }
+    }
+
+    /**
+     * Appends single line to unrolled lines, handling multiline buffers.
+     *
+     * @param string[] $unrolledLines
+     */
+    private function processSingleZoneLine(
+        string $cleaned,
+        bool &$inMultiline,
+        string &$multilineBuffer,
+        array &$unrolledLines
+    ): void {
+        if (!$inMultiline) {
+            if (!str_contains($cleaned, '(')) {
+                $unrolledLines[] = trim($cleaned);
+                return;
+            }
+            $inMultiline = true;
+            $multilineBuffer = str_replace('(', ' ', $cleaned);
+        } else {
+            $multilineBuffer .= ' ' . $cleaned;
+        }
+
+        if (str_contains($multilineBuffer, ')')) {
+            $inMultiline = false;
+            $unrolledLines[] = trim(str_replace(')', ' ', $multilineBuffer));
+            $multilineBuffer = '';
+        }
+    }
+
+    /**
+     * Resolves origin from SOA record when $ORIGIN is omitted.
+     */
+    private function resolveOriginFromRecords(array $records): string
+    {
+        foreach ($records as $r) {
+            if (($r['type'] ?? '') === 'SOA') {
+                return (string) ($r['name'] ?? '');
+            }
+        }
+        return '';
     }
 
     private function stripComments(string $line): string
@@ -195,33 +234,39 @@ class BindZoneService
         return $result;
     }
 
-    private function parseRecordLine(array $tokens, string $origin, int $defaultTtl, string $lastName): ?array
+    private function resolveRecordName(string $name, string $origin, string $lastName, int &$idx): string
     {
-        $name = $tokens[0];
-        $idx = 1;
-
         if ($name === '@') {
-            $name = $origin;
-        } elseif (!str_ends_with($name, '.')) {
-            // Check if first token is TTL or Class or Type (omitted name)
-            if (is_numeric($name) || in_array(strtoupper($name), ['IN', 'CS', 'CH', 'HS', 'A', 'AAAA', 'CNAME', 'MX', 'TXT', 'NS', 'SOA', 'PTR', 'SRV', 'CAA'], true)) {
-                $name = $lastName;
+            return $origin;
+        }
+
+        if (str_ends_with($name, '.')) {
+            $resolvedName = $name;
+        } else {
+            $knownTokens = ['IN', 'CS', 'CH', 'HS', 'A', 'AAAA', 'CNAME', 'MX', 'TXT', 'NS', 'SOA', 'PTR', 'SRV', 'CAA'];
+            if (is_numeric($name) || in_array(strtoupper($name), $knownTokens, true)) {
                 $idx = 0;
+                $resolvedName = $lastName;
             } else {
-                $name = $origin !== '' ? $name . '.' . $origin : $name . '.';
+                $resolvedName = $origin !== '' ? $name . '.' . $origin : $name . '.';
             }
         }
 
+        return $resolvedName;
+    }
+
+    private function parseRecordLine(array $tokens, string $origin, int $defaultTtl, string $lastName): ?array
+    {
+        $idx = 1;
+        $name = $this->resolveRecordName((string) $tokens[0], $origin, $lastName, $idx);
         $ttl = $defaultTtl;
-        $class = 'IN';
 
         if (isset($tokens[$idx]) && is_numeric($tokens[$idx])) {
             $ttl = (int) $tokens[$idx];
             $idx++;
         }
 
-        if (isset($tokens[$idx]) && strtoupper($tokens[$idx]) === 'IN') {
-            $class = 'IN';
+        if (isset($tokens[$idx]) && strtoupper((string) $tokens[$idx]) === 'IN') {
             $idx++;
         }
 
@@ -229,7 +274,7 @@ class BindZoneService
             return null;
         }
 
-        $type = strtoupper($tokens[$idx]);
+        $type = strtoupper((string) $tokens[$idx]);
         $idx++;
 
         $contentParts = array_slice($tokens, $idx);
