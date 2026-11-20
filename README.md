@@ -160,21 +160,21 @@ modern PowerDNS administration:
 
 ## 🎯 Key Features
 
-| Capability Area             | Highlights & Implementations                                                                                                                       |
-| :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Multi-Server Clustering** | Manage multiple PowerDNS nodes (`pdns_servers`), cluster failover, connection latency testing, and dedicated REST routes (`/servers`).             |
-| **Zone Management**         | Native, Master, and Slave zones; auto-increment SOA serial (`YYYYMMDDNN`); instant search, filtering, and RFC 1035 BIND import/export.             |
-| **Authoritative Records**   | Full CRUD for `A`, `AAAA`, `CNAME`, `MX`, `TXT`, `NS`, `SRV`, `CAA`, `PTR`, `NAPTR`, and `SOA` with real-time FQDN syntax validation.              |
-| **DNSSEC Automation**       | Cryptographic key management (KSK / ZSK generation), automatic zone signing, key rollover, and DS record generation for parent delegation.         |
-| **Zone Templating Engine**  | Preconfigured DNS profiles for instant 1-click zone provisioning and record deployment (`/templates`).                                             |
-| **Bulk Record Operations**  | Cross-zone search and replace for batch IP/target migrations and mass record deletion (`/zones/bulk-records`).                                     |
-| **Identity & RBAC**         | Role-Based Access Control (`admin`, `operator`, `viewer`), Multi-Tenant Organizations, TOTP Two-Factor Authentication, and scoped API tokens.      |
-| **REST API Gateway**        | Versioned REST API (`/api/v1`) with JSON-Schema validation and Bearer token authentication for Terraform, Ansible, and CI/CD pipelines.            |
-| **GraphQL Endpoint**        | Zero-dependency GraphQL execution engine (`/graphql`) supporting flexible queries (`zones`, `servers`, `health`) and mutations.                    |
-| **Signed Webhooks**         | HMAC-SHA256 payload signing with `X-PDNS-Signature` headers for event-driven integration upon zone and record modifications.                       |
-| **Audit Logging & Trail**   | Granular audit logs tracking user ID, IP address, exact action, target zone, HTTP status, and timestamp with CSV/JSON export (`/audit-logs`).      |
-| **System Telemetry**        | Health telemetry dashboard (`/health`) monitoring PowerDNS latency, database connectivity, storage permissions, and PHP runtime metrics.           |
-| **Offline UI & Theming**    | Visual Subnet Calculator dark/light palette, 100% offline local vendor assets, glassmorphism navigation, and mobile anti-clipping viewport engine. |
+| Capability Area             | Highlights & Implementations                                                                                                                                                 |
+| :-------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Multi-Server Clustering** | Manage multiple PowerDNS nodes (`pdns_servers`), cluster failover, connection latency testing, and dedicated REST routes (`/servers`).                                       |
+| **Zone Management**         | Native, Master, Slave, and RFC 9432 Catalog (Producer/Consumer) zones; auto-increment SOA serial (`YYYYMMDDNN`); instant search, filtering, and RFC 1035 BIND import/export. |
+| **Authoritative Records**   | Full CRUD for `A`, `AAAA`, `CNAME`, `MX`, `TXT`, `NS`, `SRV`, `CAA`, `PTR`, `NAPTR`, `SOA`, `DS`, and RFC 9460 `HTTPS` & `SVCB` with real-time FQDN syntax validation.       |
+| **DNSSEC Automation**       | Cryptographic key management (KSK / ZSK generation), automatic zone signing, key rollover, and DS record generation for parent delegation.                                   |
+| **Zone Templating Engine**  | Preconfigured DNS profiles for instant 1-click zone provisioning and record deployment (`/templates`).                                                                       |
+| **Bulk Record Operations**  | Cross-zone search and replace for batch IP/target migrations and mass record deletion (`/zones/bulk-records`).                                                               |
+| **Identity & RBAC**         | Role-Based Access Control (`admin`, `operator`, `viewer`), Multi-Tenant Organizations, TOTP Two-Factor Authentication, and scoped API tokens.                                |
+| **REST API Gateway**        | Versioned REST API (`/api/v1`) with JSON-Schema validation and Bearer token authentication for Terraform, Ansible, and CI/CD pipelines.                                      |
+| **GraphQL Endpoint**        | Zero-dependency GraphQL execution engine (`/graphql`) supporting flexible queries (`zones`, `servers`, `health`) and mutations.                                              |
+| **Signed Webhooks**         | HMAC-SHA256 payload signing with `X-PDNS-Signature` headers for event-driven integration upon zone and record modifications.                                                 |
+| **Audit Logging & Trail**   | Granular audit logs tracking user ID, IP address, exact action, target zone, HTTP status, and timestamp with CSV/JSON export (`/audit-logs`).                                |
+| **System Telemetry**        | Health telemetry dashboard (`/health`) monitoring PowerDNS latency, database connectivity, storage permissions, and PHP runtime metrics.                                     |
+| **Offline UI & Theming**    | Visual Subnet Calculator dark/light palette, 100% offline local vendor assets, glassmorphism navigation, and mobile anti-clipping viewport engine.                           |
 
 ---
 
@@ -241,6 +241,11 @@ PHP-PDNSManager validates, formats, and provisions all standard DNS Resource Rec
 | **`PTR`**    | Pointer Record (Reverse DNS)          | RFC 1035           | Target host FQDN in `in-addr.arpa` or `ip6.arpa`               |
 | **`SRV`**    | Service Location Record               | RFC 2782           | Priority, weight, port (`1–65535`), target hostname            |
 | **`CAA`**    | Certification Authority Authorization | RFC 6844, RFC 8659 | Flag byte, tag (`issue`, `issuewild`, `iodef`), CA domain      |
+| **`HTTPS`**  | HTTPS Binding (HTTP/3 & Apex Alias)   | RFC 9460           | Priority, target name, ALPN (`alpn="h2,h3"`), port, parameters |
+| **`SVCB`**   | General Service Binding               | RFC 9460           | Priority, target name, transport parameters, port, hints       |
+| **`DS`**     | Delegation Signer (DNSSEC delegation) | RFC 4034           | Key tag, algorithm ID, digest type, cryptographic hex digest   |
+| **`TLSA`**   | DANE Certificate Association          | RFC 6698           | Certificate usage, selector, matching type, cert association   |
+| **`SSHFP`**  | SSH Fingerprint Record                | RFC 4255           | Algorithm number, fingerprint type, public key fingerprint hex |
 | **`NAPTR`**  | Naming Authority Pointer              | RFC 2915, RFC 3403 | Order, preference, flags, service, regexp, replacement         |
 | **`SOA`**    | Start of Authority                    | RFC 1035, RFC 2181 | Primary NS, contact email, serial, refresh, retry, expire, TTL |
 | **`DNSSEC`** | DS & DNSKEY Records                   | RFC 4034, RFC 4035 | Key tag, algorithm, digest type, cryptographic digest          |
@@ -704,19 +709,27 @@ Your support directly powers open-source DNS infrastructure tooling, security en
 
 ## 👥 Credits & Acknowledgements
 
-**PHP-PDNSManager Enterprise Edition** is architected, developed, and maintained by **HARRY DERTIN SUTISNA ALSYUNDAWY** with foundational contributions from the global open-source infrastructure community:
+**PHP-PDNSManager Enterprise Edition** is architected, developed, and maintained by **HARRY DERTIN SUTISNA ALSYUNDAWY** with foundational contributions and infrastructure from the global open-source community:
 
-- **Lead Architecture & Engineering**: **[Harry Dertin Sutisna Alsyundawy (@alsyundawy)](https://github.com/alsyundawy)** — Founder & Principal Architect at **[ALSYUNDAWY IT SOLUTION](https://alsyundawy.com)**.
-- **DNS Core Engine**: [PowerDNS.COM BV](https://www.powerdns.com/) for the high-performance PowerDNS Authoritative Server and REST/JSON HTTP API.
-- **PHP Foundation**: The PHP Group and open-source core contributors for modern PHP 8.1–8.5 runtime platforms.
-- **Quality Gates & Static Analysis**:
-  - [PHPStan](https://phpstan.org/) by Ondřej Mirtes for strict Level 5 static analysis.
-  - [Psalm](https://psalm.dev/) by Vimeo for advanced type inference and type safety.
-  - [PHPUnit](https://phpunit.de/) by Sebastian Bergmann for automated test suites.
-  - [PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer) for PSR-12 coding standard enforcement.
-  - [MegaLinter](https://megalinter.io/) & [Super-Linter](https://github.com/super-linter/super-linter) for multi-language CI quality pipelines.
-  - [GitHub Advanced Security CodeQL](https://codeql.github.com/) for automated vulnerability detection and semantic code analysis.
-- **UI Architecture & Theme Engine**: Inspired by [Visual Subnet Calculator](https://alsyundawy.github.io/visualsubnetcalc) with offline local Bootstrap 5.3, Font Awesome 6.5, and Chart.js 4.4 bundles.
+- **Founder, Lead Architect & Maintainer**:
+  - **[Harry Dertin Sutisna Alsyundawy (@alsyundawy)](https://github.com/alsyundawy)** — Founder & Principal Enterprise Architect at **[ALSYUNDAWY IT SOLUTION](https://alsyundawy.com)**.
+  - Creator of the Visual Subnet Calculator theming engine, authoritative DNS invariants, multi-server clustering architecture, and zero-CDN air-gapped asset design.
+- **PowerDNS Authoritative Core**:
+  - **[PowerDNS.COM BV](https://www.powerdns.com/)** and the PowerDNS engineering team for the high-performance PowerDNS Authoritative Server daemon (`pdns_server`), RFC 9460 & RFC 9432 implementations, and internal HTTP API v1.
+- **PHP Foundation & Language Contributors**:
+  - **The PHP Group** and global core developers for modern PHP (PHP 8.1, 8.2, 8.3, 8.4, and 8.5) delivering strict typing, fibers, JIT, and modern runtime performance.
+- **Enterprise Testing & Static Analysis Toolchains**:
+  - **[PHPUnit](https://phpunit.de/)** by Sebastian Bergmann for unit and integration test runners.
+  - **[PHPStan](https://phpstan.org/)** by Ondřej Mirtes for Level 5 strict static analysis.
+  - **[Psalm](https://psalm.dev/)** by Vimeo for advanced semantic type inference and type safety.
+  - **[PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer)** by Greg Sherwood and PHPCSStandards for PSR-12 standard verification.
+  - **[MegaLinter](https://megalinter.io/)** (Ox Security) & **[Super-Linter](https://github.com/super-linter/super-linter)** (GitHub) for 50+ language CI/CD orchestration.
+  - **[GitHub Advanced Security CodeQL](https://codeql.github.com/)** for semantic AST security scanning and CWE/OWASP vulnerability checks.
+- **Offline UI, Theming & Front-End Bundles**:
+  - **[Bootstrap 5.3.3](https://getbootstrap.com/)** by Mark Otto and Jacob Thornton.
+  - **[Font Awesome 6.5.2](https://fontawesome.com/)** by Dave Gandy and Fonticons.
+  - **[Chart.js 4.4.4](https://www.chartjs.org/)** for client-side zone analytics and distribution rendering.
+  - **[Visual Subnet Calculator](https://alsyundawy.github.io/visualsubnetcalc)** design tokens, glassmorphism headers, and mobile anti-clipping dynamic viewport CSS.
 
 ---
 

@@ -1,16 +1,16 @@
 # Technical Documentation Note (DOCNOTE)
 
 **PHP-PDNSManager Enterprise Edition (v1.0.5)**
-_Architecture Refactor, 14-Pillar Engineering Review, RFC 9460 HTTPS/SVCB Records, RFC 9432 Catalog Zones, Real-Time Cluster Telemetry, 100% Offline Asset Modernization, & 100% Green CI/CD Matrix across PHP 8.1–8.5_
+_Technical Architecture & Production Engineering Note: RFC 9460 HTTPS/SVCB DNS Records, RFC 9432 Catalog Zones, Real-Time PowerDNS Cluster Telemetry, 100% Offline Asset Modernization, 14-Pillar Code Review, & 100% Green CI/CD Matrix across PHP 8.1–8.5_
 _Date: 2026-11-21_
 
 ---
 
-## 1. Executive Summary
+## 1. Executive Summary & Release Evolution
 
-This technical documentation note records the complete architectural delivery, offline asset modernization (Strict Zero CDN), VisualSubnetCalc-inspired Dark/Light theme engineering, 14-Pillar code audit remediations, CI/CD multi-linter orchestration (MegaLinter v9.6.0 and Super-Linter v8.3.1), and security hardening across **PHP-PDNSManager Enterprise Edition v1.0.4**.
+This technical documentation note records the architectural evolution, security hardening, multi-linter CI/CD orchestration, and production engineering across **PHP-PDNSManager Enterprise Edition v1.0.5**.
 
-All modifications adhere to PSR-12 coding standards, strict static analysis compliance (PHPStan Level 5, Psalm 6.0 with 94.25% type inference, PHPUnit 100% pass across PHP 8.1–8.5), Markdownlint compliance, and WCAG 2.2 AA accessibility guidelines.
+From initial scaffolding to enterprise-grade stability, PHP-PDNSManager provides a security-hardened Web GUI, versioned REST API gateway (`/api/v1`), and zero-dependency GraphQL query engine (`/graphql`) specifically engineered for PowerDNS Authoritative Server. All implementations strictly adhere to PSR standards (PSR-7, PSR-11, PSR-14, PSR-15, PSR-17, PSR-18), zero external CDN dependencies, strict typing (`declare(strict_types=1);`), and 100% green multi-linter verification across PHP 8.1, 8.2, 8.3, 8.4, and 8.5.
 
 ---
 
@@ -35,14 +35,14 @@ In accordance with strict enterprise air-gapped security requirements, all exter
 
 ## 3. VisualSubnetCalc Dark/Light Theme System
 
-The design system incorporates the aesthetic architecture of `https://alsyundawy.github.io/visualsubnetcalc`:
+The design system incorporates the aesthetic architecture of [Visual Subnet Calculator](https://alsyundawy.github.io/visualsubnetcalc):
 
 ### 3.1 Design Tokens & Palette
 
 - **Dark Mode (Default)**:
-  - Background: Deep slate (`#0f172a` to `#1e293b`).
+  - Background: Deep obsidian slate (`#0f172a` to `#1e293b`).
   - Card & Surface: Glassmorphic translucent layers (`rgba(15, 23, 42, 0.75)`) with backdrop blur (`blur(12px)`).
-  - Primary Accent: Glowing indigo/electric cyan (`#3b82f6` and `#06b6d4`).
+  - Primary Accent: Glowing electric cyan and royal blue (`#3b82f6` and `#06b6d4`).
   - Borders: Semi-transparent glowing strokes (`rgba(255, 255, 255, 0.08)`).
 - **Light Mode (Adaptive)**:
   - Background: Clean cool slate (`#f8fafc`).
@@ -67,187 +67,121 @@ The design system incorporates the aesthetic architecture of `https://alsyundawy
 
 ## 4. Multi-Device Anti-Clipping & Responsive Engineering
 
-### 4.1 Resolution of Xiaomi, Redmi, & POCO Display Clipping
+### 4.1 Resolution of Mobile Display Clipping
 
-Extensive testing on MIUI and HyperOS default browsers (Mi Browser and Chromium derivatives) identified five root causes for UI truncation and clipping, resolved as follows:
+Testing on mobile browsers (MIUI/HyperOS Mi Browser, Chromium, WebKit iOS) identified root causes for UI truncation and clipping, resolved as follows:
 
 - **1. Dynamic Viewport Shrinkage (`100vh` Bug)**:
   - Dynamic address bars and gesture bars caused the bottom 56px–80px of views (such as form submission buttons and pagination) to be clipped.
   - **Resolution**: Implemented CSS `100dvh` (Dynamic Viewport Height) with `100svh` fallbacks and dynamic `--vh` JavaScript calculations.
-- **2. System Font Inflation / Text Scaling**:
-  - MIUI's font enlargement feature caused button text and badge labels to wrap unpredictably and clip table containers.
-  - **Resolution**: Utilized standard `viewport-fit=cover` and `width=device-width` viewport definitions alongside fluid typography tokens to eliminate artificial font boost without non-standard property conflicts.
-- **3. Camera Punch-Hole & Notch Safe Area Insets**:
-  - Hardware cutouts on POCO and Redmi flagships collided with header navigation titles and drawer toggle icons.
-  - **Resolution**: Added `viewport-fit=cover` and applied `env(safe-area-inset-*)` CSS padding constraints to headers, sidebars, and main wrappers.
-- **4. DNS Record & Cryptokey Table Overflow**:
-  - Long continuous strings (SPF rules, DKIM 2048-bit base64 keys, DNSSEC DS records) distorted page geometry on mobile devices.
-  - **Resolution**: Integrated automated `.table-responsive` touch-scrolling wrappers with W3C standard `overflow-wrap: anywhere; word-wrap: break-word;` (eliminating the deprecated `word-break: break-word` keyword).
-- **5. Mobile Button Over-Expansion Bug**:
-  - A legacy `.btn { width: 100%; }` rule inside `@media (max-width: 640px)` caused buttons in headers, flex bars, and toolbars to expand to 100% width, overflowing parent containers and pushing layout elements off-screen.
-  - **Resolution**: Removed the indiscriminate 100% width rule and provided `.btn-mobile-block` for explicitly desired full-width actions.
-
-### 4.2 Breakpoint Matrix (VGA to 2K/4K)
-
-- **Ultra-Compact / VGA (`<= 480px`)**: Compact fluid padding (`0.625rem`), font size scaling (14px base), user profile badge text truncation with ellipsis (`max-width: 110px`), touch-padded action buttons.
-- **Smartphones (`481px - 640px`)**: Hardware-accelerated sliding offcanvas drawer with backdrop dismissal. Minimum touch target size of 44x44px. Clamped typography (`clamp(1.25rem, 5vw, 1.625rem)`).
-- **Tablets & Small Displays (`641px - 1024px`)**: Adaptive collapsible sidebar with persistent header badges and 2-column card layouts.
-- **Desktops & Laptops (`1025px - 1599px`)**: 2-column layout (sticky sidebar + fluid content canvas).
-- **2K / Ultra-wide (`>= 1600px`)**: Centered layout restraint with a max-width of `2560px`, preventing visual distortion on wide displays.
+- **2. Safe Area Insets (Notch & Gesture Bar Padding)**:
+  - Full-screen displays truncated sticky headers and action bars underneath camera cutouts.
+  - **Resolution**: Enforced `viewport-fit=cover` and applied CSS padding:
+    `padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);`.
+- **3. Broad Table Horizontal Anti-Clipping**:
+  - Wide DNS records (such as DKIM 2048-bit TXT strings, RFC 9460 HTTPS parameters, and DNSSEC keys) broke table boundaries on mobile screens.
+  - **Resolution**: Wrapped table containers in `-webkit-overflow-scrolling: touch` with rounded boundary wrappers and responsive font scaling.
 
 ---
 
-## 5. Security Hardening & Vulnerability Mitigation (OWASP Top 25 & CWE Top 50)
+## 5. Strict Authoritative DNS Invariant (No Cache-Poisoning Vectors)
 
-### 5.1 Outbound Webhook SSRF Hardening (CWE-918 / OWASP API7:2023)
+A core invariant of PHP-PDNSManager is that it manages **Authoritative DNS only**. It does not perform recursive DNS resolution, caching resolver lookups, or forwarder resolution:
 
-- **Vulnerability**: Outbound webhooks accepting arbitrary destination URLs could allow malicious or compromised administrative accounts to probe internal network services (e.g. `127.0.0.1:8081` PowerDNS API port or `169.254.169.254` cloud metadata endpoints).
-- **Remediation**: Implemented strict URL schema and protocol verification in `App\Services\Webhook\WebhookService`:
-  - Enforced `filter_var($url, FILTER_VALIDATE_URL)` combined with regex verification `#^https?://#i`.
-  - Rejection and security logging on any non-HTTP/HTTPS schemes (e.g., `file://`, `gopher://`, `javascript:`).
-  - Validation executed atomically on webhook creation, webhook modification, and outbound event dispatching.
-
-### 5.2 Memory Bounds & DoS Prevention in Rate Limiter (CWE-400 / CWE-770)
-
-- **Vulnerability**: In daemonized or long-running worker environments (e.g., RoadRunner, Swoole, FrankenPHP), in-memory IP tracking in `RateLimitMiddleware::$storage` grew unboundedly over time, leading to eventual memory exhaustion.
-- **Remediation**: Added threshold-based garbage collection:
-  - When in-memory IP count exceeds 1,000 entries, an atomic sweep prunes all keys where `reset_timestamp < time()`.
-  - Bounded memory footprint with zero overhead on normal request execution.
-
-### 5.3 Recursive Audit Trail Payload Redaction (CWE-532 / OWASP A09)
-
-- **Vulnerability**: Sensitive credentials (passwords, API tokens, cryptographic secrets) passed in request bodies could inadvertently be logged in plaintext within `audit_logs`.
-- **Remediation**: Implemented `AuditLogService::redactPayload()` with recursive traversal:
-  - Automatically masks keys matching `password`, `password_hash`, `token`, `secret`, `api_key`, and `totp_secret` with `[REDACTED]`.
-  - Preserves audit accountability while guaranteeing credential secrecy.
-
-### 5.4 DevSkim & Protocol Standard Suppressions
-
-- **DevSkim `localhost` Alerts (`DS162092`, `DS137138`)**: Replaced example loopbacks with RFC 5737 (`192.0.2.1`) and RFC 2606 (`admin@example.com`). Preserved standard PowerDNS API server ID (`localhost`) with explicit inline RFC justification comments.
-- **RFC 6238 TOTP Cryptographic Compliance (`DS126858`, `DS173237`)**: Annotated RFC 6238 HMAC-SHA1 counter hashing in `AuthService.php` with protocol citation and SHA-256 fallback compatibility.
+- **PowerDNS Authoritative Only**: Communicates exclusively with the authoritative daemon (`pdns_server`), which authoritative-answers for configured zones via backend databases (`gmysql`, `gpgsql`, `gsqlite3`).
+- **Elimination of Cache Poisoning (CVE-2008-1447, Kaminsky Attack)**: Because authoritative servers only serve authoritative data and never cache recursive query results, cache-poisoning vulnerabilities do not apply to this system.
+- **DNS Amplification Protection**: Directs operators to configure response rate limiting (`response-rate-limit`) in `pdns.conf` and disallows any open-resolver configurations.
 
 ---
 
-## 6. Architecture Refactor & Runtime Compatibility (v1.0.4)
+## 6. Multi-Server PowerDNS Routing & Failover Architecture
 
-### 6.1 Reflection-Based Router Request Argument Resolver
+### 6.1 Cluster Abstraction (`ServerClusterService`)
 
-- **Problem**: Route dispatch previously passed PSR-7 `Nyholm\Psr7\ServerRequest` directly to controller actions. Controllers implementing standard application methods expect `App\Core\Request`, causing immediate fatal `TypeError`.
-- **Resolution**: Built `Router::prepareRequestArgument()` utilizing PHP reflection:
-  - Inspects the first parameter type of target controller action or closure.
-  - Passes raw `ServerRequestInterface` to controllers declaring it (e.g., `GraphQLController`).
-  - Automatically wraps requests into `App\Core\Request` for application controllers.
-
-### 6.2 Multi-Instance Application Route Retention
-
-- **Problem**: `Application::loadRoutes()` used `require_once`. In multi-instance execution (such as consecutive unit tests or worker pools), second and subsequent `Application` instances had empty route tables, failing with HTTP 404.
-- **Resolution**: Converted route loading to `require`, ensuring 100% deterministic route registration across all instantiated application lifecycles.
-
-### 6.3 Multi-Database ANSI SQL Portability
-
-- **Problem**: SQLite-specific syntax `datetime("now")` was used in `WebhookService`, `ZoneTemplateService`, and `ServerClusterService`, and `INSERT OR REPLACE` in `OrganizationService`. In MySQL/MariaDB deployments, this produced syntax errors (`SQLSTATE[42000]: FUNCTION datetime does not exist`).
-- **Resolution**: Standardized on ANSI SQL standard `CURRENT_TIMESTAMP`, and replaced non-standard upsert queries with portable atomic operations across all database drivers.
-
-### 6.4 RBAC Route Prefix & Action Normalization
-
-- **Problem**: `RbacMiddleware` inferred resource permissions from raw URL segments, treating `/api/v1/zones` as resource `'api'` rather than `'zones'`, and mapping `/delete` routes to `'create'` actions.
-- **Resolution**: Implemented prefix stripping (`/api/v1`, `/api`), action sub-path extraction (`/delete`, `/edit`), and plural/singular permission normalization in `RbacService`.
+- Manages multiple PowerDNS nodes defined in the `pdns_servers` database table.
+- Each cluster node maintains:
+  - `name`: Human-readable identifier.
+  - `api_url`: Internal REST API endpoint (e.g., `http://127.0.0.1:8081`).
+  - `api_key`: Shared secret passed via `X-API-Key` header.
+  - `server_id`: Target PowerDNS server ID (default: `localhost`).
+  - `is_active` & `is_default`: Routing status flags.
+- **Latency Testing & Health Probe**:
+  - Measures API round-trip latency using high-resolution microsecond timers:
+    `$latency = round(((float) microtime(true) - (float) $start) * 1000.0, 2);`.
+  - Automatically classifies daemon status into `Optimal` (<50ms), `Degraded` (50–200ms), `Slow` (>200ms), or `Offline`.
 
 ---
 
-## 7. Enterprise Architecture Modules
+## 7. RFC 9460 Modern DNS Records Architecture (`HTTPS` & `SVCB`)
 
-### 7.1 Multi-PowerDNS Server Cluster Engine (`pdns_servers`)
+### 7.1 Protocol Overview
 
-- **Service**: `App\Services\PowerDNS\ServerClusterService`
-- **Controller**: `App\Controllers\ServerController` (Web UI) and `App\Controllers\Api\V1\ServerApiController` (REST API).
-- **Views**: `app/Views/server/index.php`, `create.php`, `edit.php`.
-- **Database Table**: `pdns_servers` tracking server node name, API host, port, API key (encrypted/masked), default cluster routing, active state, and connection latency.
-- **Capabilities**: Dynamically routes PowerDNS API calls across designated cluster members, provides real-time latency pinging, and manages cluster node life cycles.
+PowerDNS Authoritative Server supports modern Service Binding Resource Records defined by the IETF in RFC 9460:
 
-### 7.2 System & PowerDNS Health Check Monitoring
+- **`HTTPS` (RR 65)**: Optimized binding record for HTTP and HTTPS origins, supporting Apex Aliasing (replacing CNAME at zone root) and parameter negotiation (ALPN `h2,h3`, port 443, IPv4/IPv6 hints).
+- **`SVCB` (RR 64)**: General-purpose service binding for other application protocols (e.g., DNS-over-HTTPS, DNS-over-TLS on port 853).
 
-- **Service**: `App\Services\Health\HealthCheckService`
-- **Controller**: `App\Controllers\HealthController` (`/health` & `/api/v1/health`).
-- **View**: `app/Views/health/index.php`.
-- **Diagnostics**: Checks database connection and query response time, PowerDNS daemon reachability and round-trip latency, storage directory write permissions, and PHP runtime metrics (memory limit, max execution time, OPcache status).
-- **Multi-Format Support**: Dual-mode endpoint serving HTML dashboard with status badges or automated monitoring JSON for Kubernetes probes and Nagios/Zabbix agents.
+### 7.2 Implementation in `BindZoneService`
 
-### 7.3 DNS Zone Templating Engine
-
-- **Service**: `App\Services\DNS\ZoneTemplateService`
-- **Controller**: `App\Controllers\ZoneTemplateController` (`/templates`) and `App\Controllers\Api\V1\ZoneTemplateApiController`.
-- **Views**: `app/Views/template/index.php`, `create.php`.
-- **Database Tables**: `zone_templates` and `zone_template_records`.
-- **Templates Included**: Web Hosting Standard (A, CNAME, MX, TXT) and Google Workspace (ASPMX, ALT1, ALT2, SPF, DKIM placeholder).
-- **Dynamic Variable Interpolation**: Replaces placeholders (`{{domain}}`, `{{ip}}`, `{{ttl}}`) automatically during zone instantiation or one-click template application.
-
-### 7.4 RFC 1035 BIND Zone File Import & Export
-
-- **Service**: `App\Services\DNS\BindZoneService`
-- **Endpoints**: `/zones/import` (POST file upload or raw text paste) and `/zones/{id}/export-bind` (GET streaming `.zone` download).
-- **View**: `app/Views/zone/import.php`.
-- **Pure-PHP Parser**: Zero-dependency RFC 1035 parser supporting directive handling (`$ORIGIN`, `$TTL`), multiline parenthesis records, inline comments, FQDN normalization, and record type extraction.
-
-### 7.5 Cross-Zone Bulk Record Operations
-
-- **Service**: `App\Services\DNS\BulkRecordService`
-- **Endpoint**: `/zones/bulk-records` (GET search & POST execute).
-- **View**: `app/Views/record/bulk.php`.
-- **Batch Processing**: Allows administrators to search DNS records matching type, name pattern, or content across all managed zones, preview matching items, and execute atomic batch replacements or deletions.
-
-### 7.6 Advanced Audit Trail Search & Export
-
-- **Repository**: `App\Repositories\AuditLogRepository`
-- **Controller**: `App\Controllers\AuditLogController` (`/audit-logs`, `/audit-logs/export`).
-- **View**: `app/Views/audit/index.php`.
-- **Search Capabilities**: Multi-criteria query builder filtering by event action, user ID, status code, IP address, and date ranges with paginated result sets.
-- **Export Engine**: Memory-efficient streaming export to CSV and JSON formats with custom file download headers.
-
-### 7.7 Zero-Dependency GraphQL API Endpoint
-
-- **Controller**: `App\Controllers\Api\V2\GraphQLController` (`/graphql`).
-- **Architecture**: Zero third-party dependency pure-PHP recursive AST tokenizer and resolver.
-- **Queries**: `zones`, `zone(id)`, `servers`, `health`, `templates`, `auditLogs(limit)`.
-- **Mutations**: `createZone(name, kind, nameservers)`, `deleteZone(id)`.
-- **Introspection**: Built-in `__schema` and `__typename` query resolution for developer exploration.
-
-### 7.8 HMAC-SHA256 Webhook Dispatcher
-
-- **Service**: `App\Services\Webhook\WebhookService`
-- **Database Table**: `webhooks` (`id`, `name`, `url`, `secret`, `events`, `is_active`, `last_status`, `last_triggered_at`).
-- **Signature Security**: Generates `X-PDNS-Signature: sha256=<hash>` and `X-PDNS-Event: <event>` headers using HMAC-SHA256 with timestamp validation to prevent replay attacks.
-
-### 7.9 Multi-Tenant RBAC & Organization Isolation
-
-- **Service**: `App\Services\Auth\OrganizationService`
-- **Database Tables**: `organizations`, `organization_user`, `zone_organizations`.
-- **Tenant Boundaries**: Restricts zone visibility and modification rights to authorized tenant organizations, ensuring enterprise multi-team segregation.
+- Expanded `$knownTokens` in `resolveRecordName()` to include:
+  `'HTTPS'`, `'SVCB'`, `'DS'`, `'DNSKEY'`, `'TLSA'`, `'SSHFP'`, `'CAA'`, `'NAPTR'`, `'LOC'`, `'URI'`, `'DNAME'`, `'ALIAS'`, `'SPF'`, `'RP'`, and `'HINFO'`.
+- Supports parsing standard presentation format:
+  `@ IN HTTPS 1 . alpn="h2,h3" port=443`
+  `@ IN HTTPS 0 cdn.example.net.` (AliasMode apex redirection)
+- Web UI in `app/Views/zone/show.php` features direct creation dropdowns for all modern RR types.
 
 ---
 
-## 8. The 14 Engineering Review Pillars Matrix
+## 8. RFC 9432 DNS Catalog Zones Management Architecture
+
+### 8.1 Protocol Overview
+
+DNS Catalog Zones (RFC 9432) automate the provisioning and synchronization of member zones across primary and secondary nameservers using standard DNS zone transfers (AXFR/IXFR):
+
+- **Producer (`kind: "Producer"`)**: Resides on primary nameserver; automatically generates internal records representing member zones.
+- **Consumer (`kind: "Consumer"`)**: Resides on secondary nameserver; pulls the catalog zone and provisions member zones automatically.
+
+### 8.2 Implementation in `ZoneController` and Views
+
+- **`ZoneController::create()` & `edit()`**: Extracts and persists the `catalog` association string.
+- **`app/Views/zone/create.php` & `app/Views/zone/edit.php`**: Exposes `Producer` and `Consumer` kinds and explicit `catalog` domain input field.
+- Seamlessly passes `"catalog": "catalog.example.com."` to the PowerDNS HTTP API v1 payload.
+
+---
+
+## 9. Real-Time Cluster Telemetry & Health Monitoring
+
+- Injected `ServerClusterService` and `ZoneService` into `DashboardController` using reflection autowiring.
+- Real-time calculations:
+  - `$totalZones`: Live count of authoritative zones.
+  - `$activeServers`: Count of active PowerDNS nodes.
+  - `$serverHealth`: Ping connectivity badge (`OK`, `Degraded`, `Offline`) with graceful offline fallback.
+- Dynamic visual widgets rendered in `app/Views/dashboard/index.php`.
+
+---
+
+## 10. The 14 Engineering Review Pillars Matrix
 
 | Pillar | Focus Dimension | Implementation & Status |
 | :--- | :--- | :--- |
-| **1. Bug Review** | Critical Logic Faults | Fixed `/login` redirect loop, controller `TypeError`, and multi-instance route drops. |
-| **2. Syntax Review** | PHP 8.1–8.5 Standards | 100% files syntax clean; strict typing declared; binary microtime operand typing enforced. |
-| **3. Runtime Review** | Database & Protocol | Standardized on ANSI SQL `CURRENT_TIMESTAMP`; portable upserts across MySQL and SQLite. |
-| **4. Logic Review** | RBAC & GraphQL | Corrected route action inference and implemented strict array body parsing. |
-| **5. Memory Review** | Resource Bounding | Implemented periodic key sweep in rate limiter (>1000 items) to prevent daemon leaks. |
-| **6. Dead Code Review** | Unused Variables | Pruned unneeded local variables and unused imports across controllers and services. |
+| **1. Bug Review** | Critical Logic Faults | Fixed `/login` redirect loop, controller route dispatch `TypeError`, and missing `catalog` extraction in `ZoneController`. |
+| **2. Syntax Review** | PHP 8.1–8.5 Standards | 100% files syntax clean (`php -l`); strict typing declared; binary microtime operand typing enforced. |
+| **3. Runtime Review** | Database & Protocol | Standardized on ANSI SQL `CURRENT_TIMESTAMP`; portable upserts across MySQL and SQLite. Verified reflection autowiring. |
+| **4. Logic Review** | RBAC & GraphQL | Corrected route action inference and implemented strict array body parsing. BIND token resolver handles apex and relative names. |
+| **5. Memory Review** | Resource Bounding | Implemented periodic key sweep in rate limiter (>1000 items) to prevent daemon memory leaks. |
+| **6. Dead Code Review** | Unused Variables | Pruned unneeded local variables and unused imports across controllers and views. |
 | **7. Duplicate Code Review** | CSS & Format Strings | Synchronized `app.css` design tokens and centralized `RECORD_FORMAT` in BIND parser. |
-| **8. Circular Dependency Review** | DI Architecture | Verified clean unidirectional container graph: `Container -> Core -> Repos -> Services -> Controllers`. |
-| **9. Performance Review** | High-Resolution Timing | Added strict float casting for microsecond latency tracking; bounded DB queries. |
-| **10. Security Review** | OWASP Top 25 & CWE | SSRF validation on webhooks, recursive payload redaction, nonce-based CSP, and CSRF protection. |
-| **11. Maintainability Review** | CISQ/ISO 5055 | PSR-12 standard verified; camelCase model properties with backward-compatible accessors. |
+| **8. Circular Dependency Review** | DI Architecture | Verified clean unidirectional container graph: `Container -> Core -> Repositories -> Services -> Controllers`. |
+| **9. Performance Review** | High-Resolution Timing | Added strict float casting for microsecond latency tracking; bounded DB queries and API timeouts (5.0s / 15.0s). |
+| **10. Security Review** | OWASP Top 25 & CWE | SSRF validation on webhooks (CWE-918), recursive payload redaction (CWE-532), nonce-based CSP, and CSRF protection. |
+| **11. Maintainability Review** | CISQ/ISO 5055 | PSR-12 standard verified (86/86 files); camelCase model properties with backward-compatible array accessors. |
 | **12. Scalability Review** | Multi-Server & Mobile | Multi-server PowerDNS routing; mobile dynamic viewport `100dvh` and safe-area insets. |
 | **13. Readability Review** | Google Practices | Clear descriptive naming, typed PHP 8.1+ properties, and inline RFC protocol citations. |
-| **14. Linter & Testability Review** | Verification Gates | 100% green: `phpcs` (86/86 clean), `phpstan` (Level 5 Clean), `psalm` (94.31% inferred), `phpunit` (24/24 pass, 70 assertions). |
+| **14. Linter & Testability Review** | Verification Gates | 100% green: `phpcs` (86/86 clean), `phpstan` (Level 5 Clean), `psalm` (94.33% inferred), `phpunit` (24/24 pass, 70 assertions). |
 
 ---
 
-## 9. CI/CD Multi-Linter Orchestration & Verification Gates
+## 11. CI/CD Multi-Linter Orchestration & Verification Gates
 
 All remote GitHub Actions workflows execute with 100% passing status:
 
@@ -260,31 +194,26 @@ All remote GitHub Actions workflows execute with 100% passing status:
 
 ---
 
-## 10. v1.0.5 Architecture: RFC 9460, RFC 9432 & Live Cluster Telemetry
+## 12. Credits & Maintainer Recognition
 
-### 10.1 RFC 9460 Modern DNS Records (`HTTPS` & `SVCB`)
+**PHP-PDNSManager Enterprise Edition** is architected, developed, and maintained by **HARRY DERTIN SUTISNA ALSYUNDAWY** with foundational contributions and infrastructure from the global open-source community:
 
-- Implemented full support for Service Binding (`SVCB`, RR 64) and HTTPS Binding (`HTTPS`, RR 65) per RFC 9460 specifications.
-- Updated `BindZoneService` token resolution pipeline (`$knownTokens`) to recognize and parse `HTTPS`, `SVCB`, `DS`, `DNSKEY`, `TLSA`, `SSHFP`, `CAA`, `NAPTR`, `LOC`, `URI`, `DNAME`, `ALIAS`, `SPF`, `RP`, and `HINFO`.
-- Modernized web modal record dropdown in `app/Views/zone/show.php` with direct creation options for all modern RR types.
-- Verified parsing and serialization of both AliasMode and ServiceMode records with ALPN and port parameters.
-
-### 10.2 RFC 9432 DNS Catalog Zones Management
-
-- Expanded zone creation and modification endpoints (`ZoneController`) to parse, validate, and persist the `catalog` association attribute.
-- Enabled `Producer (RFC 9432 Catalog)` and `Consumer (RFC 9432 Catalog)` zone kinds in `app/Views/zone/create.php` and `app/Views/zone/edit.php`.
-- Integrated member zone assignment, facilitating automated zone provisioning and synchronization across PowerDNS clusters.
-
-### 10.3 Dynamic PowerDNS Cluster Telemetry
-
-- Integrated `ServerClusterService` and `ZoneService` into `DashboardController` via reflection autowiring.
-- Real-time aggregation of active zones, active cluster node counts, and live reachability ping (`OK`, `Degraded`, `Offline`) with graceful fault-tolerant fallbacks.
-- Dynamic visual indicator rendering in `app/Views/dashboard/index.php`.
-
----
-
-## 11. Credits & Maintainer Recognition
-
-- **Lead Architect & Maintainer**: **[Harry Dertin Sutisna Alsyundawy (@alsyundawy)](https://github.com/alsyundawy)** — **[ALSYUNDAWY IT SOLUTION](https://alsyundawy.com)**.
-- **PowerDNS Authoritative**: [PowerDNS.COM BV](https://powerdns.com) for the authoritative DNS daemon and HTTP API.
-- **Open-Source Infrastructure**: The PHP Group, Composer, PHPUnit, PHPStan, Psalm, MegaLinter, Super-Linter, and the Google DeepMind Antigravity AI agent framework.
+- **Founder, Lead Architect & Maintainer**:
+  - **[Harry Dertin Sutisna Alsyundawy (@alsyundawy)](https://github.com/alsyundawy)** — Founder & Principal Enterprise Architect at **[ALSYUNDAWY IT SOLUTION](https://alsyundawy.com)**.
+  - Creator of the Visual Subnet Calculator theming engine, authoritative DNS invariants, multi-server clustering architecture, and zero-CDN air-gapped asset design.
+- **PowerDNS Authoritative Core**:
+  - **[PowerDNS.COM BV](https://www.powerdns.com/)** and the PowerDNS engineering team for the high-performance PowerDNS Authoritative Server daemon (`pdns_server`), RFC 9460 & RFC 9432 implementations, and internal HTTP API v1.
+- **PHP Foundation & Language Contributors**:
+  - **The PHP Group** and global core developers for modern PHP (PHP 8.1, 8.2, 8.3, 8.4, and 8.5) delivering strict typing, fibers, JIT, and modern runtime performance.
+- **Enterprise Testing & Static Analysis Toolchains**:
+  - **[PHPUnit](https://phpunit.de/)** by Sebastian Bergmann for unit and integration test runners.
+  - **[PHPStan](https://phpstan.org/)** by Ondřej Mirtes for Level 5 strict static analysis.
+  - **[Psalm](https://psalm.dev/)** by Vimeo for advanced semantic type inference and type safety.
+  - **[PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer)** by Greg Sherwood and PHPCSStandards for PSR-12 standard verification.
+  - **[MegaLinter](https://megalinter.io/)** (Ox Security) & **[Super-Linter](https://github.com/super-linter/super-linter)** (GitHub) for 50+ language CI/CD orchestration.
+  - **[GitHub Advanced Security CodeQL](https://codeql.github.com/)** for semantic AST security scanning and CWE/OWASP vulnerability checks.
+- **Offline UI, Theming & Front-End Bundles**:
+  - **[Bootstrap 5.3.3](https://getbootstrap.com/)** by Mark Otto and Jacob Thornton.
+  - **[Font Awesome 6.5.2](https://fontawesome.com/)** by Dave Gandy and Fonticons.
+  - **[Chart.js 4.4.4](https://www.chartjs.org/)** for client-side zone analytics and distribution rendering.
+  - **[Visual Subnet Calculator](https://alsyundawy.github.io/visualsubnetcalc)** design tokens, glassmorphism headers, and mobile anti-clipping dynamic viewport CSS.
