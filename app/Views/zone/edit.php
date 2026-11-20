@@ -1,10 +1,10 @@
 <?php
 /**
  * @var string|null $csrfToken
- * @var array{name?: string, kind?: string, masters?: array<string>, nameservers?: array<string>}|null $zone
+ * @var array{name?: string, kind?: string, masters?: array<string>, nameservers?: array<string>, catalog?: string}|null $zone
  */
 $csrfToken = $csrfToken ?? '';
-$zone = $zone ?? ['name' => '', 'kind' => 'Native', 'masters' => [], 'nameservers' => []];
+$zone = $zone ?? ['name' => '', 'kind' => 'Native', 'masters' => [], 'nameservers' => [], 'catalog' => ''];
 $title = 'Edit Zone';
 ?>
 <div class="card">
@@ -24,7 +24,13 @@ $title = 'Edit Zone';
                     <option value="Native" <?= ($zone['kind'] ?? 'Native') === 'Native' ? 'selected' : '' ?>>Native</option>
                     <option value="Master" <?= ($zone['kind'] ?? '') === 'Master' ? 'selected' : '' ?>>Master</option>
                     <option value="Slave" <?= ($zone['kind'] ?? '') === 'Slave' ? 'selected' : '' ?>>Slave</option>
+                    <option value="Producer" <?= ($zone['kind'] ?? '') === 'Producer' ? 'selected' : '' ?>>Producer (RFC 9432 Catalog)</option>
+                    <option value="Consumer" <?= ($zone['kind'] ?? '') === 'Consumer' ? 'selected' : '' ?>>Consumer (RFC 9432 Catalog)</option>
                 </select>
+            </div>
+            <div class="mb-3">
+                <label for="zoneCatalog" class="form-label">Catalog Zone (Optional, RFC 9432)</label>
+                <input type="text" id="zoneCatalog" name="catalog" class="form-control" value="<?= htmlspecialchars((string) ($zone['catalog'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" placeholder="catalog.example.com">
             </div>
             <div class="mb-3">
                 <label for="zoneMasters" class="form-label">Masters</label>

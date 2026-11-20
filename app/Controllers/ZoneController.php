@@ -68,6 +68,9 @@ class ZoneController
                     'nameservers' => array_filter(array_map('trim', explode(',', (string) $request->input('nameservers', '')))),
                     'dnssec' => (bool) $request->input('dnssec', false),
                 ];
+                if ($request->has('catalog') && trim((string) $request->input('catalog')) !== '') {
+                    $data['catalog'] = trim((string) $request->input('catalog'));
+                }
                 $zone = $this->zoneService->createZone($data);
                 return (new Response())->redirect(self::ZONES_PATH . urlencode($zone['name']));
             } catch (ValidationException $e) {
@@ -89,6 +92,9 @@ class ZoneController
                     'masters' => array_filter(array_map('trim', explode(',', (string) $request->input('masters', '')))),
                     'nameservers' => array_filter(array_map('trim', explode(',', (string) $request->input('nameservers', '')))),
                 ];
+                if ($request->has('catalog')) {
+                    $data['catalog'] = trim((string) $request->input('catalog'));
+                }
                 $this->zoneService->updateZone($zoneId, $data);
                 return (new Response())->redirect(self::ZONES_PATH . urlencode($zoneId));
             } catch (ValidationException $e) {

@@ -1,7 +1,7 @@
 # Technical Documentation Note (DOCNOTE)
 
-**PHP-PDNSManager Enterprise Edition (v1.0.4)**
-_Architecture Refactor, 14-Pillar Engineering Review, 100% Offline Asset Modernization, Super-Linter & MegaLinter Orchestration, SSRF Hardening, Memory Bounded Rate Limiting, Reflection Request Adapter, Multi-Database ANSI SQL Compatibility, & 100% Green CI/CD Matrix across PHP 8.1–8.5_
+**PHP-PDNSManager Enterprise Edition (v1.0.5)**
+_Architecture Refactor, 14-Pillar Engineering Review, RFC 9460 HTTPS/SVCB Records, RFC 9432 Catalog Zones, Real-Time Cluster Telemetry, 100% Offline Asset Modernization, & 100% Green CI/CD Matrix across PHP 8.1–8.5_
 _Date: 2026-11-21_
 
 ---
@@ -243,7 +243,7 @@ Extensive testing on MIUI and HyperOS default browsers (Mi Browser and Chromium 
 | **11. Maintainability Review** | CISQ/ISO 5055 | PSR-12 standard verified; camelCase model properties with backward-compatible accessors. |
 | **12. Scalability Review** | Multi-Server & Mobile | Multi-server PowerDNS routing; mobile dynamic viewport `100dvh` and safe-area insets. |
 | **13. Readability Review** | Google Practices | Clear descriptive naming, typed PHP 8.1+ properties, and inline RFC protocol citations. |
-| **14. Linter & Testability Review** | Verification Gates | 100% green: `phpcs` (86/86 clean), `phpstan` (Level 5 Clean), `psalm` (94.25% inferred), `phpunit` (23/23 pass). |
+| **14. Linter & Testability Review** | Verification Gates | 100% green: `phpcs` (86/86 clean), `phpstan` (Level 5 Clean), `psalm` (94.31% inferred), `phpunit` (24/24 pass, 70 assertions). |
 
 ---
 
@@ -260,7 +260,30 @@ All remote GitHub Actions workflows execute with 100% passing status:
 
 ---
 
-## 10. Credits & Maintainer Recognition
+## 10. v1.0.5 Architecture: RFC 9460, RFC 9432 & Live Cluster Telemetry
+
+### 10.1 RFC 9460 Modern DNS Records (`HTTPS` & `SVCB`)
+
+- Implemented full support for Service Binding (`SVCB`, RR 64) and HTTPS Binding (`HTTPS`, RR 65) per RFC 9460 specifications.
+- Updated `BindZoneService` token resolution pipeline (`$knownTokens`) to recognize and parse `HTTPS`, `SVCB`, `DS`, `DNSKEY`, `TLSA`, `SSHFP`, `CAA`, `NAPTR`, `LOC`, `URI`, `DNAME`, `ALIAS`, `SPF`, `RP`, and `HINFO`.
+- Modernized web modal record dropdown in `app/Views/zone/show.php` with direct creation options for all modern RR types.
+- Verified parsing and serialization of both AliasMode and ServiceMode records with ALPN and port parameters.
+
+### 10.2 RFC 9432 DNS Catalog Zones Management
+
+- Expanded zone creation and modification endpoints (`ZoneController`) to parse, validate, and persist the `catalog` association attribute.
+- Enabled `Producer (RFC 9432 Catalog)` and `Consumer (RFC 9432 Catalog)` zone kinds in `app/Views/zone/create.php` and `app/Views/zone/edit.php`.
+- Integrated member zone assignment, facilitating automated zone provisioning and synchronization across PowerDNS clusters.
+
+### 10.3 Dynamic PowerDNS Cluster Telemetry
+
+- Integrated `ServerClusterService` and `ZoneService` into `DashboardController` via reflection autowiring.
+- Real-time aggregation of active zones, active cluster node counts, and live reachability ping (`OK`, `Degraded`, `Offline`) with graceful fault-tolerant fallbacks.
+- Dynamic visual indicator rendering in `app/Views/dashboard/index.php`.
+
+---
+
+## 11. Credits & Maintainer Recognition
 
 - **Lead Architect & Maintainer**: **[Harry Dertin Sutisna Alsyundawy (@alsyundawy)](https://github.com/alsyundawy)** — **[ALSYUNDAWY IT SOLUTION](https://alsyundawy.com)**.
 - **PowerDNS Authoritative**: [PowerDNS.COM BV](https://powerdns.com) for the authoritative DNS daemon and HTTP API.

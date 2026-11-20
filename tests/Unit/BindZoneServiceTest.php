@@ -85,4 +85,25 @@ EOF;
         $this->assertStringContainsString('192.0.2.1', $serialized);
         $this->assertStringContainsString('www.example.com.', $serialized);
     }
+
+    public function testParseModernRecordTypesHttpsAndSvcb(): void
+    {
+        $bindData = <<<EOF
+\$ORIGIN example.com.
+\$TTL 3600
+@       IN  SOA     ns1.example.com. hostmaster.example.com. ( 2026112101 7200 3600 1209600 3600 )
+@       IN  NS      ns1.example.com.
+@       IN  HTTPS   1 . alpn="h2,h3"
+_dns    IN  SVCB    1 dns.example.com. port=853
+@       IN  CAA     0 issue "letsencrypt.org"
+EOF;
+
+        $parsed = $this->service->parse($bindData);
+
+        $this->assertEquals('example.com.', $parsed['origin']);
+        $types = array_column($parsed['records'], 'type');
+        $this->assertContains('HTTPS', $types);
+        $this->assertContains('SVCB', $types);
+        $this->assertContains('CAA', $types);
+    }
 }

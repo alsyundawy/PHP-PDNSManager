@@ -1,6 +1,6 @@
 # PHP-PDNSManager — Enterprise PowerDNS Authoritative Control Plane
 
-[![Release](https://img.shields.io/badge/Release-v1.0.4-007ACC?style=for-the-badge&logo=github)](https://github.com/alsyundawy/PHP-PDNSManager/releases)
+[![Release](https://img.shields.io/badge/Release-v1.0.5-007ACC?style=for-the-badge&logo=github)](https://github.com/alsyundawy/PHP-PDNSManager/releases)
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%20%7C%208.2%20%7C%208.3%20%7C%208.4%20%7C%208.5-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net/)
 [![PowerDNS](https://img.shields.io/badge/PowerDNS-Authoritative%20Only-00599C?style=for-the-badge&logo=powerdns&logoColor=white)](https://powerdns.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
@@ -547,9 +547,9 @@ Every commit of PHP-PDNSManager is validated against comprehensive automated qua
 
 | Quality Gate             | Verification Engine                                               | Target / Standard                   | Pass Criteria              |       Status        |
 | :----------------------- | :---------------------------------------------------------------- | :---------------------------------- | :------------------------- | :-----------------: |
-| **Unit & Service Tests** | [`PHPUnit 10.5 / 11.0`](https://phpunit.de)                       | Core models, services, repositories | 100% assertions pass       |  **✔ 23/23 PASS**   |
+| **Unit & Service Tests** | [`PHPUnit 10.5 / 11.0`](https://phpunit.de)                       | Core models, services, repositories | 100% assertions pass       |  **✔ 24/24 PASS**   |
 | **Static Analysis**      | [`PHPStan`](https://phpstan.org)                                  | Strict Level 5 analysis             | 0 errors                   | **✔ LEVEL 5 CLEAN** |
-| **Type Inference**       | [`Psalm`](https://psalm.dev)                                      | Level 4 strict type safety          | 0 errors (94.25% inferred) |     **✔ CLEAN**     |
+| **Type Inference**       | [`Psalm`](https://psalm.dev)                                      | Level 4 strict type safety          | 0 errors (94.31% inferred) |     **✔ CLEAN**     |
 | **Coding Standards**     | [`PHP_CodeSniffer`](https://github.com/squizlabs/PHP_CodeSniffer) | PSR-12 strict compliance            | 0 errors, 0 warnings       |  **✔ PSR-12 PASS**  |
 | **MegaLinter Multi-Scan**| [`MegaLinter v9.6.0`](https://megalinter.io)                      | 50+ language and secret linters     | 0 errors, 0 secret leaks   |  **✔ 100% PASS**    |
 | **Super-Linter Engine**  | [`Super-Linter v8.3.1`](https://github.com/super-linter)          | Strict Inclusion Linter Engine      | 0 errors                   |  **✔ 100% PASS**    |

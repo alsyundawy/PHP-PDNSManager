@@ -30,7 +30,13 @@ $title = 'Create Zone';
                     <option value="Native">Native</option>
                     <option value="Master">Master</option>
                     <option value="Slave">Slave</option>
+                    <option value="Producer">Producer (RFC 9432 Catalog)</option>
+                    <option value="Consumer">Consumer (RFC 9432 Catalog)</option>
                 </select>
+            </div>
+            <div class="mb-3">
+                <label for="catalog" class="form-label">Catalog Zone (Optional, RFC 9432)</label>
+                <input type="text" class="form-control" id="catalog" name="catalog" placeholder="catalog.example.com">
             </div>
             <div class="mb-3">
                 <label for="masters" class="form-label">Masters (comma separated IPs)</label>

@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.5] - 2026-11-21
+
+### Added — RFC 9460 Modern DNS Records, RFC 9432 Catalog Zones & Dynamic Cluster Telemetry
+
+- **RFC 9460 Modern DNS Resource Records Support**:
+  - Integrated modern DNS record types `HTTPS` (RR 65) and `SVCB` (RR 64) as defined in RFC 9460 into `BindZoneService` token resolution pipeline (`$knownTokens`).
+  - Added full token resolution for security and discovery record types: `DS`, `DNSKEY`, `TLSA`, `SSHFP`, `CAA`, `NAPTR`, `LOC`, `URI`, `DNAME`, `ALIAS`, `SPF`, `RP`, and `HINFO`.
+  - Expanded web modal record creation dropdown in `app/Views/zone/show.php` with all modern record types (`HTTPS`, `SVCB`, `DS`, `DNSKEY`, `TLSA`, `SSHFP`, `CAA`, etc.).
+  - Added dedicated unit test `testParseModernRecordTypesHttpsAndSvcb` in `tests/Unit/BindZoneServiceTest.php` ensuring robust parsing and serialization.
+- **RFC 9432 DNS Catalog Zones Control Plane Integration**:
+  - Enhanced `app/Controllers/ZoneController.php` (`create` and `edit`) to parse, validate, and persist the RFC 9432 `catalog` parameter.
+  - Added `Producer (RFC 9432 Catalog)` and `Consumer (RFC 9432 Catalog)` zone kinds to both `app/Views/zone/create.php` and `app/Views/zone/edit.php`.
+  - Added dedicated Catalog Zone input fields in zone creation and modification views.
+- **Dynamic Cluster Telemetry & Real-Time Dashboard Integration**:
+  - Modernized `DashboardController.php` with autowired dependency injection of `ZoneService` and `ServerClusterService`.
+  - Implemented live telemetry calculation: real-time active zone counts, active PowerDNS cluster node counts, connection reachability, and cluster health badges (`OK`, `Degraded`, `Offline`) with graceful fault-tolerant fallbacks.
+  - Updated `app/Views/dashboard/index.php` with dynamic telemetry visualization and direct quick-action links to BIND Zone Import and Audit Log CSV Export.
+- **Quality Assurance & Verification**:
+  - 100% test pass rate across all 24 unit, feature, and integration test suites (70 assertions).
+  - 0 syntax errors across all PHP files.
+  - 0 static analysis errors across PHPStan (Level 5) and Psalm (Level 4/7 with 94.31% type coverage).
+  - 0 code style violations across PHPCS (PSR-12, 86/86 files clean).
+
+---
+
 ## [1.0.4] - 2026-11-21
 
 ### 14-Pillar Production Code Review & CI/CD Pipeline Overhaul

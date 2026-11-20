@@ -179,7 +179,19 @@ $title = 'Zone: ' . $zoneName;
                             <option value="CNAME">CNAME</option>
                             <option value="MX">MX</option>
                             <option value="TXT">TXT</option>
+                            <option value="NS">NS</option>
+                            <option value="PTR">PTR</option>
                             <option value="SRV">SRV</option>
+                            <option value="CAA">CAA</option>
+                            <option value="HTTPS">HTTPS (RFC 9460)</option>
+                            <option value="SVCB">SVCB (RFC 9460)</option>
+                            <option value="DS">DS</option>
+                            <option value="DNSKEY">DNSKEY</option>
+                            <option value="TLSA">TLSA</option>
+                            <option value="SSHFP">SSHFP</option>
+                            <option value="URI">URI</option>
+                            <option value="LOC">LOC</option>
+                            <option value="NAPTR">NAPTR</option>
                         </select>
                     </div>
                     <div class="mb-3">

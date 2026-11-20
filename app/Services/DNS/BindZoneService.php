@@ -142,6 +142,7 @@ class BindZoneService
      *
      * @param string[] $tokens
      * @param array<int, array{name: string, type: string, ttl: int, content: string}> $records
+     * @param-out array<int, array{name: string, type: string, ttl: int, content: string}> $records
      */
     private function processLineTokens(
         array $tokens,
@@ -243,7 +244,11 @@ class BindZoneService
         if (str_ends_with($name, '.')) {
             $resolvedName = $name;
         } else {
-            $knownTokens = ['IN', 'CS', 'CH', 'HS', 'A', 'AAAA', 'CNAME', 'MX', 'TXT', 'NS', 'SOA', 'PTR', 'SRV', 'CAA'];
+            $knownTokens = [
+                'IN', 'CS', 'CH', 'HS', 'A', 'AAAA', 'CNAME', 'MX', 'TXT', 'NS', 'SOA', 'PTR',
+                'SRV', 'CAA', 'HTTPS', 'SVCB', 'DS', 'DNSKEY', 'TLSA', 'SSHFP', 'NAPTR', 'LOC',
+                'URI', 'DNAME', 'ALIAS', 'SPF', 'RP', 'HINFO',
+            ];
             if (is_numeric($name) || in_array(strtoupper($name), $knownTokens, true)) {
                 $idx = 0;
                 $resolvedName = $lastName;
@@ -255,6 +260,10 @@ class BindZoneService
         return $resolvedName;
     }
 
+    /**
+     * @param string[] $tokens
+     * @return array{name: string, type: string, ttl: int, content: string}|null
+     */
     private function parseRecordLine(array $tokens, string $origin, int $defaultTtl, string $lastName): ?array
     {
         $idx = 1;
