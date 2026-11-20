@@ -57,6 +57,11 @@ class WebhookService
     {
         $name = trim((string) ($data['name'] ?? ''));
         $url = trim((string) ($data['url'] ?? ''));
+        if (filter_var($url, FILTER_VALIDATE_URL) === false || !preg_match('#^https?://#i', $url)) {
+            $this->logger->warning("Rejected invalid or non-HTTP webhook URL: {$url}");
+            return null;
+        }
+
         $secret = isset($data['secret']) && $data['secret'] !== '' ? (string) $data['secret'] : bin2hex(random_bytes(16));
         $events = is_array($data['events'] ?? null) ? json_encode($data['events']) : (string) ($data['events'] ?? '["*"]');
         $isActive = !empty($data['is_active']) ? 1 : 0;
@@ -78,7 +83,15 @@ class WebhookService
         }
 
         $name = isset($data['name']) ? trim((string) $data['name']) : $webhook->name;
-        $url = isset($data['url']) ? trim((string) $data['url']) : $webhook->url;
+        $url = $webhook->url;
+        if (isset($data['url'])) {
+            $candidateUrl = trim((string) $data['url']);
+            if (filter_var($candidateUrl, FILTER_VALIDATE_URL) === false || !preg_match('#^https?://#i', $candidateUrl)) {
+                $this->logger->warning("Rejected invalid or non-HTTP webhook URL: {$candidateUrl}");
+                return false;
+            }
+            $url = $candidateUrl;
+        }
         $secret = isset($data['secret']) ? (string) $data['secret'] : $webhook->secret;
         $events = json_encode($webhook->events);
         if (isset($data['events'])) {

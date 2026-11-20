@@ -140,7 +140,7 @@ class ServerClusterService
         try {
             $start = microtime(true);
             $res = $client->get('');
-            $latency = round((microtime(true) - $start) * 1000, 2);
+            $latency = round(((float) microtime(true) - (float) $start) * 1000.0, 2);
             return [
                 'success' => true,
                 'latency_ms' => $latency,

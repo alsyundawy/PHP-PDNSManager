@@ -64,7 +64,7 @@ class HealthCheckService
         try {
             $stmt = $this->db->execute('SELECT 1');
             $stmt->fetch();
-            $latency = round((microtime(true) - $start) * 1000, 2);
+            $latency = round(((float) microtime(true) - (float) $start) * 1000.0, 2);
             return [
                 'status' => 'healthy',
                 'latency_ms' => $latency,
@@ -84,7 +84,7 @@ class HealthCheckService
         $start = microtime(true);
         try {
             $res = $this->pdns->get('');
-            $latency = round((microtime(true) - $start) * 1000, 2);
+            $latency = round(((float) microtime(true) - (float) $start) * 1000.0, 2);
             return [
                 'status' => 'healthy',
                 'latency_ms' => $latency,

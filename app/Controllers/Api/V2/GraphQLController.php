@@ -46,7 +46,7 @@ class GraphQLController
 
         if ($method === 'POST') {
             $parsed = $request->getParsedBody();
-            if (empty($parsed)) {
+            if (!is_array($parsed) || empty($parsed)) {
                 $raw = (string) $request->getBody();
                 $parsed = json_decode($raw, true);
             }
