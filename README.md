@@ -476,7 +476,7 @@ Authorization: Bearer pdns_sec_your_generated_api_token_here
 
 ```bash
 curl -X POST https://pdns.example.com/api/v1/zones/example.com/records \
-  -H "Authorization: Bearer pdns_sec_8f92b41c0e" \
+  -H "Authorization: Bearer <your-api-token-here>" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "api.example.com.",
@@ -617,8 +617,7 @@ Contributions are welcome! Please follow these guidelines:
 
 1. Fork the repository and create your feature branch: `git checkout -b feature/amazing-feature`.
 2. Ensure all changes adhere strictly to PSR-12 and max 120-character line lengths.
-3. Verify that all quality gates pass: `./vendor/bin/phpunit --no-coverage`, `./vendor/bin/phpstan analyse`, and
-   `./vendor/bin/phpcs`.
+3. Verify that all quality gates pass: `./vendor/bin/phpunit --no-coverage`, `./vendor/bin/phpstan analyse`, and `./vendor/bin/phpcs`.
 4. Commit your changes with conventional commit messages: `git commit -m 'feat: add DNSSEC automated rollover'`.
 5. Push to your branch and open a Pull Request.
 

@@ -92,7 +92,7 @@ class AuthService
             ((ord($hash[$offset])     & 0x7f) << 24) |
             ((ord($hash[$offset + 1]) & 0xff) << 16) |
             ((ord($hash[$offset + 2]) & 0xff) <<  8) |
-             (ord($hash[$offset + 3]) & 0xff)
+            ((ord($hash[$offset + 3]) & 0xff))
         ) % 1000000;
         return str_pad((string) $otp, 6, '0', STR_PAD_LEFT);
     }

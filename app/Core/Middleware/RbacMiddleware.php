@@ -43,20 +43,32 @@ class RbacMiddleware implements MiddlewareInterface
     private function inferPermission(ServerRequestInterface $request): string
     {
         $path   = $request->getUri()->getPath();
-        $method = $request->getMethod();
+        $method = strtoupper($request->getMethod());
 
-        // BUGFIX: Added PATCH → 'edit' mapping (was missing)
-        $map = [
-            'GET'    => 'view',
-            'POST'   => 'create',
-            'PUT'    => 'edit',
-            'PATCH'  => 'edit',
-            'DELETE' => 'delete',
-        ];
+        $segments = array_values(array_filter(explode('/', trim($path, '/'))));
+        if (!empty($segments) && $segments[0] === 'api') {
+            array_shift($segments);
+            if (!empty($segments) && preg_match('/^v\d+$/i', $segments[0])) {
+                array_shift($segments);
+            }
+        }
 
-        $action   = $map[$method] ?? 'view';
-        $resource = explode('/', trim($path, '/'))[0] ?? 'dashboard';
+        $resource = $segments[0] ?? 'dashboard';
+        $normalizedResource = rtrim($resource, 's');
 
-        return $resource . '.' . $action;
+        // Determine action
+        if (str_ends_with($path, '/delete')) {
+            $action = 'delete';
+        } elseif (str_ends_with($path, '/edit') || in_array($method, ['PUT', 'PATCH'], true)) {
+            $action = 'edit';
+        } elseif ($method === 'DELETE') {
+            $action = 'delete';
+        } elseif ($method === 'POST') {
+            $action = 'create';
+        } else {
+            $action = 'view';
+        }
+
+        return $normalizedResource . '.' . $action;
     }
 }

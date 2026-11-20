@@ -22,7 +22,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         if (in_array($request->getMethod(), ['GET', 'HEAD', 'OPTIONS'])) {
             return $handler->handle($request);
         }
-        if (str_starts_with($request->getUri()->getPath(), '/api')) {
+        $path = $request->getUri()->getPath();
+        if (str_starts_with($path, '/api') || $path === '/graphql') {
             return $handler->handle($request);
         }
         $parsedBody = $request->getParsedBody();

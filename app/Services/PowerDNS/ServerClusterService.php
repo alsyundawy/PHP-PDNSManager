@@ -85,7 +85,7 @@ class ServerClusterService
         }
 
         $this->db->execute(
-            'INSERT INTO pdns_servers (name, api_url, api_key, server_id, is_active, is_default, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, datetime("now"), datetime("now"))',
+            'INSERT INTO pdns_servers (name, api_url, api_key, server_id, is_active, is_default, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
             [$name, $apiUrl, $apiKey, $serverId, $isActive, $isDefault]
         );
 
@@ -120,7 +120,7 @@ class ServerClusterService
         }
 
         $this->db->execute(
-            'UPDATE pdns_servers SET name = ?, api_url = ?, api_key = ?, server_id = ?, is_active = ?, is_default = ?, updated_at = datetime("now") WHERE id = ?',
+            'UPDATE pdns_servers SET name = ?, api_url = ?, api_key = ?, server_id = ?, is_active = ?, is_default = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
             [$name, $apiUrl, $apiKey, $serverId, $isActive, $isDefault, $id]
         );
 

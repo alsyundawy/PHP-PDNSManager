@@ -123,8 +123,8 @@ class Application implements RequestHandlerInterface
     private function loadRoutes(): void
     {
         $router = $this->container->get(Router::class); // NOSONAR - used in required route files
-        require_once $this->basePath . '/routes/web.php';
-        require_once $this->basePath . '/routes/api.php';
+        require $this->basePath . '/routes/web.php';
+        require $this->basePath . '/routes/api.php';
     }
 
     private function emit(Response $response): void

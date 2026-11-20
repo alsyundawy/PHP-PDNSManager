@@ -35,14 +35,14 @@ class ContentSecurityPolicyMiddleware implements MiddlewareInterface
         if ($this->config->get('security.csp_enabled', true)) {
             // SECURITY HARDENING: Strict Zero CDN Content Security Policy with Nonce
             $csp = "default-src 'self'; "
-                 . "script-src 'self' 'nonce-{$nonce}'; "
-                 . "style-src 'self' 'unsafe-inline'; "
-                 . "img-src 'self' data:; "
-                 . "font-src 'self' data:; "
-                 . "connect-src 'self'; "
-                 . "frame-ancestors 'none'; "
-                 . "base-uri 'self'; "
-                 . "form-action 'self';";
+                . "script-src 'self' 'nonce-{$nonce}'; "
+                . "style-src 'self' 'unsafe-inline'; "
+                . "img-src 'self' data:; "
+                . "font-src 'self' data:; "
+                . "connect-src 'self'; "
+                . "frame-ancestors 'none'; "
+                . "base-uri 'self'; "
+                . "form-action 'self';";
 
             $response = $response
                 ->withHeader('Content-Security-Policy', $csp)

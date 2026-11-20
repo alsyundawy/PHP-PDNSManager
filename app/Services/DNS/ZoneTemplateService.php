@@ -83,7 +83,7 @@ class ZoneTemplateService
         }
 
         $this->db->execute(
-            'INSERT INTO zone_templates (name, description, is_default, created_at, updated_at) VALUES (?, ?, ?, datetime("now"), datetime("now"))',
+            'INSERT INTO zone_templates (name, description, is_default, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
             [$name, $description, $isDefault]
         );
 
@@ -105,7 +105,7 @@ class ZoneTemplateService
         $priority = isset($rec['priority']) && $rec['priority'] !== '' ? (int) $rec['priority'] : null;
 
         $this->db->execute(
-            'INSERT INTO zone_template_records (template_id, name, type, content, ttl, priority, created_at) VALUES (?, ?, ?, ?, ?, ?, datetime("now"))',
+            'INSERT INTO zone_template_records (template_id, name, type, content, ttl, priority, created_at) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)',
             [$templateId, $name, $type, $content, $ttl, $priority]
         );
     }

@@ -20,13 +20,14 @@ class AuthenticationMiddleware implements MiddlewareInterface
     }
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $path = $request->getUri()->getPath();
         $route = $request->getAttribute('route');
-        if ($route && in_array($route, ['login', 'logout'])) {
+        if (($route && in_array($route, ['login', 'logout'])) || in_array($path, ['/login', '/logout', '/api/v1/health', '/health'])) {
             return $handler->handle($request);
         }
         $user = $this->auth->check();
         if (!$user) {
-            if (str_starts_with($request->getUri()->getPath(), '/api')) {
+            if (str_starts_with($path, '/api')) {
                 throw new HttpException(401, 'Unauthenticated');
             }
             return new Response(302, ['Location' => '/login']);

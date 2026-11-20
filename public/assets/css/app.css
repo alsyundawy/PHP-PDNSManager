@@ -17,8 +17,8 @@
  */
 
 /* --------------------------------------------------------------------------
-   1. Design Tokens & Root Theme Variables (Light & Default Mode)
-   -------------------------------------------------------------------------- */
+  1. Design Tokens & Root Theme Variables (Light & Default Mode)
+  -------------------------------------------------------------------------- */
 :root {
   /* Safe Area Insets (Xiaomi, Redmi, POCO notch/punch-hole & home pill) */
   --safe-top: env(safe-area-inset-top, 0px);
@@ -101,8 +101,8 @@
 }
 
 /* --------------------------------------------------------------------------
-   2. Dark Theme Variables (Matching visualsubnetcalc & ns1.orion.net.id)
-   -------------------------------------------------------------------------- */
+  2. Dark Theme Variables (Matching visualsubnetcalc & ns1.orion.net.id)
+  -------------------------------------------------------------------------- */
 [data-bs-theme="dark"],
 [data-theme="dark"] {
   --bg-1: #0f172a;
@@ -158,8 +158,8 @@
 }
 
 /* --------------------------------------------------------------------------
-   3. Global Reset & Anti-Clipping Foundations (Xiaomi / MIUI / HyperOS)
-   -------------------------------------------------------------------------- */
+  3. Global Reset & Anti-Clipping Foundations (Xiaomi / MIUI / HyperOS)
+  -------------------------------------------------------------------------- */
 *,
 *::before,
 *::after {
@@ -228,8 +228,8 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   4. Sidebar Navigation (Desktop Sticky + Mobile Offcanvas Drawer)
-   -------------------------------------------------------------------------- */
+  4. Sidebar Navigation (Desktop Sticky + Mobile Offcanvas Drawer)
+  -------------------------------------------------------------------------- */
 .sidebar {
   background: var(--sidebar-bg);
   color: var(--sidebar-text);
@@ -395,8 +395,8 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   5. Top Navbar & Glassmorphic Elements
-   -------------------------------------------------------------------------- */
+  5. Top Navbar & Glassmorphic Elements
+  -------------------------------------------------------------------------- */
 main {
   min-width: 0;
   width: 100%;
@@ -441,8 +441,8 @@ main {
 }
 
 /* --------------------------------------------------------------------------
-   6. Dashboard Cards & Metrics (Glassmorphism & Glow)
-   -------------------------------------------------------------------------- */
+  6. Dashboard Cards & Metrics (Glassmorphism & Glow)
+  -------------------------------------------------------------------------- */
 .dashboard-card {
   background: var(--card-bg);
   border: 1px solid var(--glass-border);
@@ -496,8 +496,8 @@ main {
 }
 
 /* --------------------------------------------------------------------------
-   7. Anti-Clipping Data Tables (Critical for Xiaomi, Redmi & POCO)
-   -------------------------------------------------------------------------- */
+  7. Anti-Clipping Data Tables (Critical for Xiaomi, Redmi & POCO)
+  -------------------------------------------------------------------------- */
 .table-responsive,
 .table-responsive-wrapper {
   width: 100%;
@@ -558,8 +558,8 @@ main {
 }
 
 /* --------------------------------------------------------------------------
-   8. Form Controls & Buttons
-   -------------------------------------------------------------------------- */
+  8. Form Controls & Buttons
+  -------------------------------------------------------------------------- */
 .form-control,
 .form-select {
   border: 1px solid var(--input-border);
@@ -632,8 +632,8 @@ main {
 }
 
 /* --------------------------------------------------------------------------
-   9. Multi-Resolution Media Queries (VGA 320px-640px to 2K 2560px+)
-   -------------------------------------------------------------------------- */
+  9. Multi-Resolution Media Queries (VGA 320px-640px to 2K 2560px+)
+  -------------------------------------------------------------------------- */
 /* Ultra-Compact & VGA Mobile (320px - 480px, e.g. iPhone SE, entry POCO C, Redmi A) */
 @media (max-width: 480px) {
   html {

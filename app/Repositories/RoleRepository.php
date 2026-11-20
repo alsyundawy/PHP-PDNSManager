@@ -33,10 +33,10 @@ class RoleRepository implements RoleRepositoryInterface
         try {
             $stmt = $this->db->execute(
                 'SELECT DISTINCT p.name FROM permissions p
-                 JOIN permission_role pr ON p.id = pr.permission_id
-                 JOIN roles r ON pr.role_id = r.id
-                 JOIN user_role ur ON r.id = ur.role_id
-                 WHERE ur.user_id = :user_id',
+                JOIN permission_role pr ON p.id = pr.permission_id
+                JOIN roles r ON pr.role_id = r.id
+                JOIN user_role ur ON r.id = ur.role_id
+                WHERE ur.user_id = :user_id',
                 ['user_id' => $userId]
             );
             return array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'name');

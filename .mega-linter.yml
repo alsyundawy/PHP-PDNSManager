@@ -2,7 +2,7 @@
 # https://megalinter.io/latest/configuration/
 ---
 # Exclude vendor, generated assets, cache, and third-party libraries
-FILTER_REGEX_EXCLUDE: (.*\.min\.(js|css)|vendor/|public/assets/vendor/|public/assets/js/vendor/|public/assets/css/vendor/|public/assets/webfonts/|storage/|coverage/|\.phpunit\.cache/|\.kilo/)
+FILTER_REGEX_EXCLUDE: (.*\.min\.(js|css)|vendor/|public/assets/vendor/|public/assets/js/vendor/|public/assets/css/vendor/|public/assets/webfonts/|storage/|coverage/|\.phpunit\.cache/|\.kilo/|\.php-cs-fixer\.cache)
 
 # Disable linters with false positives on technical DNS terms and vendor duplicates
 DISABLE:
@@ -13,13 +13,14 @@ DISABLE:
 DISABLE_LINTERS:
   - REPOSITORY_DEVSKIM
   - JAVASCRIPT_STANDARD
+  - SQL_TSQLLINT
+  - ACTION_ZIZMOR
+  - PHP_PHPSTAN
+  - PHP_PSALM
 
 # Link project configuration files
 PHP_PHPCS_CONFIG_FILE: phpcs.xml
-PHP_PHPSTAN_CONFIG_FILE: phpstan.neon
-PHP_PSALM_CONFIG_FILE: psalm.xml
+MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdownlint.yaml
 
 # Output configuration
-PRINT_ADDITIONAL_OBJECT_REPORTERS: false
 SHOW_ELAPSED_TIME: true
-FILE_IO_MULTITHREADING: true

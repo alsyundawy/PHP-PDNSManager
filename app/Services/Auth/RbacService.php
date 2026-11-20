@@ -29,7 +29,17 @@ class RbacService
             return true;
         }
         $permissions = $this->getUserPermissions($userObj);
-        return in_array($permission, $permissions, true);
+        if (in_array($permission, $permissions, true)) {
+            return true;
+        }
+        $parts = explode('.', $permission, 2);
+        if (count($parts) === 2) {
+            $altResource = str_ends_with($parts[0], 's') ? substr($parts[0], 0, -1) : $parts[0] . 's';
+            if (in_array($altResource . '.' . $parts[1], $permissions, true)) {
+                return true;
+            }
+        }
+        return false;
     }
     public function getUser(int $userId): ?User
     {

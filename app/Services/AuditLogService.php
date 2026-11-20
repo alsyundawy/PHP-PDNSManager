@@ -63,8 +63,10 @@ class AuditLogService
     private function sanitizePayload(array $payload): array
     {
         $sensitive = ['password', 'password_hash', 'token', 'secret', 'api_key', 'totp_secret'];
-        foreach ($sensitive as $key) {
-            if (isset($payload[$key])) {
+        foreach ($payload as $key => $value) {
+            if (is_array($value)) {
+                $payload[$key] = $this->sanitizePayload($value);
+            } elseif (in_array(strtolower((string) $key), $sensitive, true)) {
                 $payload[$key] = '[REDACTED]';
             }
         }

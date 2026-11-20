@@ -62,7 +62,7 @@ class WebhookService
         $isActive = !empty($data['is_active']) ? 1 : 0;
 
         $this->db->execute(
-            'INSERT INTO webhooks (name, url, secret, events, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, datetime("now"), datetime("now"))',
+            'INSERT INTO webhooks (name, url, secret, events, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
             [$name, $url, $secret, $events, $isActive]
         );
 
@@ -91,7 +91,7 @@ class WebhookService
         }
 
         $this->db->execute(
-            'UPDATE webhooks SET name = ?, url = ?, secret = ?, events = ?, is_active = ?, updated_at = datetime("now") WHERE id = ?',
+            'UPDATE webhooks SET name = ?, url = ?, secret = ?, events = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
             [$name, $url, $secret, $events, $isActive, $id]
         );
 
@@ -150,7 +150,7 @@ class WebhookService
                     'body' => $jsonPayload,
                 ]);
 
-                $this->db->execute('UPDATE webhooks SET last_triggered_at = datetime("now") WHERE id = ?', [$webhook->id]);
+                $this->db->execute('UPDATE webhooks SET last_triggered_at = CURRENT_TIMESTAMP WHERE id = ?', [$webhook->id]);
             } catch (\Throwable $e) {
                 $this->logger->warning("Webhook delivery failed to {$webhook->url}: " . $e->getMessage());
             }

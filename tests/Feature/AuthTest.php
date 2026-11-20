@@ -37,4 +37,23 @@ class AuthTest extends TestCase
         $user = $this->auth->login('testuser', 'wrong', '192.0.2.1');
         $this->assertNull($user);
     }
+
+    public function testLoginRouteAccessibleWithoutSession(): void
+    {
+        $_SESSION = [];
+        $app = new Application(__DIR__ . '/../../');
+        $request = new \Nyholm\Psr7\ServerRequest('GET', new \Nyholm\Psr7\Uri('/login'));
+        $response = $app->handle($request);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertStringContainsString('form', (string) $response->getBody());
+    }
+
+    public function testHealthEndpointAccessibleWithoutAuth(): void
+    {
+        $_SESSION = [];
+        $app = new Application(__DIR__ . '/../../');
+        $request = new \Nyholm\Psr7\ServerRequest('GET', new \Nyholm\Psr7\Uri('/api/v1/health'));
+        $response = $app->handle($request);
+        $this->assertEquals(200, $response->getStatusCode());
+    }
 }

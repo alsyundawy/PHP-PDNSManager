@@ -53,7 +53,7 @@ class OrganizationService
     public function createOrganization(string $name, string $slug, ?string $description = null): ?Organization
     {
         $this->db->execute(
-            'INSERT INTO organizations (name, slug, description, created_at, updated_at) VALUES (?, ?, ?, datetime("now"), datetime("now"))',
+            'INSERT INTO organizations (name, slug, description, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)',
             [trim($name), trim($slug), $description]
         );
 
@@ -64,7 +64,11 @@ class OrganizationService
     public function addUserToOrganization(int $organizationId, int $userId, string $role = 'member'): void
     {
         $this->db->execute(
-            'INSERT OR REPLACE INTO organization_user (organization_id, user_id, role, created_at) VALUES (?, ?, ?, datetime("now"))',
+            'DELETE FROM organization_user WHERE organization_id = ? AND user_id = ?',
+            [$organizationId, $userId]
+        );
+        $this->db->execute(
+            'INSERT INTO organization_user (organization_id, user_id, role, created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)',
             [$organizationId, $userId, $role]
         );
     }
@@ -79,10 +83,16 @@ class OrganizationService
 
     public function assignZoneToOrganization(string $zoneId, int $organizationId): void
     {
-        $this->db->execute(
-            'INSERT OR IGNORE INTO zone_organizations (zone_id, organization_id, created_at) VALUES (?, ?, datetime("now"))',
+        $stmt = $this->db->execute(
+            'SELECT 1 FROM zone_organizations WHERE zone_id = ? AND organization_id = ? LIMIT 1',
             [$zoneId, $organizationId]
         );
+        if ($stmt->fetch() === false) {
+            $this->db->execute(
+                'INSERT INTO zone_organizations (zone_id, organization_id, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)',
+                [$zoneId, $organizationId]
+            );
+        }
     }
 
     public function removeZoneFromOrganization(string $zoneId, int $organizationId): void
@@ -136,8 +146,8 @@ class OrganizationService
                 // Check if user belongs to an org assigned to this zone
                 $stmt = $this->db->execute(
                     'SELECT COUNT(*) as cnt FROM zone_organizations zo
-                     JOIN organization_user ou ON zo.organization_id = ou.organization_id
-                     WHERE zo.zone_id = ? AND ou.user_id = ?',
+                    JOIN organization_user ou ON zo.organization_id = ou.organization_id
+                    WHERE zo.zone_id = ? AND ou.user_id = ?',
                     [$zoneId, $userId]
                 );
                 $userAccess = $stmt->fetch(PDO::FETCH_ASSOC);

@@ -33,6 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BRANCH: main
           VALIDATE_ALL_CODEBASE: false
+          COMPOSER_IGNORE_PLATFORM_REQS: "1"
           VALIDATE_PHP_BUILTIN: true
           VALIDATE_PHP_PHPCS: true
           VALIDATE_JAVASCRIPT_ES: true

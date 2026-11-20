@@ -83,14 +83,14 @@ $token = $csrfToken;
                                 <i class="fas fa-user text-secondary" aria-hidden="true"></i>
                             </span>
                             <input type="text"
-                                   class="form-control border-start-0 ps-0"
-                                   id="username"
-                                   name="username"
-                                   autocomplete="username"
-                                   required
-                                   autofocus
-                                   placeholder="admin"
-                                   spellcheck="false">
+                                class="form-control border-start-0 ps-0"
+                                id="username"
+                                name="username"
+                                autocomplete="username"
+                                required
+                                autofocus
+                                placeholder="admin"
+                                spellcheck="false">
                         </div>
                     </div>
 
@@ -103,12 +103,12 @@ $token = $csrfToken;
                                 <i class="fas fa-lock text-secondary" aria-hidden="true"></i>
                             </span>
                             <input type="password"
-                                   class="form-control border-start-0 ps-0"
-                                   id="password"
-                                   name="password"
-                                   autocomplete="current-password"
-                                   required
-                                   placeholder="••••••••">
+                                class="form-control border-start-0 ps-0"
+                                id="password"
+                                name="password"
+                                autocomplete="current-password"
+                                required
+                                placeholder="••••••••">
                         </div>
                     </div>
 

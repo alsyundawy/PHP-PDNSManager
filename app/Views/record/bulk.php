@@ -84,7 +84,7 @@
         <div class="card-body p-0">
             <form method="POST" action="/zones/bulk-records" id="bulkActionForm">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES, 'UTF-8') ?>">
-                
+
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">

@@ -104,7 +104,8 @@ Extensive testing on MIUI and HyperOS default browsers (Mi Browser and Chromium 
 DevSkim flags `localhost` and `127.0.0.1` bindings as potential indicators of debug code or anti-scaling patterns. The alerts were addressed through:
 
 - **RFC 2606 & RFC 5737 Sanitization**: Replaced `admin@localhost` with `admin@example.com` in `InitialSeeder.php`, and replaced `127.0.0.1` with `192.0.2.1` in `AuthTest.php` and `PowerDNSClientTest.php`.
-- **PowerDNS API Protocol Compliance**: PowerDNS Authoritative Server HTTP API officially uses `localhost` as the canonical default server identifier (`/api/v1/servers/localhost`). Documented with inline suppressions (`// DevSkim: ignore DS137138 - PowerDNS standard default server ID`) across `Database.php`, `config/database.php`, `config/powerdns.php`, `PowerDNSClient.php`, `ServerClusterService.php`, `PdnsServer.php`, `ServerController.php`, `ServerApiController.php`, `create.php`, and `002_roadmap_features.sql`.
+- **PowerDNS API Protocol Compliance**: PowerDNS Authoritative Server HTTP API officially uses `localhost` as the canonical default server identifier (`/api/v1/servers/localhost`).
+  Documented with inline suppressions (`// DevSkim: ignore DS137138 - PowerDNS standard default server ID`) across `Database.php`, `config/database.php`, `config/powerdns.php`, `PowerDNSClient.php`, `ServerClusterService.php`, `PdnsServer.php`, `ServerController.php`, `ServerApiController.php`, `create.php`, and `002_roadmap_features.sql`.
 
 ### 5.2 RFC 6238 TOTP Hashing & Cryptographic Safety (`DS126858`, `DS173237`)
 

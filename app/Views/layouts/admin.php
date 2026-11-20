@@ -98,45 +98,45 @@ $robots = $viewVars['robots'] ?? 'noindex, nofollow';
                 <ul class="nav flex-column mb-auto">
                     <li class="nav-item">
                         <a class="nav-link <?= request()->getPath() === DASHBOARD_URI ? 'active' : '' ?>"
-                           href="<?= DASHBOARD_URI ?>"
-                           <?= request()->getPath() === DASHBOARD_URI ? 'aria-current="page"' : '' ?>>
+                            href="<?= DASHBOARD_URI ?>"
+                            <?= request()->getPath() === DASHBOARD_URI ? 'aria-current="page"' : '' ?>>
                             <i class="fas fa-tachometer-alt me-2" aria-hidden="true"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= request()->getPath() === '/zones' || (str_starts_with(request()->getPath(), '/zones/') && !str_starts_with(request()->getPath(), '/zones/bulk-records')) ? 'active' : '' ?>"
-                           href="/zones"
-                           <?= request()->getPath() === '/zones' ? 'aria-current="page"' : '' ?>>
+                            href="/zones"
+                            <?= request()->getPath() === '/zones' ? 'aria-current="page"' : '' ?>>
                             <i class="fas fa-globe me-2" aria-hidden="true"></i> Zones
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= request()->getPath() === '/zones/bulk-records' ? 'active' : '' ?>"
-                           href="/zones/bulk-records">
+                            href="/zones/bulk-records">
                             <i class="fas fa-layer-group me-2" aria-hidden="true"></i> Bulk Records
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= str_starts_with(request()->getPath(), '/templates') ? 'active' : '' ?>"
-                           href="/templates">
+                            href="/templates">
                             <i class="fas fa-file-invoice me-2" aria-hidden="true"></i> Zone Templates
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= str_starts_with(request()->getPath(), '/servers') ? 'active' : '' ?>"
-                           href="/servers">
+                            href="/servers">
                             <i class="fas fa-server me-2" aria-hidden="true"></i> Server Clusters
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= str_starts_with(request()->getPath(), '/audit-logs') ? 'active' : '' ?>"
-                           href="/audit-logs">
+                            href="/audit-logs">
                             <i class="fas fa-history me-2" aria-hidden="true"></i> Audit Trail
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= str_starts_with(request()->getPath(), '/health') ? 'active' : '' ?>"
-                           href="/health">
+                            href="/health">
                             <i class="fas fa-heartbeat me-2" aria-hidden="true"></i> Health Check
                         </a>
                     </li>

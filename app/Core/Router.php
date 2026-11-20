@@ -78,7 +78,8 @@ class Router
             if (preg_match($pattern, $uri, $matches)) {
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
                 $handler = $this->resolveHandler($route['handler']);
-                $response = $handler($request, ...$params);
+                $reqArg = $this->prepareRequestArgument($handler, $request);
+                $response = $handler($reqArg, ...$params);
                 if ($response instanceof Response) {
                     return $response;
                 }
@@ -86,6 +87,25 @@ class Router
             }
         }
         throw new HttpException(404, 'Route not found');
+    }
+
+    private function prepareRequestArgument(mixed $handler, ServerRequestInterface $request): mixed
+    {
+        try {
+            $ref = is_array($handler)
+                ? new \ReflectionMethod($handler[0], $handler[1])
+                : new \ReflectionFunction($handler);
+            $params = $ref->getParameters();
+            if (!empty($params)) {
+                $type = $params[0]->getType();
+                if ($type instanceof \ReflectionNamedType && $type->getName() === ServerRequestInterface::class) {
+                    return $request;
+                }
+            }
+        } catch (\ReflectionException) {
+            // Fallback to App\Core\Request
+        }
+        return new Request($request);
     }
 
     private function resolveHandler(mixed $handler): callable
