@@ -31,24 +31,48 @@
 
 ## 🧭 Navigation
 
-- [Overview](#-overview)
-- [Why This Modernized Edition?](#-why-this-modernized-edition)
-- [Key Features](#-key-features)
-- [Architecture & Request Pipeline](#️-architecture--request-pipeline)
-- [DNS Record Types & Authoritative Engine](#-dns-record-types--authoritative-engine)
-- [Visual Subnet Calculator Design & Mobile Responsive System](#-visual-subnet-calculator-design--mobile-responsive-system)
-- [Cross-OS Production Deployment & Clustering](#-cross-os-production-deployment--clustering)
-- [Installation & Setup Guide](#-installation--setup-guide)
-- [Configuration Reference](#️-configuration-reference)
-- [REST & GraphQL API Automation Layer](#-rest--graphql-api-automation-layer)
-- [Quality Assurance & Verification Gates](#-quality-assurance--verification-gates)
-- [Engineering Standards & Invariants](#-engineering-standards--invariants)
-- [Security & Content Safety](#-security--content-safety)
-- [Project Directory Structure](#-project-directory-structure)
-- [Contributing](#-contributing)
-- [Maintainer & Contact](#-maintainer--contact)
-- [Support & Donation](#-support--donation)
-- [License](#-license)
+- [PHP-PDNSManager — Enterprise PowerDNS Authoritative Control Plane](#php-pdnsmanager--enterprise-powerdns-authoritative-control-plane)
+  - [🧭 Navigation](#-navigation)
+  - [🌟 Overview](#-overview)
+  - [🚀 Why This Modernized Edition?](#-why-this-modernized-edition)
+    - [🛡️ 1. Zero-CDN Offline Architecture \& Content Security](#️-1-zero-cdn-offline-architecture--content-security)
+    - [⚡ 2. Strict Authoritative DNS Invariant (No Cache-Poisoning Vectors)](#-2-strict-authoritative-dns-invariant-no-cache-poisoning-vectors)
+    - [🖥️ 3. Multi-PowerDNS Cluster Management \& Health Telemetry](#️-3-multi-powerdns-cluster-management--health-telemetry)
+    - [🎨 4. Visual Subnet Calculator Theming \& Mobile Anti-Clipping Engine](#-4-visual-subnet-calculator-theming--mobile-anti-clipping-engine)
+    - [🔒 5. Enterprise Security \& Defense-in-Depth](#-5-enterprise-security--defense-in-depth)
+    - [🔄 6. RFC 1035 BIND Zone Import/Export \& Templating](#-6-rfc-1035-bind-zone-importexport--templating)
+  - [🎯 Key Features](#-key-features)
+  - [🏗️ Architecture \& Request Pipeline](#️-architecture--request-pipeline)
+  - [📊 DNS Record Types \& Authoritative Engine](#-dns-record-types--authoritative-engine)
+  - [🎨 Visual Subnet Calculator Design \& Mobile Responsive System](#-visual-subnet-calculator-design--mobile-responsive-system)
+  - [🌐 Cross-OS Production Deployment \& Clustering](#-cross-os-production-deployment--clustering)
+    - [Distribution Paths \& Configuration Mapping](#distribution-paths--configuration-mapping)
+    - [Hardened PowerDNS Authoritative Configuration (`pdns.conf`)](#hardened-powerdns-authoritative-configuration-pdnsconf)
+    - [Production Firewall Configuration](#production-firewall-configuration)
+      - [Ubuntu / Debian (UFW)](#ubuntu--debian-ufw)
+      - [Rocky Linux / AlmaLinux (Firewalld)](#rocky-linux--almalinux-firewalld)
+  - [📦 Installation \& Setup Guide](#-installation--setup-guide)
+    - [1. Prerequisites](#1-prerequisites)
+    - [2. Clone \& Install Dependencies](#2-clone--install-dependencies)
+    - [3. Initialize Database \& Seed Administrator](#3-initialize-database--seed-administrator)
+    - [4. File Permissions](#4-file-permissions)
+    - [5. Nginx Production Configuration](#5-nginx-production-configuration)
+  - [⚙️ Configuration Reference](#️-configuration-reference)
+  - [🌐 REST \& GraphQL API Automation Layer](#-rest--graphql-api-automation-layer)
+    - [REST API Authentication](#rest-api-authentication)
+    - [Core REST Endpoints](#core-rest-endpoints)
+    - [Example REST cURL Request](#example-rest-curl-request)
+    - [Zero-Dependency GraphQL Endpoint (`/graphql`)](#zero-dependency-graphql-endpoint-graphql)
+  - [📊 Quality Assurance \& Verification Gates](#-quality-assurance--verification-gates)
+  - [📋 Engineering Standards \& Invariants](#-engineering-standards--invariants)
+  - [🔒 Security \& Content Safety](#-security--content-safety)
+  - [📂 Project Directory Structure](#-project-directory-structure)
+  - [🤝 Contributing](#-contributing)
+  - [📬 Maintainer \& Contact](#-maintainer--contact)
+  - [💖 Support \& Donation](#-support--donation)
+    - [💳 International Support: PayPal](#-international-support-paypal)
+    - [🇮🇩 Indonesian \& Regional Support: QRIS (Quick Response Code Indonesian Standard)](#-indonesian--regional-support-qris-quick-response-code-indonesian-standard)
+  - [📄 License](#-license)
 
 ---
 
@@ -476,7 +500,7 @@ Authorization: Bearer pdns_sec_your_generated_api_token_here
 
 ```bash
 curl -X POST https://pdns.example.com/api/v1/zones/example.com/records \
-  -H "Authorization: Bearer <your-api-token-here>" \
+  -H "X-API-Key: ${PDNS_API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "api.example.com.",

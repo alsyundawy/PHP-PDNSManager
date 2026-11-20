@@ -40,15 +40,15 @@ The design system incorporates the aesthetic architecture of `https://alsyundawy
 ### 3.1 Design Tokens & Palette
 
 - **Dark Mode (Default)**:
-    - Background: Deep slate (`#0f172a` to `#1e293b`).
-    - Card & Surface: Glassmorphic translucent layers (`rgba(15, 23, 42, 0.75)`) with backdrop blur (`blur(12px)`).
-    - Primary Accent: Glowing indigo/electric cyan (`#3b82f6` and `#06b6d4`).
-    - Borders: Semi-transparent glowing strokes (`rgba(255, 255, 255, 0.08)`).
+  - Background: Deep slate (`#0f172a` to `#1e293b`).
+  - Card & Surface: Glassmorphic translucent layers (`rgba(15, 23, 42, 0.75)`) with backdrop blur (`blur(12px)`).
+  - Primary Accent: Glowing indigo/electric cyan (`#3b82f6` and `#06b6d4`).
+  - Borders: Semi-transparent glowing strokes (`rgba(255, 255, 255, 0.08)`).
 - **Light Mode (Adaptive)**:
-    - Background: Clean cool slate (`#f8fafc`).
-    - Card & Surface: Crisp white (`#ffffff`) with diffused elevation shadows (`0 4px 20px -2px rgba(0, 0, 0, 0.05)`).
-    - Primary Accent: Deep royal blue (`#1d4ed8`).
-    - Borders: Light slate (`#e2e8f0`).
+  - Background: Clean cool slate (`#f8fafc`).
+  - Card & Surface: Crisp white (`#ffffff`) with diffused elevation shadows (`0 4px 20px -2px rgba(0, 0, 0, 0.05)`).
+  - Primary Accent: Deep royal blue (`#1d4ed8`).
+  - Borders: Light slate (`#e2e8f0`).
 
 ### 3.2 State Synchronization & Flash-of-Unstyled-Content (FOUC) Prevention
 
@@ -71,21 +71,21 @@ The design system incorporates the aesthetic architecture of `https://alsyundawy
 
 Extensive testing on MIUI and HyperOS default browsers (Mi Browser and Chromium derivatives) identified five root causes for UI truncation and clipping, resolved as follows:
 
-1. **Dynamic Viewport Shrinkage (`100vh` Bug)**:
-    - Dynamic address bars and gesture bars caused the bottom 56px–80px of views (such as form submission buttons and pagination) to be clipped.
-    - **Resolution**: Implemented CSS `100dvh` (Dynamic Viewport Height) with `100svh` fallbacks and dynamic `--vh` JavaScript calculations.
-2. **System Font Inflation / Text Scaling**:
-    - MIUI's font enlargement feature caused button text and badge labels to wrap unpredictably and clip table containers.
-    - **Resolution**: Utilized standard `viewport-fit=cover` and `width=device-width` viewport definitions alongside fluid typography tokens to eliminate artificial font boost without non-standard property conflicts.
-3. **Camera Punch-Hole & Notch Safe Area Insets**:
-    - Hardware cutouts on POCO and Redmi flagships collided with header navigation titles and drawer toggle icons.
-    - **Resolution**: Added `viewport-fit=cover` and applied `env(safe-area-inset-*)` CSS padding constraints to headers, sidebars, and main wrappers.
-4. **DNS Record & Cryptokey Table Overflow**:
-    - Long continuous strings (SPF rules, DKIM 2048-bit base64 keys, DNSSEC DS records) distorted page geometry on mobile devices.
-    - **Resolution**: Integrated automated `.table-responsive` touch-scrolling wrappers with W3C standard `overflow-wrap: anywhere; word-wrap: break-word;` (eliminating the deprecated `word-break: break-word` keyword).
-5. **Mobile Button Over-Expansion Bug**:
-    - A legacy `.btn { width: 100%; }` rule inside `@media (max-width: 640px)` caused buttons in headers, flex bars, and toolbars to expand to 100% width, overflowing parent containers and pushing layout elements off-screen.
-    - **Resolution**: Removed the indiscriminate 100% width rule and provided `.btn-mobile-block` for explicitly desired full-width actions.
+- **1. Dynamic Viewport Shrinkage (`100vh` Bug)**:
+  - Dynamic address bars and gesture bars caused the bottom 56px–80px of views (such as form submission buttons and pagination) to be clipped.
+  - **Resolution**: Implemented CSS `100dvh` (Dynamic Viewport Height) with `100svh` fallbacks and dynamic `--vh` JavaScript calculations.
+- **2. System Font Inflation / Text Scaling**:
+  - MIUI's font enlargement feature caused button text and badge labels to wrap unpredictably and clip table containers.
+  - **Resolution**: Utilized standard `viewport-fit=cover` and `width=device-width` viewport definitions alongside fluid typography tokens to eliminate artificial font boost without non-standard property conflicts.
+- **3. Camera Punch-Hole & Notch Safe Area Insets**:
+  - Hardware cutouts on POCO and Redmi flagships collided with header navigation titles and drawer toggle icons.
+  - **Resolution**: Added `viewport-fit=cover` and applied `env(safe-area-inset-*)` CSS padding constraints to headers, sidebars, and main wrappers.
+- **4. DNS Record & Cryptokey Table Overflow**:
+  - Long continuous strings (SPF rules, DKIM 2048-bit base64 keys, DNSSEC DS records) distorted page geometry on mobile devices.
+  - **Resolution**: Integrated automated `.table-responsive` touch-scrolling wrappers with W3C standard `overflow-wrap: anywhere; word-wrap: break-word;` (eliminating the deprecated `word-break: break-word` keyword).
+- **5. Mobile Button Over-Expansion Bug**:
+  - A legacy `.btn { width: 100%; }` rule inside `@media (max-width: 640px)` caused buttons in headers, flex bars, and toolbars to expand to 100% width, overflowing parent containers and pushing layout elements off-screen.
+  - **Resolution**: Removed the indiscriminate 100% width rule and provided `.btn-mobile-block` for explicitly desired full-width actions.
 
 ### 4.2 Breakpoint Matrix (VGA to 2K/4K)
 
