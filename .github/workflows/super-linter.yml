@@ -35,9 +35,7 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           COMPOSER_IGNORE_PLATFORM_REQS: "1"
           VALIDATE_PHP_BUILTIN: true
-          VALIDATE_PHP_PHPCS: false
           VALIDATE_JAVASCRIPT_ES: true
-          VALIDATE_CSS: false
           VALIDATE_MARKDOWN: true
           MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdownlint.yaml
           VALIDATE_YAML: true
