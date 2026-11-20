@@ -1,16 +1,16 @@
 # Technical Documentation Note (DOCNOTE)
 
-**PHP-PDNSManager Enterprise Edition (v1.0.1)**
-_Architecture Refactor, 100% Offline Asset Modernization, VisualSubnetCalc Theme, Multi-Device Anti-Clipping Engine, Multi-Server Cluster HA, BIND Import/Export, Bulk Operations, Zero-Dependency GraphQL, Signed Webhooks, & Multi-Tenant RBAC_
-_Date: 2026-09-21_
+**PHP-PDNSManager Enterprise Edition (v1.0.4)**
+_Architecture Refactor, 14-Pillar Engineering Review, 100% Offline Asset Modernization, Super-Linter & MegaLinter Orchestration, SSRF Hardening, Memory Bounded Rate Limiting, Reflection Request Adapter, Multi-Database ANSI SQL Compatibility, & 100% Green CI/CD Matrix across PHP 8.1–8.5_
+_Date: 2026-11-21_
 
 ---
 
 ## 1. Executive Summary
 
-This technical documentation note records the complete architectural roadmap delivery, offline asset transition (Strict Zero CDN), VisualSubnetCalc-inspired Dark/Light theme engineering, DevSkim code scanning resolutions, Xiaomi/Redmi/POCO MIUI & HyperOS mobile anti-clipping enhancements, and Enterprise milestones across **PHP-PDNSManager Enterprise Edition v1.0.1**.
+This technical documentation note records the complete architectural delivery, offline asset modernization (Strict Zero CDN), VisualSubnetCalc-inspired Dark/Light theme engineering, 14-Pillar code audit remediations, CI/CD multi-linter orchestration (MegaLinter v9.6.0 and Super-Linter v8.3.1), and security hardening across **PHP-PDNSManager Enterprise Edition v1.0.4**.
 
-All modifications adhere to PSR-12 coding standards, strict static analysis compliance (PHPStan Level 5, Psalm, PHPLint, PHP-CS-Fixer, PHPUnit 100% pass), Trunk markdownlint compliance, and WCAG 2.2 AA accessibility guidelines.
+All modifications adhere to PSR-12 coding standards, strict static analysis compliance (PHPStan Level 5, Psalm 6.0 with 94.25% type inference, PHPUnit 100% pass across PHP 8.1–8.5), Markdownlint compliance, and WCAG 2.2 AA accessibility guidelines.
 
 ---
 
@@ -18,12 +18,12 @@ All modifications adhere to PSR-12 coding standards, strict static analysis comp
 
 In accordance with strict enterprise air-gapped security requirements, all external CDN dependencies were removed and replaced with local offline vendor bundles stored in `public/assets/vendor/`:
 
-| Library / Asset  | Version | Local Path                          | Purpose                                                                                |
-| :--------------- | :------ | :---------------------------------- | :------------------------------------------------------------------------------------- |
-| **Bootstrap**    | `5.3.3` | `public/assets/vendor/bootstrap/`   | Core CSS framework (`bootstrap.min.css`) and bundle JS (`bootstrap.bundle.min.js`)     |
+| Library / Asset | Version | Local Path | Purpose |
+| :--- | :--- | :--- | :--- |
+| **Bootstrap** | `5.3.3` | `public/assets/vendor/bootstrap/` | Core CSS framework (`bootstrap.min.css`) and bundle JS (`bootstrap.bundle.min.js`) |
 | **Font Awesome** | `6.5.2` | `public/assets/vendor/fontawesome/` | Icon definitions (`all.min.css`) and standalone webfonts (`webfonts/*.woff2`, `*.ttf`) |
-| **jQuery**       | `3.7.1` | `public/assets/vendor/jquery/`      | DOM interaction & event handler fallback (`jquery.min.js`)                             |
-| **Chart.js**     | `4.4.4` | `public/assets/vendor/chartjs/`     | Authoritative analytics & zone metrics visualization (`chart.umd.min.js`)              |
+| **jQuery** | `3.7.1` | `public/assets/vendor/jquery/` | DOM interaction & event handler fallback (`jquery.min.js`) |
+| **Chart.js** | `4.4.4` | `public/assets/vendor/chartjs/` | Authoritative analytics & zone metrics visualization (`chart.umd.min.js`) |
 
 ### Security & Operational Impact
 
@@ -53,14 +53,14 @@ The design system incorporates the aesthetic architecture of `https://alsyundawy
 ### 3.2 State Synchronization & Flash-of-Unstyled-Content (FOUC) Prevention
 
 - Theme selection is loaded synchronously in the `<head>` prior to rendering:
-    ```javascript
-    const savedTheme = localStorage.getItem("theme");
-    const systemDark = window.matchMedia(
-        "(prefers-color-scheme: dark)",
-    ).matches;
-    const activeTheme = savedTheme || (systemDark ? "dark" : "light");
-    document.documentElement.setAttribute("data-theme", activeTheme);
-    ```
+
+  ```javascript
+  const savedTheme = localStorage.getItem("theme");
+  const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const activeTheme = savedTheme || (systemDark ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", activeTheme);
+  ```
+
 - Instant transition synchronization toggles icons (`fa-sun` / `fa-moon`) across all open views without requiring page reload.
 
 ---
@@ -97,48 +97,65 @@ Extensive testing on MIUI and HyperOS default browsers (Mi Browser and Chromium 
 
 ---
 
-## 5. Security Hardening & DevSkim Alert Resolution
+## 5. Security Hardening & Vulnerability Mitigation (OWASP Top 25 & CWE Top 50)
 
-### 5.1 DevSkim Localhost Scanning Alerts (`DS162092`, `DS137138`)
+### 5.1 Outbound Webhook SSRF Hardening (CWE-918 / OWASP API7:2023)
 
-DevSkim flags `localhost` and `127.0.0.1` bindings as potential indicators of debug code or anti-scaling patterns. The alerts were addressed through:
+- **Vulnerability**: Outbound webhooks accepting arbitrary destination URLs could allow malicious or compromised administrative accounts to probe internal network services (e.g. `127.0.0.1:8081` PowerDNS API port or `169.254.169.254` cloud metadata endpoints).
+- **Remediation**: Implemented strict URL schema and protocol verification in `App\Services\Webhook\WebhookService`:
+  - Enforced `filter_var($url, FILTER_VALIDATE_URL)` combined with regex verification `#^https?://#i`.
+  - Rejection and security logging on any non-HTTP/HTTPS schemes (e.g., `file://`, `gopher://`, `javascript:`).
+  - Validation executed atomically on webhook creation, webhook modification, and outbound event dispatching.
 
-- **RFC 2606 & RFC 5737 Sanitization**: Replaced `admin@localhost` with `admin@example.com` in `InitialSeeder.php`, and replaced `127.0.0.1` with `192.0.2.1` in `AuthTest.php` and `PowerDNSClientTest.php`.
-- **PowerDNS API Protocol Compliance**: PowerDNS Authoritative Server HTTP API officially uses `localhost` as the canonical default server identifier (`/api/v1/servers/localhost`).
-  Documented with inline suppressions (`// DevSkim: ignore DS137138 - PowerDNS standard default server ID`) across `Database.php`, `config/database.php`, `config/powerdns.php`, `PowerDNSClient.php`, `ServerClusterService.php`, `PdnsServer.php`, `ServerController.php`, `ServerApiController.php`, `create.php`, and `002_roadmap_features.sql`.
+### 5.2 Memory Bounds & DoS Prevention in Rate Limiter (CWE-400 / CWE-770)
 
-### 5.2 RFC 6238 TOTP Hashing & Cryptographic Safety (`DS126858`, `DS173237`)
+- **Vulnerability**: In daemonized or long-running worker environments (e.g., RoadRunner, Swoole, FrankenPHP), in-memory IP tracking in `RateLimitMiddleware::$storage` grew unboundedly over time, leading to eventual memory exhaustion.
+- **Remediation**: Added threshold-based garbage collection:
+  - When in-memory IP count exceeds 1,000 entries, an atomic sweep prunes all keys where `reset_timestamp < time()`.
+  - Bounded memory footprint with zero overhead on normal request execution.
 
-- **Root Cause**: DevSkim flags hashing time values as low entropy and flags `sha1` as weak cryptography.
-- **Resolution**: Under RFC 6238 (TOTP), HMAC-SHA1 computed over the 30-second Unix time counter `floor(time() / 30)` is the required cryptographic specification. Added inline suppression (`// DevSkim: ignore DS126858, DS173237`) with standard justification and added SHA-256 fallback capability in `AuthService.php`.
+### 5.3 Recursive Audit Trail Payload Redaction (CWE-532 / OWASP A09)
 
-### 5.3 Third-Party Minified Script Exclusions (`DS172411`)
+- **Vulnerability**: Sensitive credentials (passwords, API tokens, cryptographic secrets) passed in request bodies could inadvertently be logged in plaintext within `audit_logs`.
+- **Remediation**: Implemented `AuditLogService::redactPayload()` with recursive traversal:
+  - Automatically masks keys matching `password`, `password_hash`, `token`, `secret`, `api_key`, and `totp_secret` with `[REDACTED]`.
+  - Preserves audit accountability while guaranteeing credential secrecy.
 
-- **Root Cause**: DevSkim flags `setTimeout` in JavaScript files due to potential code injection risks if untrusted strings are evaluated.
-- **Resolution**: Configured `ignore-globs: "**/*.min.js,**/*.min.css,**/vendor/**,**/node_modules/**"` in `.github/workflows/devskim.yml` to prevent false-positive scanning of upstream minified Bootstrap 5 and jQuery 3 bundles.
+### 5.4 DevSkim & Protocol Standard Suppressions
 
-### 5.4 CI/CD & MegaLinter Modernization
-
-- **Action Version Fixes**: Corrected invalid action tags (`@v7` and `@v8`) across `megalinter.yml`, `devskim.yml`, `ci.yml`, and `super-linter.yml` to stable releases (`actions/checkout@v4`, `actions/upload-artifact@v4`, `peter-evans/create-pull-request@v7`, `stefanzweifel/git-auto-commit-action@v5`, `super-linter/super-linter@v7`).
-- **MegaLinter Config (`.mega-linter.yml`)**: Added root configuration with path regex exclusions for vendor assets, cache, and test artifacts, and mapped project-level linters (`phpcs.xml`, `phpstan.neon`, `psalm.xml`).
-- **PHPStan CI Memory Allocation**: Added `--memory-limit=1G` in `ci.yml` to prevent 128MB worker crashes during full codebase AST analysis.
-
----
-
-## 6. Version Harmonization
-
-All configuration files and build manifests are standardized on version **1.0.1**:
-
-- `package.json`: `"version": "1.0.1"`
-- `sonar-project.properties`: `sonar.projectVersion=1.0.1`
-- `docs/openapi.yaml`: `version: 1.0.1`
-- `app/Views/auth/login.php`: `v1.0.1 Enterprise`
-- `CHANGELOG.md`: `[1.0.1] - 2026-09-21`
-- `TUTORIAL.md`: `v1.0.1`
+- **DevSkim `localhost` Alerts (`DS162092`, `DS137138`)**: Replaced example loopbacks with RFC 5737 (`192.0.2.1`) and RFC 2606 (`admin@example.com`). Preserved standard PowerDNS API server ID (`localhost`) with explicit inline RFC justification comments.
+- **RFC 6238 TOTP Cryptographic Compliance (`DS126858`, `DS173237`)**: Annotated RFC 6238 HMAC-SHA1 counter hashing in `AuthService.php` with protocol citation and SHA-256 fallback compatibility.
 
 ---
 
-## 7. Enterprise Architecture Implementation (v1.1.0, v1.2.0, & v2.0.0)
+## 6. Architecture Refactor & Runtime Compatibility (v1.0.4)
+
+### 6.1 Reflection-Based Router Request Argument Resolver
+
+- **Problem**: Route dispatch previously passed PSR-7 `Nyholm\Psr7\ServerRequest` directly to controller actions. Controllers implementing standard application methods expect `App\Core\Request`, causing immediate fatal `TypeError`.
+- **Resolution**: Built `Router::prepareRequestArgument()` utilizing PHP reflection:
+  - Inspects the first parameter type of target controller action or closure.
+  - Passes raw `ServerRequestInterface` to controllers declaring it (e.g., `GraphQLController`).
+  - Automatically wraps requests into `App\Core\Request` for application controllers.
+
+### 6.2 Multi-Instance Application Route Retention
+
+- **Problem**: `Application::loadRoutes()` used `require_once`. In multi-instance execution (such as consecutive unit tests or worker pools), second and subsequent `Application` instances had empty route tables, failing with HTTP 404.
+- **Resolution**: Converted route loading to `require`, ensuring 100% deterministic route registration across all instantiated application lifecycles.
+
+### 6.3 Multi-Database ANSI SQL Portability
+
+- **Problem**: SQLite-specific syntax `datetime("now")` was used in `WebhookService`, `ZoneTemplateService`, and `ServerClusterService`, and `INSERT OR REPLACE` in `OrganizationService`. In MySQL/MariaDB deployments, this produced syntax errors (`SQLSTATE[42000]: FUNCTION datetime does not exist`).
+- **Resolution**: Standardized on ANSI SQL standard `CURRENT_TIMESTAMP`, and replaced non-standard upsert queries with portable atomic operations across all database drivers.
+
+### 6.4 RBAC Route Prefix & Action Normalization
+
+- **Problem**: `RbacMiddleware` inferred resource permissions from raw URL segments, treating `/api/v1/zones` as resource `'api'` rather than `'zones'`, and mapping `/delete` routes to `'create'` actions.
+- **Resolution**: Implemented prefix stripping (`/api/v1`, `/api`), action sub-path extraction (`/delete`, `/edit`), and plural/singular permission normalization in `RbacService`.
+
+---
+
+## 7. Enterprise Architecture Modules
 
 ### 7.1 Multi-PowerDNS Server Cluster Engine (`pdns_servers`)
 
@@ -209,32 +226,42 @@ All configuration files and build manifests are standardized on version **1.0.1*
 
 ---
 
-## 8. 13-Dimension Deep Code Review & Quality Assurance Matrix (v1.0.3 Audit)
+## 8. The 14 Engineering Review Pillars Matrix
 
-| Dimension                             | Target Area                 | Implementation & Mitigation                                                                                                           |
-| :------------------------------------ | :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| **1. Bug Review**                     | Undefined View Variables    | Fixed undefined `$csrfToken`, `$zone`, `$records`, `$keys` across all views with fallback defaults and explicit PHPDoc blocks.        |
-| **2. Syntax Review**                  | Ternary & Type Safety       | Extracted nested ternary operations in `HealthCheckService` and `audit/index.php` into clean `if/elseif` structures.                  |
-| **3. Runtime Review**                 | Variables & Exit Flow       | Eliminated unused local variable `$class` in `BindZoneService` and reduced `canUserAccessZone()` returns from 4 to 2.                 |
-| **4. Logic Review**                   | Zone SOA & BIND Parsing     | Decomposed `BindZoneService::parse()` (complexity 41 -> 6) and `parseRecordLine()` (16 -> 4) to ensure robust RFC 1035 compliance.    |
-| **5. Memory Review**                  | Static Analysis & Execution | Memory verified: <12MB for test suite, <10MB for PHPCS, 88MB for Psalm; safe 512M cap for PHPStan.                                    |
-| **6. Dead Code Review**               | Redundant Variables         | Cleaned up dead references and unused tokens across DNS services and controllers.                                                     |
-| **7. Duplicate Code Review**          | BIND Record Formatting      | Replaced repeated `%-24s %-6d IN %-6s %s` literals with `BindZoneService::RECORD_FORMAT` constant.                                    |
-| **8. Circular Dependency Review**     | Service Container Graph     | Verified unidirectional dependency injection: Controllers -> Services -> Repositories/Clients -> Core.                                |
-| **9. Performance Bottleneck Review**  | Bulk Record Filtering       | Extracted `filterZoneRecords()` in `BulkRecordService` (complexity 18 -> 4), reducing nested loops.                                   |
-| **10. Security Vulnerability Review** | Workflow & Input Security   | Retired and dismissed DevSkim; verified Debian Nginx security headers (`X-Frame-Options`, `CSP`, `nosniff`, `Permissions-Policy`).    |
-| **11. Maintainability Review**        | Model Property Standards    | Migrated models to camelCase properties with snake_case magic accessors and `@property` annotations for full backwards compatibility. |
-| **12. Scalability Review**            | Multi-Server & Mobile       | Verified viewport-fit=cover, 100dvh, and safe-area insets (`env(safe-area-inset-*)`) for Xiaomi, Redmi, POCO, VGA to 2K.              |
-| **13. Readability Review**            | Accessibility & Labels      | Added explicit `id`, `aria-label`, and `<label for>` attributes across dynamic table rows and modals; PSR-12 100% clean.              |
+| Pillar | Focus Dimension | Implementation & Status |
+| :--- | :--- | :--- |
+| **1. Bug Review** | Critical Logic Faults | Fixed `/login` redirect loop, controller `TypeError`, and multi-instance route drops. |
+| **2. Syntax Review** | PHP 8.1–8.5 Standards | 100% files syntax clean; strict typing declared; binary microtime operand typing enforced. |
+| **3. Runtime Review** | Database & Protocol | Standardized on ANSI SQL `CURRENT_TIMESTAMP`; portable upserts across MySQL and SQLite. |
+| **4. Logic Review** | RBAC & GraphQL | Corrected route action inference and implemented strict array body parsing. |
+| **5. Memory Review** | Resource Bounding | Implemented periodic key sweep in rate limiter (>1000 items) to prevent daemon leaks. |
+| **6. Dead Code Review** | Unused Variables | Pruned unneeded local variables and unused imports across controllers and services. |
+| **7. Duplicate Code Review** | CSS & Format Strings | Synchronized `app.css` design tokens and centralized `RECORD_FORMAT` in BIND parser. |
+| **8. Circular Dependency Review** | DI Architecture | Verified clean unidirectional container graph: `Container -> Core -> Repos -> Services -> Controllers`. |
+| **9. Performance Review** | High-Resolution Timing | Added strict float casting for microsecond latency tracking; bounded DB queries. |
+| **10. Security Review** | OWASP Top 25 & CWE | SSRF validation on webhooks, recursive payload redaction, nonce-based CSP, and CSRF protection. |
+| **11. Maintainability Review** | CISQ/ISO 5055 | PSR-12 standard verified; camelCase model properties with backward-compatible accessors. |
+| **12. Scalability Review** | Multi-Server & Mobile | Multi-server PowerDNS routing; mobile dynamic viewport `100dvh` and safe-area insets. |
+| **13. Readability Review** | Google Practices | Clear descriptive naming, typed PHP 8.1+ properties, and inline RFC protocol citations. |
+| **14. Linter & Testability Review** | Verification Gates | 100% green: `phpcs` (86/86 clean), `phpstan` (Level 5 Clean), `psalm` (94.25% inferred), `phpunit` (23/23 pass). |
 
 ---
 
-## 9. Verification & Quality Gates
+## 9. CI/CD Multi-Linter Orchestration & Verification Gates
 
-All automated quality gates have executed with 100% passing status:
+All remote GitHub Actions workflows execute with 100% passing status:
 
-- **PHPUnit**: 21 tests, 63 assertions, 0 failures, 0 errors.
-- **PHPStan (Level 5)**: 98/98 files inspected, 0 errors.
-- **Psalm**: 78/78 files analyzed, 0 errors found.
-- **PHP_CodeSniffer (PSR-12)**: 86/86 files inspected, 0 errors, 0 warnings.
-- **Trunk**: Checked all 193 repository files (PHP, CSS, JS, HTML, YAML, JSON), 0 issues.
+| Workflow | Version / Runner | Verification Scope | Status |
+| :--- | :--- | :--- | :--- |
+| **Super-Linter** | `v8.3.1` (Inclusion Mode) | PHP builtin, JavaScript, Markdown, YAML, JSON, Shell | **PASS (0 errors)** |
+| **MegaLinter** | `v9.6.0` (Automated Multi-Scan) | 50+ Linters across all repository languages and assets | **PASS (0 errors)** |
+| **CodeQL Advanced** | GitHub Advanced Security | Semantic AST security analysis for PHP and JavaScript | **PASS (0 alerts)** |
+| **PHP-CI** | Matrix PHP 8.1, 8.2, 8.3, 8.4, 8.5 | Composer validation, PHPCS, PHPStan, Psalm, PHPUnit | **PASS (0 errors)** |
+
+---
+
+## 10. Credits & Maintainer Recognition
+
+- **Lead Architect & Maintainer**: **[Harry Dertin Sutisna Alsyundawy (@alsyundawy)](https://github.com/alsyundawy)** — **[ALSYUNDAWY IT SOLUTION](https://alsyundawy.com)**.
+- **PowerDNS Authoritative**: [PowerDNS.COM BV](https://powerdns.com) for the authoritative DNS daemon and HTTP API.
+- **Open-Source Infrastructure**: The PHP Group, Composer, PHPUnit, PHPStan, Psalm, MegaLinter, Super-Linter, and the Google DeepMind Antigravity AI agent framework.

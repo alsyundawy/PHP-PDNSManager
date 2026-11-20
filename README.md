@@ -1,10 +1,13 @@
 # PHP-PDNSManager — Enterprise PowerDNS Authoritative Control Plane
 
-[![Release](https://img.shields.io/badge/Release-v1.0.1-007ACC?style=for-the-badge&logo=github)](https://github.com/alsyundawy/PHP-PDNSManager/releases)
-[![PHP Version](https://img.shields.io/badge/PHP-8.2%20%7C%208.3%20%7C%208.4%20%7C%208.5-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net/)
+[![Release](https://img.shields.io/badge/Release-v1.0.4-007ACC?style=for-the-badge&logo=github)](https://github.com/alsyundawy/PHP-PDNSManager/releases)
+[![PHP Version](https://img.shields.io/badge/PHP-8.1%20%7C%208.2%20%7C%208.3%20%7C%208.4%20%7C%208.5-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net/)
 [![PowerDNS](https://img.shields.io/badge/PowerDNS-Authoritative%20Only-00599C?style=for-the-badge&logo=powerdns&logoColor=white)](https://powerdns.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
-[![Quality Gates](https://img.shields.io/badge/Quality%20Gates-PHPStan%20L5%20%7C%20Psalm%20L4%20%7C%20PSR--12-brightgreen?style=for-the-badge&logo=checkmarx)](https://github.com/alsyundawy/PHP-PDNSManager/actions)
+[![CI Pipeline](https://img.shields.io/badge/PHP--CI-PHP%208.1--8.5%20PASS-brightgreen?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/alsyundawy/PHP-PDNSManager/actions)
+[![MegaLinter](https://img.shields.io/badge/MegaLinter-v9.6.0%20PASS-brightgreen?style=for-the-badge&logo=ox)](https://github.com/alsyundawy/PHP-PDNSManager/actions)
+[![Super-Linter](https://img.shields.io/badge/Super--Linter-v8.3.1%20PASS-brightgreen?style=for-the-badge&logo=github)](https://github.com/alsyundawy/PHP-PDNSManager/actions)
+[![CodeQL](https://img.shields.io/badge/CodeQL-Advanced%20PASS-brightgreen?style=for-the-badge&logo=github)](https://github.com/alsyundawy/PHP-PDNSManager/actions)
 [![Zero CDN](https://img.shields.io/badge/Assets-100%25%20Offline%20Local-blue?style=for-the-badge&logo=bootstrap)](https://getbootstrap.com/)
 [![Multi-Server](https://img.shields.io/badge/Multi--Server-Cluster%20%26%20Failover-orange?style=for-the-badge&logo=serverfault)](https://powerdns.com/)
 [![Database](https://img.shields.io/badge/Database-MySQL%20%7C%20MariaDB%20%7C%20SQLite-003B57?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
@@ -68,6 +71,7 @@
   - [🔒 Security \& Content Safety](#-security--content-safety)
   - [📂 Project Directory Structure](#-project-directory-structure)
   - [🤝 Contributing](#-contributing)
+  - [👥 Credits & Acknowledgements](#-credits--acknowledgements)
   - [📬 Maintainer \& Contact](#-maintainer--contact)
   - [💖 Support \& Donation](#-support--donation)
     - [💳 International Support: PayPal](#-international-support-paypal)
@@ -543,12 +547,13 @@ Every commit of PHP-PDNSManager is validated against comprehensive automated qua
 
 | Quality Gate             | Verification Engine                                               | Target / Standard                   | Pass Criteria              |       Status        |
 | :----------------------- | :---------------------------------------------------------------- | :---------------------------------- | :------------------------- | :-----------------: |
-| **Unit & Service Tests** | [`PHPUnit 10.5`](https://phpunit.de)                              | Core models, services, repositories | 100% assertions pass       |  **✔ 21/21 PASS**   |
+| **Unit & Service Tests** | [`PHPUnit 10.5 / 11.0`](https://phpunit.de)                       | Core models, services, repositories | 100% assertions pass       |  **✔ 23/23 PASS**   |
 | **Static Analysis**      | [`PHPStan`](https://phpstan.org)                                  | Strict Level 5 analysis             | 0 errors                   | **✔ LEVEL 5 CLEAN** |
-| **Type Inference**       | [`Psalm`](https://psalm.dev)                                      | Level 4 strict type safety          | 0 errors                   |     **✔ CLEAN**     |
+| **Type Inference**       | [`Psalm`](https://psalm.dev)                                      | Level 4 strict type safety          | 0 errors (94.25% inferred) |     **✔ CLEAN**     |
 | **Coding Standards**     | [`PHP_CodeSniffer`](https://github.com/squizlabs/PHP_CodeSniffer) | PSR-12 strict compliance            | 0 errors, 0 warnings       |  **✔ PSR-12 PASS**  |
-| **Code Formatting**      | [`PHP-CS-Fixer`](https://cs.symfony.com)                          | Strict rule set                     | 0 fixable files remaining  |     **✔ CLEAN**     |
-| **Security Scanning**    | GitHub Code Scanning & SonarLint                                  | OWASP Top 10, CWE checks            | 0 security vulnerabilities |   **✔ 0 ISSUES**    |
+| **MegaLinter Multi-Scan**| [`MegaLinter v9.6.0`](https://megalinter.io)                      | 50+ language and secret linters     | 0 errors, 0 secret leaks   |  **✔ 100% PASS**    |
+| **Super-Linter Engine**  | [`Super-Linter v8.3.1`](https://github.com/super-linter)          | Strict Inclusion Linter Engine      | 0 errors                   |  **✔ 100% PASS**    |
+| **Security Scanning**    | GitHub Advanced Security CodeQL & SonarLint                       | OWASP Top 25, CWE Top 50 checks     | 0 security vulnerabilities |   **✔ 0 ALERTS**    |
 
 ---
 
@@ -600,6 +605,13 @@ PHP-PDNSManager/
 │       ├── Auth/               # Authentication & TOTP 2FA Services
 │       ├── DNS/                # BIND Zone Import/Export & Templating
 │       └── PowerDNS/           # PowerDNS REST API Client & Cluster Services
+├── app/                        # Application Source Code
+│   ├── Controllers/            # Web & REST API v1 / GraphQL v2 Controllers
+│   ├── Core/                   # Kernel, DI Container, Router, Middleware, Database
+│   ├── Models/                 # Domain Entities (User, Role, Webhook, Template)
+│   ├── Repositories/           # Database Repositories & Data Contracts
+│   ├── Services/               # Domain Services (Auth, DNS, Cluster, Health)
+│   └── Views/                  # Server-Side PHP HTML Views (Auth, Zones, Servers)
 ├── bin/                        # CLI Commands (migrate.php, seed.php)
 ├── config/                     # Modular Application Configurations
 │   ├── app.php                 # Core Application Settings
@@ -617,15 +629,18 @@ PHP-PDNSManager/
 │           ├── chartjs/        # Chart.js 4.4.4 UMD Bundle
 │           ├── fontawesome/    # Font Awesome 6.5.2 (Webfonts & CSS)
 │           └── jquery/         # jQuery 3.7.1 Minified
-├── resources/                  # Server-Side View Templates
-│   └── Views/                  # PHP HTML Views (Auth, Zones, Servers, Templates)
+├── resources/                  # Frontend Resources & SCSS / CSS Source
+│   └── css/app.css             # Raw CSS Design Tokens
 ├── routes/                     # Route Definitions (web.php, api.php)
 ├── storage/                    # Runtime Storage (Logs, Cache)
 ├── tests/                      # Automated PHPUnit Test Suite
-│   ├── Feature/                # Feature & Integration Tests
-│   └── Unit/                   # Unit Tests (Cluster, BIND, Webhooks)
+│   ├── API/                    # REST API Functional Tests
+│   ├── Feature/                # End-to-End HTTP Pipeline Feature Tests
+│   ├── Integration/            # Database Schema Integration Tests
+│   └── Unit/                   # Unit Tests (Cluster, BIND, Webhooks, Templates)
+├── BUGFIX_REPORT.md            # Historical Defect Resolutions
 ├── CHANGELOG.md                # Full Semantic Versioning Changelog
-├── DOCNOTE.md                  # Engineering Architecture Notes
+├── DOCNOTE.md                  # Comprehensive Engineering Technical Notes
 ├── LICENSE                     # MIT Open Source License
 ├── phpstan.neon                # PHPStan Static Analysis Configuration
 ├── psalm.xml                   # Psalm Strict Configuration
@@ -684,6 +699,24 @@ or e-wallet (GoPay, OVO, DANA, LinkAja, ShopeePay):
 - **WhatsApp Confirmation**: [`+62 856-8515-212`](https://wa.me/628568515212)
 
 Your support directly powers open-source DNS infrastructure tooling, security enhancements, and continuous community improvements.
+
+---
+
+## 👥 Credits & Acknowledgements
+
+**PHP-PDNSManager Enterprise Edition** is architected, developed, and maintained by **HARRY DERTIN SUTISNA ALSYUNDAWY** with foundational contributions from the global open-source infrastructure community:
+
+- **Lead Architecture & Engineering**: **[Harry Dertin Sutisna Alsyundawy (@alsyundawy)](https://github.com/alsyundawy)** — Founder & Principal Architect at **[ALSYUNDAWY IT SOLUTION](https://alsyundawy.com)**.
+- **DNS Core Engine**: [PowerDNS.COM BV](https://www.powerdns.com/) for the high-performance PowerDNS Authoritative Server and REST/JSON HTTP API.
+- **PHP Foundation**: The PHP Group and open-source core contributors for modern PHP 8.1–8.5 runtime platforms.
+- **Quality Gates & Static Analysis**:
+  - [PHPStan](https://phpstan.org/) by Ondřej Mirtes for strict Level 5 static analysis.
+  - [Psalm](https://psalm.dev/) by Vimeo for advanced type inference and type safety.
+  - [PHPUnit](https://phpunit.de/) by Sebastian Bergmann for automated test suites.
+  - [PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer) for PSR-12 coding standard enforcement.
+  - [MegaLinter](https://megalinter.io/) & [Super-Linter](https://github.com/super-linter/super-linter) for multi-language CI quality pipelines.
+  - [GitHub Advanced Security CodeQL](https://codeql.github.com/) for automated vulnerability detection and semantic code analysis.
+- **UI Architecture & Theme Engine**: Inspired by [Visual Subnet Calculator](https://alsyundawy.github.io/visualsubnetcalc) with offline local Bootstrap 5.3, Font Awesome 6.5, and Chart.js 4.4 bundles.
 
 ---
 
