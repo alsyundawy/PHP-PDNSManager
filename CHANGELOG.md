@@ -40,48 +40,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### 13-Pillar Code Audit & Quality Hardening
 
 - **Bug & Undefined Variable Remediation**:
-    - Resolved undefined variables (`$csrfToken`, `$zone`, `$records`, `$keys`) and added complete fallback defaults and docblocks across `app/Views/zone/clone.php`, `create.php`, `edit.php`, and `show.php`.
+  - Resolved undefined variables (`$csrfToken`, `$zone`, `$records`, `$keys`) and added complete fallback defaults and docblocks across `app/Views/zone/clone.php`, `create.php`, `edit.php`, and `show.php`.
 - **Cognitive Complexity Reduction (< 15 Threshold)**:
-    - Decomposed `BindZoneService::parse()` (from 41 to 6) by extracting `unrollZoneLines()` and `resolveOriginFromRecords()`.
-    - Decomposed `BindZoneService::parseRecordLine()` (from 16 to 4) by extracting `resolveRecordName()`.
-    - Extracted `filterZoneRecords()` in `BulkRecordService::searchRecords()` (from 18 to 4).
+  - Decomposed `BindZoneService::parse()` (from 41 to 6) by extracting `unrollZoneLines()` and `resolveOriginFromRecords()`.
+  - Decomposed `BindZoneService::parseRecordLine()` (from 16 to 4) by extracting `resolveRecordName()`.
+  - Extracted `filterZoneRecords()` in `BulkRecordService::searchRecords()` (from 18 to 4).
 - **Code Duplication & Dead Code Cleanup**:
-    - Replaced duplicate literal format strings in `BindZoneService` with `RECORD_FORMAT` constant.
-    - Removed unused local variable `$class` in `BindZoneService::parseRecordLine()`.
+  - Replaced duplicate literal format strings in `BindZoneService` with `RECORD_FORMAT` constant.
+  - Removed unused local variable `$class` in `BindZoneService::parseRecordLine()`.
 - **Return Count & Control Flow Simplification**:
-    - Refactored `OrganizationService::canUserAccessZone()` to reduce exit points from 4 to 2.
-    - Extracted nested ternary operations into clean `if/elseif` branches in `HealthCheckService::checkOverall()` and `app/Views/audit/index.php`.
+  - Refactored `OrganizationService::canUserAccessZone()` to reduce exit points from 4 to 2.
+  - Extracted nested ternary operations into clean `if/elseif` branches in `HealthCheckService::checkOverall()` and `app/Views/audit/index.php`.
 - **Model Architecture & Static Analysis Harmonization**:
-    - Migrated `ApiToken`, `Organization`, `Webhook`, `ZoneTemplate`, and `ZoneTemplateRecord` to standard camelCase properties (`userId`, `createdAt`, `updatedAt`, `isActive`, `isDefault`, `templateId`).
-    - Preserved full backwards compatibility with SQLite snake_case schema via magic `__get`, `__set`, `__isset` and `@property` annotations.
-    - Synchronized caller services (`OrganizationService`, `ZoneTemplateService`, `WebhookService`) and unit test assertions.
+  - Migrated `ApiToken`, `Organization`, `Webhook`, `ZoneTemplate`, and `ZoneTemplateRecord` to standard camelCase properties (`userId`, `createdAt`, `updatedAt`, `isActive`, `isDefault`, `templateId`).
+  - Preserved full backwards compatibility with SQLite snake_case schema via magic `__get`, `__set`, `__isset` and `@property` annotations.
+  - Synchronized caller services (`OrganizationService`, `ZoneTemplateService`, `WebhookService`) and unit test assertions.
 
 ### SEO & Web Standards (2026 Modernization)
 
 - **Metadata & Discovery**:
-    - Enhanced `app/Views/layouts/admin.php` and `app/Views/auth/login.php` with 2026 meta keywords, `format-detection: telephone=no`, and OpenGraph locale tags.
-    - Implemented media-query-aware `meta[name="theme-color"]` supporting both dark (`#0f172a`) and light (`#0284c7`) system preferences.
+  - Enhanced `app/Views/layouts/admin.php` and `app/Views/auth/login.php` with 2026 meta keywords, `format-detection: telephone=no`, and OpenGraph locale tags.
+  - Implemented media-query-aware `meta[name="theme-color"]` supporting both dark (`#0f172a`) and light (`#0284c7`) system preferences.
 
 ### Accessibility (WCAG 2.2 AA) & Form Association
 
 - **Input Control Association**:
-    - Added explicit `id` attributes, `aria-label`, and associated `<label for>` elements across dynamic record rows, modal forms, checkboxes, and bulk action select controls in `record/bulk.php`, `template/create.php`, and `zone/show.php`.
-    - Added keyboard interaction handling (`onkeydown` for space and enter keys) on bulk table select-all toggles.
+  - Added explicit `id` attributes, `aria-label`, and associated `<label for>` elements across dynamic record rows, modal forms, checkboxes, and bulk action select controls in `record/bulk.php`, `template/create.php`, and `zone/show.php`.
+  - Added keyboard interaction handling (`onkeydown` for space and enter keys) on bulk table select-all toggles.
 
 ### Multi-Device Responsiveness (VGA to 2K & Xiaomi/POCO Cutoff Prevention)
 
 - **HyperOS & MIUI Safe-Area Enforcement**:
-    - Verified `viewport-fit=cover`, safe-area insets (`env(safe-area-inset-*)`), and dynamic viewport unit (`100dvh`).
-    - Maintained horizontal scroll guards and momentum scrolling (`-webkit-overflow-scrolling: touch`) on wide DNS record tables.
+  - Verified `viewport-fit=cover`, safe-area insets (`env(safe-area-inset-*)`), and dynamic viewport unit (`100dvh`).
+  - Maintained horizontal scroll guards and momentum scrolling (`-webkit-overflow-scrolling: touch`) on wide DNS record tables.
 
 ### Tooling & Verification
 
 - **Linters & Static Verification**:
-    - PHPUnit: 21/21 tests passed (63 assertions).
-    - PHPCS: 86/86 files clean (PSR-12).
-    - PHPStan: 98/98 files clean (0 errors, memory limit 512M).
-    - Psalm: 78/78 files clean (0 errors).
-    - Trunk: Checked all 193 repository files (PHP, CSS, JS, HTML, YAML, JSON) with zero issues.
+  - PHPUnit: 21/21 tests passed (63 assertions).
+  - PHPCS: 86/86 files clean (PSR-12).
+  - PHPStan: 98/98 files clean (0 errors, memory limit 512M).
+  - Psalm: 78/78 files clean (0 errors).
+  - Trunk: Checked all 193 repository files (PHP, CSS, JS, HTML, YAML, JSON) with zero issues.
 
 ---
 
@@ -90,35 +90,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Security & DevSkim Alert Resolution
 
 - **RFC 6238 TOTP & Cryptographic Hashing (#21, #22)**:
-    - Addressed DevSkim alerts in `App\Services\Auth\AuthService` for time-based counter hashing and HMAC-SHA1 with inline standard compliance suppressions and SHA-256 fallback compatibility.
+  - Addressed DevSkim alerts in `App\Services\Auth\AuthService` for time-based counter hashing and HMAC-SHA1 with inline standard compliance suppressions and SHA-256 fallback compatibility.
 - **TLS Protocol Enforcement (#6, #37)**:
-    - Replaced HTTP scheme with HTTPS in `phpunit.xml` (`PDNS_API_URL`) and `app/Views/server/create.php` placeholder to satisfy secure transport requirements.
+  - Replaced HTTP scheme with HTTPS in `phpunit.xml` (`PDNS_API_URL`) and `app/Views/server/create.php` placeholder to satisfy secure transport requirements.
 - **Third-Party Vendor Script Exclusions (#23–#34)**:
-    - Configured `ignore-globs` in `.github/workflows/devskim.yml` for `**/*.min.js`, `**/*.min.css`, and `**/vendor/**`, eliminating upstream `setTimeout` false positives in minified Bootstrap and jQuery bundles.
+  - Configured `ignore-globs` in `.github/workflows/devskim.yml` for `**/*.min.js`, `**/*.min.css`, and `**/vendor/**`, eliminating upstream `setTimeout` false positives in minified Bootstrap and jQuery bundles.
 - **Localhost & Loopback Binding Hardening (#2–#55)**:
-    - Replaced `admin@localhost` with RFC 2606 `admin@example.com` in `InitialSeeder.php`.
-    - Replaced loopback `127.0.0.1` with RFC 5737 `192.0.2.1` in `AuthTest.php` and `PowerDNSClientTest.php`.
-    - Added protocol-documented DevSkim suppressions for PowerDNS standard default server ID (`localhost`) across `Database.php`, `config/database.php`, `config/powerdns.php`, `PowerDNSClient.php`, `ServerClusterService.php`, `PdnsServer.php`, `ServerController.php`, `ServerApiController.php`, and `002_roadmap_features.sql`.
+  - Replaced `admin@localhost` with RFC 2606 `admin@example.com` in `InitialSeeder.php`.
+  - Replaced loopback `127.0.0.1` with RFC 5737 `192.0.2.1` in `AuthTest.php` and `PowerDNSClientTest.php`.
+  - Added protocol-documented DevSkim suppressions for PowerDNS standard default server ID (`localhost`) across `Database.php`, `config/database.php`, `config/powerdns.php`, `PowerDNSClient.php`, `ServerClusterService.php`, `PdnsServer.php`, `ServerController.php`, `ServerApiController.php`, and `002_roadmap_features.sql`.
 
 ### CI/CD & MegaLinter Modernization
 
 - **GitHub Actions Version Harmonization**:
-    - Replaced invalid `@v7` and `@v8` action version tags in `megalinter.yml`, `devskim.yml`, `ci.yml`, and `super-linter.yml` with stable releases (`actions/checkout@v4`, `actions/upload-artifact@v4`, `peter-evans/create-pull-request@v7`, `stefanzweifel/git-auto-commit-action@v5`, `super-linter/super-linter@v7`).
+  - Replaced invalid `@v7` and `@v8` action version tags in `megalinter.yml`, `devskim.yml`, `ci.yml`, and `super-linter.yml` with stable releases (`actions/checkout@v4`, `actions/upload-artifact@v4`, `peter-evans/create-pull-request@v7`, `stefanzweifel/git-auto-commit-action@v5`, `super-linter/super-linter@v7`).
 - **MegaLinter Repository Configuration**:
-    - Created root `.mega-linter.yml` with vendor/cache regex filtering, disabled noisy `COPYPASTE` and `SPELL` linters, and mapped project linter files (`phpcs.xml`, `phpstan.neon`, `psalm.xml`).
-    - Added `--memory-limit=1G` to PHPStan in CI to eliminate 128MB worker crashes.
+  - Created root `.mega-linter.yml` with vendor/cache regex filtering, disabled noisy `COPYPASTE` and `SPELL` linters, and mapped project linter files (`phpcs.xml`, `phpstan.neon`, `psalm.xml`).
+  - Added `--memory-limit=1G` to PHPStan in CI to eliminate 128MB worker crashes.
 
 ### Multi-Device Responsiveness (Xiaomi Redmi, POCO & VGA to 2K)
 
 - **MIUI & HyperOS Display Optimization**:
-    - Removed destructive `.btn { width: 100%; }` rule on mobile viewports (<= 640px) in `app.css` that caused toolbar, action button, and card layout clipping.
-    - Added `@media (max-width: 480px)` ultra-compact viewport optimizations (VGA, iPhone SE, entry POCO C and Redmi A series) with text truncation safeguards for navbar user profile badges.
-    - Enforced safe-area insets (`env(safe-area-inset-*)`) and `-webkit-text-size-adjust: 100%` across all containers to eliminate punch-hole camera cut-offs and system font-scaling distortion.
+  - Removed destructive `.btn { width: 100%; }` rule on mobile viewports (<= 640px) in `app.css` that caused toolbar, action button, and card layout clipping.
+  - Added `@media (max-width: 480px)` ultra-compact viewport optimizations (VGA, iPhone SE, entry POCO C and Redmi A series) with text truncation safeguards for navbar user profile badges.
+  - Enforced safe-area insets (`env(safe-area-inset-*)`) and `-webkit-text-size-adjust: 100%` across all containers to eliminate punch-hole camera cut-offs and system font-scaling distortion.
 
 ### SEO & Social Metadata
 
 - **Master Layout Optimization**:
-    - Enhanced `app/Views/layouts/admin.php` with dynamic title hierarchy, Open Graph tags (`og:title`, `og:description`, `og:type`, `og:site_name`), Twitter Card metadata, and canonical URL links.
+  - Enhanced `app/Views/layouts/admin.php` with dynamic title hierarchy, Open Graph tags (`og:title`, `og:description`, `og:type`, `og:site_name`), Twitter Card metadata, and canonical URL links.
 
 ### Fixed & Quality Assurance
 
@@ -133,32 +133,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - **Multi-PowerDNS Server Cluster Management (Milestone v1.1.0)**:
-    - Database table `pdns_servers` supporting multiple authoritative server nodes and clusters.
-    - `App\Services\PowerDNS\ServerClusterService` for node lifecycle, default cluster routing, latency testing, and client provisioning.
-    - `App\Controllers\ServerController` and `App\Controllers\Api\V1\ServerApiController` providing comprehensive Web GUI and RESTful management.
-    - Web views `app/Views/server/index.php`, `create.php`, and `edit.php`.
+  - Database table `pdns_servers` supporting multiple authoritative server nodes and clusters.
+  - `App\Services\PowerDNS\ServerClusterService` for node lifecycle, default cluster routing, latency testing, and client provisioning.
+  - `App\Controllers\ServerController` and `App\Controllers\Api\V1\ServerApiController` providing comprehensive Web GUI and RESTful management.
+  - Web views `app/Views/server/index.php`, `create.php`, and `edit.php`.
 - **System & PowerDNS Health Check Monitoring (Milestone v1.1.0)**:
-    - `App\Services\Health\HealthCheckService` performing latency and uptime checks for PowerDNS, database connection, storage permissions, and PHP runtime health.
-    - Dedicated `/health` endpoint supporting both rich dashboard UI and automated monitoring JSON output.
-    - Web view `app/Views/health/index.php`.
+  - `App\Services\Health\HealthCheckService` performing latency and uptime checks for PowerDNS, database connection, storage permissions, and PHP runtime health.
+  - Dedicated `/health` endpoint supporting both rich dashboard UI and automated monitoring JSON output.
+  - Web view `app/Views/health/index.php`.
 - **DNS Zone Templating Engine (Milestone v1.1.0)**:
-    - Database tables `zone_templates` and `zone_template_records` with seeded templates for Web Hosting and Google Workspace.
-    - `App\Services\DNS\ZoneTemplateService` and `App\Controllers\ZoneTemplateController` for blueprint creation and instant one-click application to zones.
-    - Web views `app/Views/template/index.php` and `create.php`.
+  - Database tables `zone_templates` and `zone_template_records` with seeded templates for Web Hosting and Google Workspace.
+  - `App\Services\DNS\ZoneTemplateService` and `App\Controllers\ZoneTemplateController` for blueprint creation and instant one-click application to zones.
+  - Web views `app/Views/template/index.php` and `create.php`.
 - **RFC 1035 BIND Zone File Import & Export (Milestone v1.2.0)**:
-    - Pure PHP parser and serializer in `App\Services\DNS\BindZoneService` supporting `$ORIGIN`, `$TTL`, comments, and multi-line parenthesis records.
-    - Interactive import UI at `/zones/import` (`app/Views/zone/import.php`) and standard `.zone` file export at `/zones/{id}/export-bind`.
+  - Pure PHP parser and serializer in `App\Services\DNS\BindZoneService` supporting `$ORIGIN`, `$TTL`, comments, and multi-line parenthesis records.
+  - Interactive import UI at `/zones/import` (`app/Views/zone/import.php`) and standard `.zone` file export at `/zones/{id}/export-bind`.
 - **Cross-Zone Bulk Record Operations (Milestone v1.2.0)**:
-    - `App\Services\DNS\BulkRecordService` and `/zones/bulk-records` UI (`app/Views/record/bulk.php`) to search records across all zones and execute batch IP/content updates or deletions.
+  - `App\Services\DNS\BulkRecordService` and `/zones/bulk-records` UI (`app/Views/record/bulk.php`) to search records across all zones and execute batch IP/content updates or deletions.
 - **Advanced Audit Trail Search & CSV/JSON Export (Milestone v1.2.0)**:
-    - Enhanced `AuditLogRepository` with `search()` and `count()` methods supporting multi-parameter filtering (action, user ID, date ranges, status codes).
-    - Web UI at `/audit-logs` (`app/Views/audit/index.php`) and export endpoints at `/audit-logs/export` supporting raw CSV and JSON formats.
+  - Enhanced `AuditLogRepository` with `search()` and `count()` methods supporting multi-parameter filtering (action, user ID, date ranges, status codes).
+  - Web UI at `/audit-logs` (`app/Views/audit/index.php`) and export endpoints at `/audit-logs/export` supporting raw CSV and JSON formats.
 - **Zero-Dependency GraphQL API Endpoint (Milestone v2.0.0)**:
-    - Built-in lightweight GraphQL engine in `App\Controllers\Api\V2\GraphQLController` handling `/graphql` (queries: `zones`, `zone`, `servers`, `health`, `templates`, `auditLogs`; mutations: `createZone`, `deleteZone`).
+  - Built-in lightweight GraphQL engine in `App\Controllers\Api\V2\GraphQLController` handling `/graphql` (queries: `zones`, `zone`, `servers`, `health`, `templates`, `auditLogs`; mutations: `createZone`, `deleteZone`).
 - **HMAC-SHA256 Webhook Notification System (Milestone v2.0.0)**:
-    - Database table `webhooks` and `App\Services\Webhook\WebhookService` for real-time external event dispatching with `X-PDNS-Signature` headers.
+  - Database table `webhooks` and `App\Services\Webhook\WebhookService` for real-time external event dispatching with `X-PDNS-Signature` headers.
 - **Multi-Tenant RBAC & Organizations (Milestone v2.0.0)**:
-    - Multi-tenant data structures (`organizations`, `organization_user`, `zone_organizations`) and `App\Services\Auth\OrganizationService` for zone-level tenant isolation.
+  - Multi-tenant data structures (`organizations`, `organization_user`, `zone_organizations`) and `App\Services\Auth\OrganizationService` for zone-level tenant isolation.
 
 ### Fixed & Optimized (13-Dimension Deep Code Review)
 
@@ -166,9 +166,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Syntax & Type Safety**: Added dedicated `AuditLogNotFoundException` extending `HttpException(404)`; added explicit parameter type-hints to `Container.php`, `Request.php`, `SessionManager.php`, and `View.php`.
 - **Duplicate & Dead Code**: Replaced repeated string literals (`/zones/`, `application/json`, `zones/`, `/cryptokeys/`, `nonce="..."`) with class constants.
 - **Xiaomi, Redmi, POCO & Cross-Device Responsiveness**:
-    - Implemented dynamic viewport units (`100dvh`, `100svh`) and safe-area insets (`env(safe-area-inset-*)`).
-    - Enforced `-webkit-text-size-adjust: 100%` and vendor prefixes to prevent MIUI/HyperOS font-boosting from breaking card grids.
-    - Implemented `overflow-wrap: anywhere; word-break: break-word;` for long DNS hashes, DKIM keys, and IPv6 records in data tables.
+  - Implemented dynamic viewport units (`100dvh`, `100svh`) and safe-area insets (`env(safe-area-inset-*)`).
+  - Enforced `-webkit-text-size-adjust: 100%` and vendor prefixes to prevent MIUI/HyperOS font-boosting from breaking card grids.
+  - Implemented `overflow-wrap: anywhere; word-break: break-word;` for long DNS hashes, DKIM keys, and IPv6 records in data tables.
 - **Coding Standards & Linters**: 100% clean passes on PHPStan (Level 5, 0 errors), Psalm (0 errors), PHPCS (PSR-12, 0 errors), PHP-CS-Fixer (0 errors), and PHPUnit (21 tests, 62 assertions, 0 failures).
 
 ---
@@ -178,37 +178,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - **100% Offline Asset Suite (Strict Zero CDN)**:
-    - Localized Bootstrap 5.3.3 (`bootstrap.min.css`, `bootstrap.bundle.min.js`).
-    - Localized Font Awesome 6.5.2 (`all.min.css` and 8 binary webfonts in `webfonts/`).
-    - Localized jQuery 3.7.1 (`jquery.min.js`).
-    - Localized Chart.js 4.4.4 UMD bundle (`chart.umd.min.js`).
-    - Strict zero external CDN dependencies for air-gapped and sovereign network compliance.
+  - Localized Bootstrap 5.3.3 (`bootstrap.min.css`, `bootstrap.bundle.min.js`).
+  - Localized Font Awesome 6.5.2 (`all.min.css` and 8 binary webfonts in `webfonts/`).
+  - Localized jQuery 3.7.1 (`jquery.min.js`).
+  - Localized Chart.js 4.4.4 UMD bundle (`chart.umd.min.js`).
+  - Strict zero external CDN dependencies for air-gapped and sovereign network compliance.
 - **VisualSubnetCalc Dark/Light Theme System**:
-    - Implemented slate dark mode palette (`#0f172a` to `#1e293b`) with glassmorphism (`rgba(15, 23, 42, 0.75)`), glowing borders, and electric blue/cyan accents modeled after `visualsubnetcalc`.
-    - Added clean light mode palette with automatic OS preference detection (`prefers-color-scheme`) and persistent `localStorage` synchronization.
-    - Interactive theme toggle button integrated in navigation bars and login views with instant icon switching.
+  - Implemented slate dark mode palette (`#0f172a` to `#1e293b`) with glassmorphism (`rgba(15, 23, 42, 0.75)`), glowing borders, and electric blue/cyan accents modeled after `visualsubnetcalc`.
+  - Added clean light mode palette with automatic OS preference detection (`prefers-color-scheme`) and persistent `localStorage` synchronization.
+  - Interactive theme toggle button integrated in navigation bars and login views with instant icon switching.
 - **Comprehensive Production Tutorial (`TUTORIAL.md`)**:
-    - End-to-end deployment guide for PowerDNS Authoritative Server with MySQL/MariaDB backend on Ubuntu 20.04/22.04 LTS and Rocky Linux 8/9.
-    - High-Availability Authoritative DNS Clustering with Native Database Replication and Primary/Secondary Supermaster setups.
-    - Authoritative DNS Zone and Record management best practices (`A`, `AAAA`, `CNAME`, `MX`, `TXT`, `NS`, `SRV`, `CAA`, `PTR`).
-    - Automated DNSSEC signing, KSK/ZSK key rollover, and DS record generation for parent zone delegation.
-    - RFC 1035 BIND zone file import, export, and cross-zone bulk record operations.
-    - Production UFW, firewalld, iptables, Fail2ban, and Linux kernel sysctl hardening scripts for DNS port 53 and web gateway ports.
+  - End-to-end deployment guide for PowerDNS Authoritative Server with MySQL/MariaDB backend on Ubuntu 20.04/22.04 LTS and Rocky Linux 8/9.
+  - High-Availability Authoritative DNS Clustering with Native Database Replication and Primary/Secondary Supermaster setups.
+  - Authoritative DNS Zone and Record management best practices (`A`, `AAAA`, `CNAME`, `MX`, `TXT`, `NS`, `SRV`, `CAA`, `PTR`).
+  - Automated DNSSEC signing, KSK/ZSK key rollover, and DS record generation for parent zone delegation.
+  - RFC 1035 BIND zone file import, export, and cross-zone bulk record operations.
+  - Production UFW, firewalld, iptables, Fail2ban, and Linux kernel sysctl hardening scripts for DNS port 53 and web gateway ports.
 
 ### Changed
 
 - **Cross-Device Anti-Clipping Engine (Xiaomi, Redmi, POCO & Android/iOS Devices)**:
-    - Fixed dynamic address bar clipping on MIUI / HyperOS using CSS `100dvh` with `100svh` and dynamic `--vh` JavaScript calculations.
-    - Added `viewport-fit=cover` and safe-area inset tokens (`env(safe-area-inset-*)`) to prevent punch-hole camera and gesture bar overlap.
-    - Enforced `-webkit-text-size-adjust: 100%` to prevent font inflation from distorting card layouts.
-    - Added responsive touch-scroll wrappers for wide DNS TXT records, DKIM public keys, and DNSSEC signatures.
+  - Fixed dynamic address bar clipping on MIUI / HyperOS using CSS `100dvh` with `100svh` and dynamic `--vh` JavaScript calculations.
+  - Added `viewport-fit=cover` and safe-area inset tokens (`env(safe-area-inset-*)`) to prevent punch-hole camera and gesture bar overlap.
+  - Enforced `-webkit-text-size-adjust: 100%` to prevent font inflation from distorting card layouts.
+  - Added responsive touch-scroll wrappers for wide DNS TXT records, DKIM public keys, and DNSSEC signatures.
 - **Backend & Static Analysis Fixes**:
-    - `app/Core/helpers.php`: Replaced legacy switch statement with PHP 8 `match` expression, eliminating unreachable statement warnings.
-    - `app/Core/Request.php`: Fixed `getParsedBody()` return type signature to safely handle arrays, objects, and null.
-    - `app/Core/View.php`: Added nullable string type hint (`?string`) to `$layout` property and updated `setLayout(?string)`.
-    - `app/Services/PowerDNS/PowerDNSClient.php`: Consolidated repeated literal `" failed: "` into `formatFailedMessage()` helper method.
-    - `config/app.php` and `tests/Integration/DatabaseTest.php`: Added DevSkim suppressions for `localhost` fallback bindings (`DS162092`, `DS137138`).
-    - Standardized project version to `1.1.0` across `package.json`, `sonar-project.properties`, `docs/openapi.yaml`, `login.php`, and documentation.
+  - `app/Core/helpers.php`: Replaced legacy switch statement with PHP 8 `match` expression, eliminating unreachable statement warnings.
+  - `app/Core/Request.php`: Fixed `getParsedBody()` return type signature to safely handle arrays, objects, and null.
+  - `app/Core/View.php`: Added nullable string type hint (`?string`) to `$layout` property and updated `setLayout(?string)`.
+  - `app/Services/PowerDNS/PowerDNSClient.php`: Consolidated repeated literal `" failed: "` into `formatFailedMessage()` helper method.
+  - `config/app.php` and `tests/Integration/DatabaseTest.php`: Added DevSkim suppressions for `localhost` fallback bindings (`DS162092`, `DS137138`).
+  - Standardized project version to `1.1.0` across `package.json`, `sonar-project.properties`, `docs/openapi.yaml`, `login.php`, and documentation.
 
 ---
 

@@ -37,7 +37,8 @@ jobs:
           VALIDATE_PHP_BUILTIN: true
           VALIDATE_JAVASCRIPT_ES: true
           VALIDATE_MARKDOWN: true
-          MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdownlint.yaml
+          LINTER_RULES_PATH: .github/linters
+          MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           VALIDATE_YAML: true
           VALIDATE_JSON: true
           VALIDATE_BASH: true
