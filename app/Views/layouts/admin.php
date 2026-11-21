@@ -117,6 +117,30 @@ $robots = $viewVars['robots'] ?? 'noindex, nofollow';
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link <?= request()->getPath() === '/zones/reverse-wizard' ? 'active' : '' ?>"
+                            href="/zones/reverse-wizard">
+                            <i class="fas fa-undo-alt me-2" aria-hidden="true"></i> Reverse Wizard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= str_starts_with(request()->getPath(), '/toolbox') ? 'active' : '' ?>"
+                            href="/toolbox">
+                            <i class="fas fa-toolbox me-2" aria-hidden="true"></i> DNS Toolbox
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= str_starts_with(request()->getPath(), '/tsig-keys') ? 'active' : '' ?>"
+                            href="/tsig-keys">
+                            <i class="fas fa-key me-2" aria-hidden="true"></i> TSIG Keys
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= str_starts_with(request()->getPath(), '/backups') ? 'active' : '' ?>"
+                            href="/backups">
+                            <i class="fas fa-shield-alt me-2" aria-hidden="true"></i> Cluster Backups
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link <?= str_starts_with(request()->getPath(), '/templates') ? 'active' : '' ?>"
                             href="/templates">
                             <i class="fas fa-file-invoice me-2" aria-hidden="true"></i> Zone Templates
@@ -177,8 +201,17 @@ $robots = $viewVars['robots'] ?? 'noindex, nofollow';
                             </span>
                         </div>
 
-                        <!-- Right Actions: Theme Toggle & User Profile -->
+                        <!-- Right Actions: Quick Search, Theme Toggle & User Profile -->
                         <div class="navbar-text ms-auto d-flex align-items-center">
+                            <!-- Quick Search Command Palette Trigger -->
+                            <button class="btn btn-sm btn-outline-secondary me-2 d-none d-md-inline-flex align-items-center"
+                                    id="commandPaletteTrigger"
+                                    type="button"
+                                    aria-label="Quick Search (Ctrl+K)"
+                                    title="Quick Search (Ctrl+K)">
+                                <i class="fas fa-search me-1" aria-hidden="true"></i> Quick Search <kbd class="ms-2 px-1 py-0 text-muted border rounded" style="font-size:0.75rem;">Ctrl K</kbd>
+                            </button>
+
                             <!-- Theme Mode Switcher (Dark / Light) -->
                             <button class="theme-toggle-btn me-3"
                                     id="themeToggleBtn"
@@ -199,6 +232,31 @@ $robots = $viewVars['robots'] ?? 'noindex, nofollow';
                     <?= $content ?>
                 </div>
             </main>
+        </div>
+    </div>
+
+    <!-- Command Palette Modal (Ctrl+K) -->
+    <div class="modal fade" id="commandPaletteModal" tabindex="-1" aria-labelledby="commandPaletteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-bottom p-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-0 text-muted"><i class="fas fa-search" aria-hidden="true"></i></span>
+                        <input type="text" id="commandPaletteInput" class="form-control bg-transparent border-0 fs-5 text-reset" placeholder="Type a domain, record, IP, or command..." autocomplete="off">
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0" style="max-height: 380px; overflow-y: auto;">
+                    <div id="commandPaletteResults" class="list-group list-group-flush">
+                        <div class="p-4 text-muted text-center small">Type at least 2 characters to search across PowerDNS zones, records, and navigation...</div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-2 px-3 small text-muted justify-content-between">
+                    <span><kbd class="px-1 border rounded">↑</kbd> <kbd class="px-1 border rounded">↓</kbd> Navigate</span>
+                    <span><kbd class="px-1 border rounded">↵</kbd> Select</span>
+                    <span><kbd class="px-1 border rounded">ESC</kbd> Close</span>
+                </div>
+            </div>
         </div>
     </div>
 

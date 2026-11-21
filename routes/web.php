@@ -9,6 +9,11 @@ use App\Controllers\DNSSECController;
 use App\Controllers\HealthController;
 use App\Controllers\ServerController;
 use App\Controllers\ZoneTemplateController;
+use App\Controllers\ZoneMetadataController;
+use App\Controllers\TsigController;
+use App\Controllers\DnsToolboxController;
+use App\Controllers\BackupController;
+use App\Controllers\SearchController;
 
 /** @var \App\Core\Router $router */
 $router->get('/login', [AuthController::class, 'showLogin']);
@@ -22,6 +27,8 @@ $router->get('/zones/import', [ZoneController::class, 'import']);
 $router->post('/zones/import', [ZoneController::class, 'import']);
 $router->get('/zones/bulk-records', [ZoneController::class, 'bulk']);
 $router->post('/zones/bulk-records', [ZoneController::class, 'bulk']);
+$router->get('/zones/reverse-wizard', [ZoneController::class, 'reverseWizard']);
+$router->post('/zones/reverse-wizard', [ZoneController::class, 'reverseWizard']);
 
 $router->get('/zones', [ZoneController::class, 'index']);
 $router->get('/zones/create', [ZoneController::class, 'create']);
@@ -35,6 +42,35 @@ $router->post('/zones/{id}/clone', [ZoneController::class, 'clone']);
 $router->get('/zones/{id}/check', [ZoneController::class, 'check']);
 $router->get('/zones/{id}/export', [ZoneController::class, 'export']);
 $router->get('/zones/{id}/export-bind', [ZoneController::class, 'exportBind']);
+
+// Zone Operations & Replication
+$router->post('/zones/{id}/notify', [ZoneController::class, 'notify']);
+$router->post('/zones/{id}/axfr-retrieve', [ZoneController::class, 'axfrRetrieve']);
+$router->post('/zones/{id}/rectify', [ZoneController::class, 'rectify']);
+
+// Zone Metadata Management
+$router->get('/zones/{id}/metadata', [ZoneMetadataController::class, 'index']);
+$router->post('/zones/{id}/metadata', [ZoneMetadataController::class, 'update']);
+$router->post('/zones/{id}/metadata/{kind}/delete', [ZoneMetadataController::class, 'delete']);
+
+// TSIG Keys Management
+$router->get('/tsig-keys', [TsigController::class, 'index']);
+$router->post('/tsig-keys', [TsigController::class, 'create']);
+$router->post('/tsig-keys/{id}/delete', [TsigController::class, 'delete']);
+
+// DNS Security & Diagnostic Toolbox
+$router->get('/toolbox', [DnsToolboxController::class, 'index']);
+$router->post('/toolbox', [DnsToolboxController::class, 'index']);
+
+// Cluster Backups & Restore
+$router->get('/backups', [BackupController::class, 'index']);
+$router->post('/backups', [BackupController::class, 'create']);
+$router->get('/backups/{filename}/download', [BackupController::class, 'download']);
+$router->post('/backups/restore', [BackupController::class, 'restore']);
+$router->post('/backups/{filename}/delete', [BackupController::class, 'delete']);
+
+// Async Search for Command Palette (Ctrl+K)
+$router->get('/api/search', [SearchController::class, 'search']);
 
 $router->post('/zones/{zoneId}/records', [RecordController::class, 'store']);
 $router->post('/zones/{zoneId}/records/{recordName}/{recordType}/update', [RecordController::class, 'update']);

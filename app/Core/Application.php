@@ -27,6 +27,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class Application implements RequestHandlerInterface
 {
+    private static ?Application $instance = null;
     private Container $container;
     private Router $router;
     private Config $config;
@@ -34,6 +35,7 @@ class Application implements RequestHandlerInterface
 
     public function __construct(string $basePath)
     {
+        self::$instance = $this;
         $this->basePath = $basePath;
         $this->container = new Container();
         $this->config = new Config($basePath . '/config');
@@ -136,6 +138,11 @@ class Application implements RequestHandlerInterface
             }
         }
         echo (string) $response->getBody();
+    }
+
+    public static function getInstance(): ?self
+    {
+        return self::$instance;
     }
 
     public function getContainer(): Container

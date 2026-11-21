@@ -75,3 +75,22 @@ if (!function_exists('env')) {
         };
     }
 }
+if (!function_exists('app')) {
+    /**
+     * Resolve a service or get container from the application.
+     *
+     * @param string|null $abstract
+     * @return mixed
+     */
+    function app(?string $abstract = null): mixed
+    {
+        $app = \App\Core\Application::getInstance();
+        if ($app === null) {
+            return null;
+        }
+        if ($abstract === null) {
+            return $app->getContainer();
+        }
+        return $app->getContainer()->get($abstract);
+    }
+}

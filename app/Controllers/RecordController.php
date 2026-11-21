@@ -28,6 +28,7 @@ class RecordController
                 'type' => $request->input('type'),
                 'content' => $request->input('content'),
                 'ttl' => (int) $request->input('ttl', 3600),
+                'auto_ptr' => (bool) $request->input('auto_ptr', false),
             ];
             $this->recordService->createRecord($zoneId, $data);
             return (new Response())->redirect(self::ZONES_PATH . urlencode($zoneId));
@@ -48,6 +49,7 @@ class RecordController
                 'type' => $recordType,
                 'content' => $request->input('content'),
                 'ttl' => (int) $request->input('ttl', 3600),
+                'auto_ptr' => (bool) $request->input('auto_ptr', false),
             ];
             $this->recordService->updateRecord($zoneId, $recordName, $recordType, $data);
             return (new Response())->redirect(self::ZONES_PATH . urlencode($zoneId));

@@ -22,6 +22,7 @@
     initZoneChart();
     initAutoResponsiveTables();
     initBulkSelection();
+    initCommandPalette();
   });
 
   /**
@@ -260,5 +261,184 @@
         cb.checked = isChecked;
       });
     });
+  }
+
+  /**
+   * 7. Command Palette (Ctrl+K / Cmd+K) Global Search & Navigation
+   */
+  function initCommandPalette() {
+    const modalEl = document.getElementById("commandPaletteModal");
+    const inputEl = document.getElementById("commandPaletteInput");
+    const resultsEl = document.getElementById("commandPaletteResults");
+    const triggerBtn = document.getElementById("commandPaletteTrigger");
+
+    if (!modalEl || !inputEl || !resultsEl) return;
+
+    let debounceTimer = null;
+    let selectedIndex = -1;
+
+    function getModalInstance() {
+      if (typeof window.bootstrap !== "undefined" && window.bootstrap.Modal) {
+        return window.bootstrap.Modal.getOrCreateInstance(modalEl);
+      }
+      return null;
+    }
+
+    function openModal() {
+      const modal = getModalInstance();
+      if (modal) {
+        modal.show();
+      } else {
+        modalEl.classList.add("show");
+        modalEl.style.display = "block";
+      }
+    }
+
+    modalEl.addEventListener("shown.bs.modal", function () {
+      inputEl.focus();
+      inputEl.select();
+    });
+
+    if (triggerBtn) {
+      triggerBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        openModal();
+      });
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        openModal();
+      }
+    });
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderLoading() {
+      resultsEl.innerHTML =
+        '<div class="p-4 text-center text-muted small"><i class="fas fa-spinner fa-spin me-2" aria-hidden="true"></i>Searching PowerDNS records, zones, and actions...</div>';
+      selectedIndex = -1;
+    }
+
+    function renderEmpty(query) {
+      resultsEl.innerHTML = `<div class="p-4 text-center text-muted small">No matches found for "<strong>${escapeHtml(query)}</strong>"</div>`;
+      selectedIndex = -1;
+    }
+
+    function renderPrompt() {
+      resultsEl.innerHTML =
+        '<div class="p-4 text-muted text-center small">Type at least 2 characters to search across PowerDNS zones, records, and navigation...</div>';
+      selectedIndex = -1;
+    }
+
+    function getTypeBadgeClass(type) {
+      switch (type.toUpperCase()) {
+        case "ZONE":
+          return "bg-primary";
+        case "RECORD":
+          return "bg-info text-dark";
+        case "ACTION":
+          return "bg-success";
+        case "COMMENT":
+          return "bg-secondary";
+        default:
+          return "bg-dark";
+      }
+    }
+
+    function renderResults(items) {
+      if (!items || items.length === 0) {
+        renderEmpty(inputEl.value.trim());
+        return;
+      }
+
+      let html = "";
+      items.forEach(function (item, idx) {
+        const badgeClass = getTypeBadgeClass(item.type || "RECORD");
+        html += `
+          <a href="${escapeHtml(item.url || "#")}" class="list-group-item list-group-item-action command-palette-item d-flex justify-content-between align-items-center py-2 px-3 border-0" data-index="${idx}">
+            <div class="me-2 text-truncate">
+              <div class="fw-semibold text-reset text-truncate">${escapeHtml(item.title || "")}</div>
+              <small class="text-muted text-truncate d-block">${escapeHtml(item.subtitle || "")}</small>
+            </div>
+            <span class="badge ${badgeClass} text-uppercase font-monospace px-2 py-1" style="font-size:0.75rem;">${escapeHtml(item.type || "")}</span>
+          </a>
+        `;
+      });
+      resultsEl.innerHTML = html;
+      selectedIndex = -1;
+    }
+
+    function executeSearch(query) {
+      if (query.length < 2) {
+        renderPrompt();
+        return;
+      }
+
+      renderLoading();
+      fetch(`/api/search?q=${encodeURIComponent(query)}`, {
+        headers: { Accept: "application/json" },
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error("Search network error");
+          return res.json();
+        })
+        .then(function (data) {
+          renderResults(data.results || []);
+        })
+        .catch(function () {
+          resultsEl.innerHTML =
+            '<div class="p-3 text-center text-danger small"><i class="fas fa-exclamation-triangle me-1"></i> Search service unavailable.</div>';
+        });
+    }
+
+    inputEl.addEventListener("input", function () {
+      clearTimeout(debounceTimer);
+      const query = this.value.trim();
+      debounceTimer = setTimeout(function () {
+        executeSearch(query);
+      }, 220);
+    });
+
+    inputEl.addEventListener("keydown", function (e) {
+      const items = resultsEl.querySelectorAll(".command-palette-item");
+      if (!items.length) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        selectedIndex = (selectedIndex + 1) % items.length;
+        updateSelection(items);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+        updateSelection(items);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (selectedIndex >= 0 && items[selectedIndex]) {
+          items[selectedIndex].click();
+        } else if (items[0]) {
+          items[0].click();
+        }
+      }
+    });
+
+    function updateSelection(items) {
+      items.forEach(function (el, idx) {
+        if (idx === selectedIndex) {
+          el.classList.add("active");
+          el.scrollIntoView({ block: "nearest" });
+        } else {
+          el.classList.remove("active");
+        }
+      });
+    }
   }
 })();

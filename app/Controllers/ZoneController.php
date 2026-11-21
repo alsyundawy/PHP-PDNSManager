@@ -12,6 +12,10 @@ use App\Services\DNS\RecordService;
 use App\Services\DNS\DNSSECService;
 use App\Services\DNS\BindZoneService;
 use App\Services\DNS\BulkRecordService;
+use App\Services\DNS\ZoneMetadataService;
+use App\Services\DNS\TsigService;
+use App\Services\DNS\ReverseZoneService;
+use App\Services\PowerDNS\Resource\ZoneResource;
 
 class ZoneController
 {
@@ -22,19 +26,31 @@ class ZoneController
     private DNSSECService $dnssecService;
     private ?BindZoneService $bindService;
     private ?BulkRecordService $bulkService;
+    private ?ZoneResource $zoneResource;
+    private ?ZoneMetadataService $metadataService;
+    private ?TsigService $tsigService;
+    private ?ReverseZoneService $reverseZoneService;
 
     public function __construct(
         ZoneService $zoneService,
         RecordService $recordService,
         DNSSECService $dnssecService,
         ?BindZoneService $bindService = null,
-        ?BulkRecordService $bulkService = null
+        ?BulkRecordService $bulkService = null,
+        ?ZoneResource $zoneResource = null,
+        ?ZoneMetadataService $metadataService = null,
+        ?TsigService $tsigService = null,
+        ?ReverseZoneService $reverseZoneService = null
     ) {
         $this->zoneService = $zoneService;
         $this->recordService = $recordService;
         $this->dnssecService = $dnssecService;
         $this->bindService = $bindService;
         $this->bulkService = $bulkService;
+        $this->zoneResource = $zoneResource;
+        $this->metadataService = $metadataService;
+        $this->tsigService = $tsigService;
+        $this->reverseZoneService = $reverseZoneService;
     }
     public function index(Request $request): Response
     {
@@ -54,7 +70,30 @@ class ZoneController
         $zone = $this->zoneService->getZone($zoneId);
         $records = $this->recordService->getRecordsForZone($zoneId);
         $keys = $this->dnssecService->getKeys($zoneId);
-        $html = view('zone.show', ['zone' => $zone, 'records' => $records, 'keys' => $keys, 'user' => $request->getAttribute('user'), 'csrfToken' => csrf_token()]);
+
+        $metadata = [];
+        try {
+            $metadata = $this->metadataService?->getAllMetadata($zoneId) ?? [];
+        } catch (\Exception) {
+            // Gracefully ignore if metadata is unsupported
+        }
+
+        $tsigKeys = [];
+        try {
+            $tsigKeys = $this->tsigService?->getAllKeys() ?? [];
+        } catch (\Exception) {
+            // Gracefully ignore
+        }
+
+        $html = view('zone.show', [
+            'zone' => $zone,
+            'records' => $records,
+            'keys' => $keys,
+            'metadata' => $metadata,
+            'tsigKeys' => $tsigKeys,
+            'user' => $request->getAttribute('user'),
+            'csrfToken' => csrf_token(),
+        ]);
         return (new Response())->html($html);
     }
     public function create(Request $request): Response
@@ -264,6 +303,58 @@ class ZoneController
             'query' => $query,
             'type' => $type,
             'records' => $records,
+            'user' => $request->getAttribute('user'),
+            'csrfToken' => csrf_token(),
+        ]);
+        return (new Response())->html($html);
+    }
+
+    public function notify(Request $request, string $zoneId): Response
+    {
+        $this->zoneService->getZone($zoneId);
+        // DevSkim: ignore DS137138 - PowerDNS API call triggers NOTIFY to secondaries
+        $this->zoneResource?->notify($zoneId);
+        return (new Response())->redirect(self::ZONES_PATH . urlencode($zoneId));
+    }
+
+    public function axfrRetrieve(Request $request, string $zoneId): Response
+    {
+        $this->zoneService->getZone($zoneId);
+        $this->zoneResource?->axfrRetrieve($zoneId);
+        return (new Response())->redirect(self::ZONES_PATH . urlencode($zoneId));
+    }
+
+    public function rectify(Request $request, string $zoneId): Response
+    {
+        $this->zoneService->getZone($zoneId);
+        $this->zoneResource?->rectify($zoneId);
+        return (new Response())->redirect(self::ZONES_PATH . urlencode($zoneId));
+    }
+
+    public function reverseWizard(Request $request): Response
+    {
+        $error = null;
+
+        if ($request->getMethod() === 'POST' && $this->reverseZoneService !== null) {
+            $type = (string) $request->input('ip_version', '4');
+            $cidr = (string) $request->input('cidr', '');
+            $nsRaw = (string) $request->input('nameservers', '');
+            $nameservers = array_filter(array_map('trim', explode(',', $nsRaw)));
+
+            try {
+                if ($type === '6') {
+                    $zone = $this->reverseZoneService->createIpv6ReverseZone($cidr, $nameservers);
+                } else {
+                    $zone = $this->reverseZoneService->createIpv4ReverseZone($cidr, $nameservers);
+                }
+                return (new Response())->redirect(self::ZONES_PATH . urlencode($zone['name']));
+            } catch (\Exception $e) {
+                $error = $e->getMessage();
+            }
+        }
+
+        $html = view('zone.reverse_wizard', [
+            'error' => $error,
             'user' => $request->getAttribute('user'),
             'csrfToken' => csrf_token(),
         ]);

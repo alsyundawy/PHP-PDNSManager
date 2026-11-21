@@ -771,3 +771,41 @@ main,
     scroll-behavior: auto !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Command Palette (Ctrl+K) & DNSSEC DS Box Styling
+   -------------------------------------------------------------------------- */
+#commandPaletteModal .modal-content {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+}
+
+.command-palette-item {
+  background: transparent;
+  color: var(--text-primary);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  border-left: 3px solid transparent !important;
+}
+
+.command-palette-item:hover,
+.command-palette-item.active {
+  background-color: var(--color-brand-accent-subtle) !important;
+  color: var(--color-brand-primary) !important;
+  border-left: 3px solid var(--color-brand-primary) !important;
+}
+
+.command-palette-item .badge {
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+
+kbd {
+  background-color: var(--bg-2);
+  color: var(--text-muted);
+  border: 1px solid var(--input-border);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}

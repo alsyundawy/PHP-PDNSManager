@@ -5,6 +5,9 @@ use App\Controllers\Api\V1\RecordApiController;
 use App\Controllers\Api\V1\DNSSECApiController;
 use App\Controllers\Api\V1\ServerApiController;
 use App\Controllers\Api\V1\ZoneTemplateApiController;
+use App\Controllers\Api\V1\ZoneMetadataApiController;
+use App\Controllers\Api\V1\TsigApiController;
+use App\Controllers\Api\V1\BackupApiController;
 use App\Controllers\Api\V2\GraphQLController;
 use App\Controllers\HealthController;
 
@@ -45,6 +48,23 @@ $router->group(['prefix' => '/api/v1', 'middleware' => ['auth', 'rbac']], functi
     $router->get('/templates/{id}', [ZoneTemplateApiController::class, 'show']);
     $router->post('/templates/{id}/apply', [ZoneTemplateApiController::class, 'apply']);
     $router->delete('/templates/{id}', [ZoneTemplateApiController::class, 'destroy']);
+
+    // Zone Metadata API
+    $router->get('/zones/{id}/metadata', [ZoneMetadataApiController::class, 'index']);
+    $router->get('/zones/{id}/metadata/{kind}', [ZoneMetadataApiController::class, 'show']);
+    $router->put('/zones/{id}/metadata/{kind}', [ZoneMetadataApiController::class, 'update']);
+    $router->delete('/zones/{id}/metadata/{kind}', [ZoneMetadataApiController::class, 'destroy']);
+
+    // TSIG Keys API
+    $router->get('/tsig-keys', [TsigApiController::class, 'index']);
+    $router->get('/tsig-keys/{id}', [TsigApiController::class, 'show']);
+    $router->post('/tsig-keys', [TsigApiController::class, 'store']);
+    $router->delete('/tsig-keys/{id}', [TsigApiController::class, 'destroy']);
+
+    // Backups API
+    $router->get('/backups', [BackupApiController::class, 'index']);
+    $router->post('/backups', [BackupApiController::class, 'store']);
+    $router->post('/backups/restore', [BackupApiController::class, 'restore']);
 });
 
 // Health check API

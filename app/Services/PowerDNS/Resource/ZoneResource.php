@@ -71,6 +71,38 @@ class ZoneResource
         $this->client->put(self::ZONES_PREFIX . urlencode($zoneId) . '/notify');
     }
 
+    public function axfrRetrieve(string $zoneId): void
+    {
+        $this->client->put(self::ZONES_PREFIX . urlencode($zoneId) . '/axfr-retrieve');
+    }
+
+    public function rectify(string $zoneId): void
+    {
+        $this->client->put(self::ZONES_PREFIX . urlencode($zoneId) . '/rectify');
+    }
+
+    public function getMetadata(string $zoneId): array
+    {
+        return $this->client->get(self::ZONES_PREFIX . urlencode($zoneId) . '/metadata');
+    }
+
+    public function getMetadataKind(string $zoneId, string $kind): array
+    {
+        return $this->client->get(self::ZONES_PREFIX . urlencode($zoneId) . '/metadata/' . urlencode($kind));
+    }
+
+    public function setMetadata(string $zoneId, string $kind, array $metadata): void
+    {
+        $this->client->put(self::ZONES_PREFIX . urlencode($zoneId) . '/metadata/' . urlencode($kind), [
+            'metadata' => $metadata,
+        ]);
+    }
+
+    public function deleteMetadata(string $zoneId, string $kind): void
+    {
+        $this->client->delete(self::ZONES_PREFIX . urlencode($zoneId) . '/metadata/' . urlencode($kind));
+    }
+
     public function getCryptokeys(string $zoneId): array
     {
         return $this->client->get(self::ZONES_PREFIX . urlencode($zoneId) . '/cryptokeys');

@@ -12,11 +12,16 @@ class RecordService
 {
     private RecordResource $recordResource;
     private Logger $logger;
+    private ?ReverseZoneService $reverseZoneService;
 
-    public function __construct(RecordResource $recordResource, Logger $logger)
-    {
+    public function __construct(
+        RecordResource $recordResource,
+        Logger $logger,
+        ?ReverseZoneService $reverseZoneService = null
+    ) {
         $this->recordResource = $recordResource;
         $this->logger         = $logger;
+        $this->reverseZoneService = $reverseZoneService;
     }
 
     public function getRecordsForZone(string $zoneId): array
@@ -33,6 +38,11 @@ class RecordService
             'name' => $data['name'],
             'type' => $data['type'],
         ]);
+
+        if (!empty($data['auto_ptr']) && in_array($data['type'], ['A', 'AAAA'], true)) {
+            $this->reverseZoneService?->syncAutoPtr((string) $data['content'], (string) $data['name'], 'REPLACE');
+        }
+
         return $result;
     }
 
@@ -45,6 +55,11 @@ class RecordService
             'name' => $recordName,
             'type' => $recordType,
         ]);
+
+        if (!empty($data['auto_ptr']) && in_array($recordType, ['A', 'AAAA'], true)) {
+            $this->reverseZoneService?->syncAutoPtr((string) $data['content'], (string) $data['name'], 'REPLACE');
+        }
+
         return $result;
     }
 
@@ -98,8 +113,6 @@ class RecordService
         if (empty($data['content'])) {
             $errors['content'] = 'Record content is required';
         }
-        // BUGFIX: Original check '!isset($data[\'ttl\']) || (int) $data[\'ttl\'] < 0'
-        // allows TTL = 0 which is valid in DNS. Corrected to allow >= 0.
         if (isset($data['ttl']) && (int) $data['ttl'] < 0) {
             $errors['ttl'] = 'TTL must be a non-negative integer';
         }
