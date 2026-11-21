@@ -6,6 +6,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.0.6] - 2026-11-21
+
+### Added — PowerDNS Native Operations, Security Toolbox, Auto-PTR, TSIG & CLI Runner
+
+- **PowerDNS Native Operations Control Plane (AXFR Retrieve, NOTIFY & Rectify)**:
+  - Added native PowerDNS endpoints in `ZoneResource.php`: `axfrRetrieve()` (`PUT /zones/{id}/axfr-retrieve`), `notify()` (`PUT /zones/{id}/notify`), and `rectify()` (`PUT /zones/{id}/rectify`).
+  - Added controller methods in `ZoneController.php`: `notify()`, `axfrRetrieve()`, and `rectify()`.
+  - Added interactive buttons in `app/Views/zone/show.php` with CSRF protection and tooltips.
+- **RFC 2845 / RFC 8945 TSIG Keys Management**:
+  - Implemented `TsigResource.php` for PowerDNS REST API `/tsigkeys` CRUD.
+  - Implemented `TsigService.php` supporting HMAC algorithms (`hmac-sha256`, `hmac-sha512`, `hmac-sha384`, `hmac-sha1`, `hmac-md5`) with 256-bit cryptographically secure random secret generation.
+  - Added web interface `app/Views/tsig/index.php` and API endpoints `/api/v1/tsig-keys`.
+- **PowerDNS Zone Metadata Directives (RFC-compliant ACLs & SOA-EDIT)**:
+  - Added metadata endpoints in `ZoneResource.php` (`getMetadata`, `getMetadataKind`, `setMetadata`, `deleteMetadata`).
+  - Created `ZoneMetadataService.php` with support for 9 PowerDNS metadata kinds (`SOA-EDIT`, `ALLOW-AXFR-FROM`, `AXFR-SOURCE`, `TSIG-ALLOW-AXFR`, `NOTIFY-DNSUPDATE`, `ALSO-NOTIFY`, etc.).
+  - Added views `app/Views/metadata/index.php` and embedded directive manager card in `app/Views/zone/show.php`.
+- **Automated Reverse DNS (Auto-PTR) & IPv4/IPv6 Reverse Zone Wizard**:
+  - Implemented RFC-compliant value objects `DomainName.php` and `IpAddress.php`.
+  - Created `ReverseZoneService.php` with automated reverse zone discovery and PTR record synchronization.
+  - Wired auto-PTR toggle in `RecordController.php`, `RecordService.php`, and `app/Views/zone/show.php`.
+  - Added dedicated Reverse Zone Creation Wizard at `/zones/reverse-wizard` (`app/Views/zone/reverse_wizard.php`).
+- **DNS Security & Email Deliverability Toolbox (SPF, DKIM, DMARC, RBL)**:
+  - Implemented `DnsToolboxService.php` featuring:
+    - RFC 7208 SPF syntax parser, lookup count enforcement (10 DNS lookup limit check), and mechanism visualizer.
+    - SPF Record Builder with qualifiers (`+`, `-`, `~`, `?`) and mechanisms (`a`, `mx`, `ip4`, `ip6`, `include`, `all`).
+    - DKIM Public Key selector lookup and key inspection.
+    - DMARC Policy builder and syntax validator (RFC 7489).
+    - Multi-provider RBL/DNSBL blacklist checker with concurrent/sequential lookup.
+  - Added web interface `app/Views/toolbox/index.php` and controller `DnsToolboxController.php`.
+- **Encrypted Cluster Backup & Restore Engine**:
+  - Implemented `BackupRestoreService.php` supporting JSON snapshot creation with optional AES-256-GCM encryption, PBKDF2 key derivation (SHA-256, 10,000 iterations), 96-bit IV, and SHA-256 integrity checksums.
+  - Safe dry-run restore preview validating zone schemas and counts before mutation.
+  - Added backup management UI in `app/Views/backup/index.php` and REST API `/api/v1/backups`.
+- **Global Command Palette (Ctrl+K / Cmd+K) & PowerDNS Live Search**:
+  - Implemented `SearchResource.php` and `SearchController.php` querying PowerDNS `/search-data`.
+  - Added instant keyboard-driven search in `public/assets/js/app.js` and `public/assets/css/app.css` supporting arrow navigation, ESC dismissal, and direct action jumping.
+- **DNSSEC Registrar DS Record Export Widget**:
+  - Integrated registrar-ready DS record formatting in `app/Views/zone/show.php` with one-click copy buttons for Cloudflare, GoDaddy, IDNIC/PANDI, and standard RFC 4034 RRs.
+- **CLI Runner `bin/pdns` & Console Kernel**:
+  - Created executable CLI tool `bin/pdns` and `App\Console\Kernel` supporting:
+    - `php bin/pdns backup:run [--encrypt] [--passphrase=...]`
+    - `php bin/pdns cluster:probe`
+    - `php bin/pdns zone:notify <zone_id>`
+    - `php bin/pdns zone:rectify <zone_id>`
+    - `php bin/pdns migrate`
+- **Database Schema Migration 003**:
+  - Added `database/migrations/003_v106_features.sql` creating `zone_snapshots`, `tsig_keys`, `backups`, and `zone_notes` tables with indexes.
+- **Quality Assurance & Verification**:
+  - Full PHPUnit test suite: 41 tests, 125 assertions, 100% pass rate.
+  - Added `ValueObjectsTest`, `V106ServicesTest`, and `CliKernelTest`.
+
+---
+
 ## [1.0.5] - 2026-11-21
 
 ### Added — RFC 9460 Modern DNS Records, RFC 9432 Catalog Zones & Dynamic Cluster Telemetry

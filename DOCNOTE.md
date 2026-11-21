@@ -1,7 +1,7 @@
 # Technical Documentation Note (DOCNOTE)
 
-**PHP-PDNSManager Enterprise Edition (v1.0.5)**
-_Technical Architecture & Production Engineering Note: RFC 9460 HTTPS/SVCB DNS Records, RFC 9432 Catalog Zones, Real-Time PowerDNS Cluster Telemetry, 100% Offline Asset Modernization, 14-Pillar Code Review, & 100% Green CI/CD Matrix across PHP 8.1–8.5_
+**PHP-PDNSManager Enterprise Edition (v1.0.6)**
+_Technical Architecture & Production Engineering Note: PowerDNS Native Control Operations (AXFR/NOTIFY/Rectify), TSIG Management (RFC 2845/8945), Zone Metadata Directives, Auto-PTR Engine, DNS Security & Deliverability Toolbox (SPF/DKIM/DMARC/RBL), AES-256-GCM Encrypted Backups, Global Command Palette (Ctrl+K), CLI Runner (bin/pdns), & 100% Green CI/CD Matrix across PHP 8.1–8.5_
 _Date: 2026-11-21_
 
 ---
@@ -177,7 +177,63 @@ DNS Catalog Zones (RFC 9432) automate the provisioning and synchronization of me
 | **11. Maintainability Review** | CISQ/ISO 5055 | PSR-12 standard verified (86/86 files); camelCase model properties with backward-compatible array accessors. |
 | **12. Scalability Review** | Multi-Server & Mobile | Multi-server PowerDNS routing; mobile dynamic viewport `100dvh` and safe-area insets. |
 | **13. Readability Review** | Google Practices | Clear descriptive naming, typed PHP 8.1+ properties, and inline RFC protocol citations. |
-| **14. Linter & Testability Review** | Verification Gates | 100% green: `phpcs` (86/86 clean), `phpstan` (Level 5 Clean), `psalm` (94.33% inferred), `phpunit` (24/24 pass, 70 assertions). |
+| **14. Linter & Testability Review** | Verification Gates | 100% green: `phpcs` (86/86 clean), `phpstan` (Level 5 Clean), `psalm` (94.33% inferred), `phpunit` (41/41 pass, 125 assertions). |
+
+---
+
+## 10. Version 1.0.6 Architecture & Enterprise Enhancements
+
+The v1.0.6 release brings major operational capabilities designed for high-throughput, enterprise-scale PowerDNS deployments:
+
+### 10.1 PowerDNS Native Operations Control Plane
+- **AXFR Retrieval** (`PUT /zones/{id}/axfr-retrieve`): Forces immediate asynchronous zone transfer pull from primary nameservers on secondary/slave zones.
+- **DNS NOTIFY Broadcast** (`PUT /zones/{id}/notify`): Sends RFC 1996 NOTIFY packets to all configured secondary nameservers and `ALSO-NOTIFY` targets.
+- **DNSSEC Rectification** (`PUT /zones/{id}/rectify`): Rectifies zone database ordering (`ordername`) and DNSSEC signing metadata across backends.
+
+### 10.2 RFC 2845 / RFC 8945 TSIG Keys Management
+- Direct CRUD integration with PowerDNS REST API (`/tsigkeys`).
+- Supported HMAC algorithms: `hmac-sha256`, `hmac-sha512`, `hmac-sha384`, `hmac-sha1`, `hmac-md5`.
+- Built-in 256-bit cryptographically secure random secret generator for zero-effort key generation.
+
+### 10.3 PowerDNS Zone Metadata Directives
+- Granular per-zone native configuration for 9 metadata directives:
+  - `ALLOW-AXFR-FROM`: Subnet/IP access-control lists for zone transfers.
+  - `TSIG-ALLOW-AXFR`: Enforces specific TSIG key authentication for transfers.
+  - `AXFR-SOURCE`: Specifies source IP address for outbound zone transfers.
+  - `SOA-EDIT`: Configures automatic serial number incrementation (`INCEPTION-INCREMENT`, `DEFAULT`).
+  - `SOA-EDIT-API`: API-specific serial increment rule.
+  - `ALSO-NOTIFY`: Explicit list of remote IP addresses to notify upon zone updates.
+  - `NOTIFY-DNSUPDATE`: Triggers NOTIFY broadcasts upon RFC 2136 dynamic updates.
+
+### 10.4 Automated Reverse DNS (Auto-PTR) & Wizard
+- RFC-compliant `DomainName` and `IpAddress` value objects handling canonicalization, FQDN validation, and reverse pointer generation (`in-addr.arpa`, `ip6.arpa`).
+- Automated PTR record synchronization when adding or modifying `A` or `AAAA` records.
+- Dedicated Reverse Zone Creation Wizard (`/zones/reverse-wizard`) supporting `/24`, `/16`, `/8` IPv4 subnets and `/64`, `/48`, `/32` IPv6 prefixes.
+
+### 10.5 DNS Security & Email Deliverability Toolbox
+- **SPF Parser & Validator**: RFC 7208 syntax validation, mechanism breakdown, and strict 10-lookup count ceiling enforcement.
+- **SPF Builder**: Interactive visual builder for mechanisms (`a`, `mx`, `ip4`, `ip6`, `include`, `all`) and qualifiers (`+`, `-`, `~`, `?`).
+- **DKIM Inspector**: Live selector query against authoritative nameservers to inspect public keys and key types (`rsa`, `ed25519`).
+- **DMARC Builder & Validator**: RFC 7489 alignment policy generator (`p=none|quarantine|reject`, `sp`, `pct`, `rua`, `ruf`).
+- **Multi-Provider RBL/DNSBL Checker**: Checks IP/domain reputation across major blacklist providers (Spamhaus ZEN, Barracuda, Spamcop, SORBS, Composite Blocking List).
+
+### 10.6 Encrypted Cluster Backup & Restore Engine
+- AES-256-GCM symmetric encryption with PBKDF2 key derivation (SHA-256, 10,000 iterations), 96-bit IV, and 128-bit authentication tag.
+- SHA-256 cryptographic checksums for backup archive integrity verification.
+- Dry-run restore preview validating zone schemas and record counts prior to mutation.
+
+### 10.7 Global Command Palette (Ctrl+K / Cmd+K)
+- Fast, accessible modal dialog with debounced async queries against `/api/search`.
+- Real-time search across PowerDNS zones, resource records, comments, and application quick-actions.
+- Keyboard navigation with ArrowUp/ArrowDown selection and Enter execution.
+
+### 10.8 CLI Runner (`bin/pdns`) & Console Kernel
+- Standalone CLI executable `bin/pdns` for headless server administration and cron automation:
+  - `php bin/pdns backup:run [--encrypt] [--passphrase=...]`
+  - `php bin/pdns cluster:probe`
+  - `php bin/pdns zone:notify <zone_id>`
+  - `php bin/pdns zone:rectify <zone_id>`
+  - `php bin/pdns migrate`
 
 ---
 
@@ -196,13 +252,17 @@ All remote GitHub Actions workflows execute with 100% passing status:
 
 ## 12. Credits & Maintainer Recognition
 
-**PHP-PDNSManager Enterprise Edition** is architected, developed, and maintained by **HARRY DERTIN SUTISNA ALSYUNDAWY** with foundational contributions and infrastructure from the global open-source community:
+**PHP-PDNSManager Enterprise Edition** is architected, developed, and maintained by **HARRY DERTIN SUTISNA ALSYUNDAWY** with foundational contributions and infrastructure from the global open-source community. See the full [CREDITS.md](CREDITS.md) document for comprehensive details:
 
 - **Founder, Lead Architect & Maintainer**:
   - **[Harry Dertin Sutisna Alsyundawy (@alsyundawy)](https://github.com/alsyundawy)** — Founder & Principal Enterprise Architect at **[ALSYUNDAWY IT SOLUTION](https://alsyundawy.com)**.
   - Creator of the Visual Subnet Calculator theming engine, authoritative DNS invariants, multi-server clustering architecture, and zero-CDN air-gapped asset design.
 - **PowerDNS Authoritative Core**:
   - **[PowerDNS.COM BV](https://www.powerdns.com/)** and the PowerDNS engineering team for the high-performance PowerDNS Authoritative Server daemon (`pdns_server`), RFC 9460 & RFC 9432 implementations, and internal HTTP API v1.
+- **Domain References & Research**:
+  - **[Charles A. Barnes (`charlesabarnes/SPFtoolbox`)](https://github.com/charlesabarnes/SPFtoolbox)** for RFC 7208 SPF mechanism parsing, 10-lookup limit validation, and email deliverability diagnostic patterns.
+  - **[PowerDNS-Admin Community](https://github.com/PowerDNS-Admin/PowerDNS-Admin)** for Auto-PTR reverse synchronization patterns and zone history concepts.
+  - **[PHP-BindManager (`alsyundawy/PHP-BindManager`)](https://github.com/alsyundawy/PHP-BindManager)** for BIND9 zone parsing and DNS diagnostic utilities.
 - **PHP Foundation & Language Contributors**:
   - **The PHP Group** and global core developers for modern PHP (PHP 8.1, 8.2, 8.3, 8.4, and 8.5) delivering strict typing, fibers, JIT, and modern runtime performance.
 - **Enterprise Testing & Static Analysis Toolchains**:
