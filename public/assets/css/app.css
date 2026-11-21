@@ -158,6 +158,239 @@
 }
 
 /* --------------------------------------------------------------------------
+  2b. Midnight Navy Theme (SparkNotePad Deep Obsidian / Blue Variant)
+  -------------------------------------------------------------------------- */
+[data-theme="midnight"] {
+  --bg-1: #090d16;
+  --bg-2: #04060b;
+  --text-primary: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent-from: #818cf8;
+  --accent-to: #6366f1;
+  --glass-border: rgba(129, 140, 248, 0.25);
+  --card-bg: rgba(15, 23, 42, 0.85);
+  --card-shadow:
+    0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(129, 140, 248, 0.2);
+  --input-bg: rgba(9, 13, 22, 0.8);
+  --input-border: rgba(129, 140, 248, 0.35);
+  --input-focus-border: #818cf8;
+
+  --color-brand-primary: #818cf8;
+  --color-brand-hover: #6366f1;
+  --color-brand-accent: #a5b4fc;
+  --color-brand-accent-subtle: rgba(129, 140, 248, 0.12);
+
+  --sidebar-bg: #05080f;
+  --sidebar-surface: #0a0f1d;
+  --sidebar-hover: #172033;
+  --sidebar-active: #6366f1;
+  --sidebar-text: #cbd5e1;
+  --sidebar-text-muted: #64748b;
+  --sidebar-text-active: #ffffff;
+  --sidebar-border: rgba(129, 140, 248, 0.15);
+
+  --btn-primary-bg: linear-gradient(180deg, #6366f1 0%, #090d16 100%);
+  --btn-primary-border: #818cf8;
+  --btn-primary-text: #ffffff;
+  --btn-primary-shadow:
+    0 2px 8px rgba(9, 13, 22, 0.7), 0 0 12px rgba(129, 140, 248, 0.35);
+
+  --btn-success-bg: linear-gradient(180deg, #059669 0%, #022c22 100%);
+  --btn-success-border: #34d399;
+  --btn-success-text: #ffffff;
+
+  --btn-danger-bg: linear-gradient(180deg, #e11d48 0%, #4c0519 100%);
+  --btn-danger-border: #fb7185;
+  --btn-danger-text: #ffffff;
+
+  --table-header-bg: rgba(23, 32, 51, 0.85);
+  --table-border-color: rgba(129, 140, 248, 0.15);
+  --table-row-hover: rgba(129, 140, 248, 0.08);
+
+  color-scheme: dark;
+}
+
+/* --------------------------------------------------------------------------
+  2c. Ocean Teal Theme (SparkNotePad Cyan/Teal Matrix)
+  -------------------------------------------------------------------------- */
+[data-theme="ocean"] {
+  --bg-1: #061923;
+  --bg-2: #030e14;
+  --text-primary: #f0fdfa;
+  --text-muted: #99f6e4;
+  --accent-from: #14b8a6;
+  --accent-to: #06b6d4;
+  --glass-border: rgba(20, 184, 166, 0.25);
+  --card-bg: rgba(6, 30, 42, 0.85);
+  --card-shadow:
+    0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(20, 184, 166, 0.2);
+  --input-bg: rgba(3, 14, 20, 0.8);
+  --input-border: rgba(20, 184, 166, 0.35);
+  --input-focus-border: #14b8a6;
+
+  --color-brand-primary: #14b8a6;
+  --color-brand-hover: #0d9488;
+  --color-brand-accent: #2dd4bf;
+  --color-brand-accent-subtle: rgba(20, 184, 166, 0.12);
+
+  --sidebar-bg: #020b10;
+  --sidebar-surface: #071e2b;
+  --sidebar-hover: #0e3347;
+  --sidebar-active: #0d9488;
+  --sidebar-text: #ccfbf1;
+  --sidebar-text-muted: #5eead4;
+  --sidebar-text-active: #ffffff;
+  --sidebar-border: rgba(20, 184, 166, 0.15);
+
+  --btn-primary-bg: linear-gradient(180deg, #0d9488 0%, #061923 100%);
+  --btn-primary-border: #14b8a6;
+  --btn-primary-text: #ffffff;
+  --btn-primary-shadow:
+    0 2px 8px rgba(3, 14, 20, 0.7), 0 0 12px rgba(20, 184, 166, 0.35);
+
+  --btn-success-bg: linear-gradient(180deg, #059669 0%, #022c22 100%);
+  --btn-success-border: #34d399;
+  --btn-success-text: #ffffff;
+
+  --btn-danger-bg: linear-gradient(180deg, #e11d48 0%, #4c0519 100%);
+  --btn-danger-border: #fb7185;
+  --btn-danger-text: #ffffff;
+
+  --table-header-bg: rgba(14, 51, 71, 0.85);
+  --table-border-color: rgba(20, 184, 166, 0.15);
+  --table-row-hover: rgba(20, 184, 166, 0.08);
+
+  color-scheme: dark;
+}
+
+/* --------------------------------------------------------------------------
+  2d. Emerald Forest Theme (SparkNotePad Evergreen Botanical)
+  -------------------------------------------------------------------------- */
+[data-theme="forest"] {
+  --bg-1: #0a1910;
+  --bg-2: #050d08;
+  --text-primary: #f0fdf4;
+  --text-muted: #86efac;
+  --accent-from: #22c55e;
+  --accent-to: #10b981;
+  --glass-border: rgba(34, 197, 94, 0.25);
+  --card-bg: rgba(10, 31, 19, 0.85);
+  --card-shadow:
+    0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(34, 197, 94, 0.2);
+  --input-bg: rgba(5, 13, 8, 0.8);
+  --input-border: rgba(34, 197, 94, 0.35);
+  --input-focus-border: #22c55e;
+
+  --color-brand-primary: #22c55e;
+  --color-brand-hover: #16a34a;
+  --color-brand-accent: #4ade80;
+  --color-brand-accent-subtle: rgba(34, 197, 94, 0.12);
+
+  --sidebar-bg: #030805;
+  --sidebar-surface: #0a1f13;
+  --sidebar-hover: #143522;
+  --sidebar-active: #16a34a;
+  --sidebar-text: #dcfce7;
+  --sidebar-text-muted: #86efac;
+  --sidebar-text-active: #ffffff;
+  --sidebar-border: rgba(34, 197, 94, 0.15);
+
+  --btn-primary-bg: linear-gradient(180deg, #16a34a 0%, #0a1910 100%);
+  --btn-primary-border: #22c55e;
+  --btn-primary-text: #ffffff;
+  --btn-primary-shadow:
+    0 2px 8px rgba(5, 13, 8, 0.7), 0 0 12px rgba(34, 197, 94, 0.35);
+
+  --btn-success-bg: linear-gradient(180deg, #059669 0%, #022c22 100%);
+  --btn-success-border: #34d399;
+  --btn-success-text: #ffffff;
+
+  --btn-danger-bg: linear-gradient(180deg, #e11d48 0%, #4c0519 100%);
+  --btn-danger-border: #fb7185;
+  --btn-danger-text: #ffffff;
+
+  --table-header-bg: rgba(20, 53, 34, 0.85);
+  --table-border-color: rgba(34, 197, 94, 0.15);
+  --table-row-hover: rgba(34, 197, 94, 0.08);
+
+  color-scheme: dark;
+}
+
+/* --------------------------------------------------------------------------
+  2e. High Contrast Theme (WCAG 2.2 AAA Compliant — Pure Black & Hyper Visibility)
+  -------------------------------------------------------------------------- */
+[data-theme="high-contrast"] {
+  --bg-1: #000000;
+  --bg-2: #000000;
+  --text-primary: #ffffff;
+  --text-muted: #ffff00;
+  --accent-from: #00ffff;
+  --accent-to: #00ffff;
+  --glass-border: #ffffff;
+  --card-bg: #000000;
+  --card-shadow: 0 0 0 2px #ffffff;
+  --input-bg: #000000;
+  --input-border: #ffffff;
+  --input-focus-border: #00ffff;
+
+  --color-brand-primary: #00ffff;
+  --color-brand-hover: #ffff00;
+  --color-brand-accent: #ffffff;
+  --color-brand-accent-subtle: #1a1a1a;
+
+  --sidebar-bg: #000000;
+  --sidebar-surface: #000000;
+  --sidebar-hover: #1a1a1a;
+  --sidebar-active: #00ffff;
+  --sidebar-text: #ffffff;
+  --sidebar-text-muted: #ffff00;
+  --sidebar-text-active: #00ffff;
+  --sidebar-border: #ffffff;
+
+  --btn-primary-bg: #000000;
+  --btn-primary-border: #00ffff;
+  --btn-primary-text: #00ffff;
+  --btn-primary-shadow: 0 0 0 2px #00ffff;
+
+  --btn-success-bg: #000000;
+  --btn-success-border: #00ff00;
+  --btn-success-text: #00ff00;
+
+  --btn-danger-bg: #000000;
+  --btn-danger-border: #ff3333;
+  --btn-danger-text: #ff3333;
+
+  --table-header-bg: #1a1a1a;
+  --table-border-color: #ffffff;
+  --table-row-hover: #262626;
+
+  color-scheme: dark;
+}
+
+[data-theme="high-contrast"] .card,
+[data-theme="high-contrast"] .modal-content,
+[data-theme="high-contrast"] .form-control,
+[data-theme="high-contrast"] .form-select,
+[data-theme="high-contrast"] .btn,
+[data-theme="high-contrast"] .badge,
+[data-theme="high-contrast"] table,
+[data-theme="high-contrast"] th,
+[data-theme="high-contrast"] td {
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+[data-theme="high-contrast"] a {
+  color: #00ffff !important;
+  text-decoration: underline !important;
+}
+
+[data-theme="high-contrast"] .badge {
+  background-color: #000000 !important;
+  border: 1px solid #ffffff !important;
+}
+
+/* --------------------------------------------------------------------------
   3. Global Reset & Anti-Clipping Foundations (Xiaomi / MIUI / HyperOS)
   -------------------------------------------------------------------------- */
 *,
@@ -787,7 +1020,9 @@ main,
 .command-palette-item {
   background: transparent;
   color: var(--text-primary);
-  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
   border-left: 3px solid transparent !important;
 }
 

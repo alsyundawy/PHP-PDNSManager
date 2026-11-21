@@ -21,7 +21,7 @@ $token = $csrfToken;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Login — PHP-PDNSManager Enterprise</title>
+    <title><?= htmlspecialchars(__('login_title'), ENT_QUOTES, 'UTF-8') ?></title>
 
     <!-- SEO & Identity (Standard 2026) -->
     <meta name="description" content="Secure authentication console for PHP-PDNSManager Enterprise DNS Suite">
@@ -61,8 +61,8 @@ $token = $csrfToken;
                         <i class="fas fa-shield-halved" aria-hidden="true"></i>
                     </span>
                 </div>
-                <h1 class="h4 fw-bold mb-1 text-contrast">PHP-PDNSManager</h1>
-                <p class="text-secondary small mb-0">Enterprise Authoritative DNS Control Center</p>
+                <h1 class="h4 fw-bold mb-1 text-contrast"><?= htmlspecialchars(__('app_name'), ENT_QUOTES, 'UTF-8') ?></h1>
+                <p class="text-secondary small mb-0"><?= htmlspecialchars(__('login_header'), ENT_QUOTES, 'UTF-8') ?></p>
             </div>
 
             <div class="card-body p-4 pt-2">
@@ -77,7 +77,7 @@ $token = $csrfToken;
                     <input type="hidden" name="_csrf" value="<?= htmlspecialchars((string)$token, ENT_QUOTES, 'UTF-8') ?>">
 
                     <div class="mb-3">
-                        <label for="username" class="form-label small fw-semibold text-contrast">Username or Email</label>
+                        <label for="username" class="form-label small fw-semibold text-contrast"><?= htmlspecialchars(__('username'), ENT_QUOTES, 'UTF-8') ?></label>
                         <div class="input-group">
                             <span class="input-group-text bg-transparent border-end-0">
                                 <i class="fas fa-user text-secondary" aria-hidden="true"></i>
@@ -96,7 +96,7 @@ $token = $csrfToken;
 
                     <div class="mb-4">
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <label for="password" class="form-label small fw-semibold text-contrast mb-0">Password</label>
+                            <label for="password" class="form-label small fw-semibold text-contrast mb-0"><?= htmlspecialchars(__('password'), ENT_QUOTES, 'UTF-8') ?></label>
                         </div>
                         <div class="input-group">
                             <span class="input-group-text bg-transparent border-end-0">
@@ -113,17 +113,31 @@ $token = $csrfToken;
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm mb-3">
-                        <i class="fas fa-arrow-right-to-bracket me-2" aria-hidden="true"></i> Sign In to Console
+                        <i class="fas fa-arrow-right-to-bracket me-2" aria-hidden="true"></i> <?= htmlspecialchars(__('sign_in'), ENT_QUOTES, 'UTF-8') ?>
                     </button>
                 </form>
 
                 <div class="d-flex justify-content-between align-items-center pt-3 border-top border-secondary border-opacity-25 small">
-                    <span class="text-secondary">v1.0.1 Enterprise</span>
-                    <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 text-decoration-none" id="themeToggleBtn" aria-label="Toggle dark/light mode">
-                        <i class="fas fa-moon theme-icon-dark d-none" aria-hidden="true"></i>
-                        <i class="fas fa-sun theme-icon-light d-none" aria-hidden="true"></i>
-                        <span class="ms-1 d-none d-sm-inline" id="themeLabel">Theme</span>
-                    </button>
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="/locale/en" class="text-decoration-none <?= current_locale() === 'en' ? 'fw-bold text-primary' : 'text-secondary' ?>">EN</a>
+                        <span class="text-secondary opacity-50">|</span>
+                        <a href="/locale/id" class="text-decoration-none <?= current_locale() === 'id' ? 'fw-bold text-primary' : 'text-secondary' ?>">ID</a>
+                    </div>
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 dropdown-toggle" id="themeToggleBtn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Theme">
+                            <i class="fas fa-palette" id="themeIcon" aria-hidden="true"></i>
+                            <span class="ms-1 d-none d-sm-inline"><?= htmlspecialchars(__('theme'), ENT_QUOTES, 'UTF-8') ?></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="themeToggleBtn">
+                            <li><a class="dropdown-item theme-select-item" href="#" data-theme="dark"><i class="fas fa-moon text-info me-2"></i> <?= htmlspecialchars(__('theme_dark'), ENT_QUOTES, 'UTF-8') ?></a></li>
+                            <li><a class="dropdown-item theme-select-item" href="#" data-theme="light"><i class="fas fa-sun text-warning me-2"></i> <?= htmlspecialchars(__('theme_light'), ENT_QUOTES, 'UTF-8') ?></a></li>
+                            <li><a class="dropdown-item theme-select-item" href="#" data-theme="midnight"><i class="fas fa-star text-primary me-2"></i> <?= htmlspecialchars(__('theme_midnight'), ENT_QUOTES, 'UTF-8') ?></a></li>
+                            <li><a class="dropdown-item theme-select-item" href="#" data-theme="ocean"><i class="fas fa-water text-cyan me-2"></i> <?= htmlspecialchars(__('theme_ocean'), ENT_QUOTES, 'UTF-8') ?></a></li>
+                            <li><a class="dropdown-item theme-select-item" href="#" data-theme="forest"><i class="fas fa-tree text-success me-2"></i> <?= htmlspecialchars(__('theme_forest'), ENT_QUOTES, 'UTF-8') ?></a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item theme-select-item" href="#" data-theme="high-contrast"><i class="fas fa-adjust text-white bg-dark p-1 rounded me-2"></i> <?= htmlspecialchars(__('theme_high_contrast'), ENT_QUOTES, 'UTF-8') ?></a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

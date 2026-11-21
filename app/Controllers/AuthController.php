@@ -49,4 +49,23 @@ class AuthController
         $this->auth->logout();
         return (new Response())->redirect('/login');
     }
+    public function setLocale(Request $request, string $lang): Response
+    {
+        $lang = in_array(strtolower($lang), ['en', 'id'], true) ? strtolower($lang) : 'en';
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            session_start();
+        }
+        $_SESSION['locale'] = $lang;
+        \App\Core\I18n::setLocale($lang);
+        setcookie('pdns_locale', $lang, [
+            'expires' => time() + 86400 * 365,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => false,
+            'samesite' => 'Lax',
+        ]);
+        $referer = (string) ($request->getServerRequest()->getServerParams()['HTTP_REFERER'] ?? '/dashboard');
+        $path = parse_url($referer, PHP_URL_PATH) ?: '/dashboard';
+        return (new Response())->redirect($path);
+    }
 }

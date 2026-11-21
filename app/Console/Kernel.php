@@ -234,7 +234,7 @@ class Kernel
             // Split into separate queries if needed
             $queries = array_filter(
                 array_map('trim', explode(';', $sql)),
-                fn($q) => $q !== ''
+                fn ($q) => $q !== ''
             );
 
             try {

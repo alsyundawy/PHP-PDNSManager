@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: PowerDNS Manager API
-  version: 1.0.1
+  version: 1.0.6
   description: PowerDNS Manager REST API
 
 # SECURITY FIX: Added global security requirement (CKVOPENAPI4)

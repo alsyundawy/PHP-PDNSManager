@@ -60,7 +60,7 @@ class ApiToken
         return match ($name) {
             'user_id' => isset($this->userId),
             'expires_at' => isset($this->expiresAt),
-            'is_revoked' => isset($this->isRevoked),
+            'is_revoked' => true,
             'created_at' => isset($this->createdAt),
             default => false,
         };

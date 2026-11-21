@@ -101,9 +101,9 @@ make fix
 1. Pastikan branch Anda sudah disinkronkan dengan branch `main` terbaru (`git pull origin main`).
 2. Pastikan `make all` berhasil tanpa error.
 3. Buat Pull Request melalui GitHub dengan menyertakan:
-    - **Judul PR** yang singkat dan representatif.
-    - **Deskripsi PR** yang menjelaskan apa yang diubah dan alasan perubahan tersebut.
-    - Tautan ke _Issue_ yang relevan (jika ada), misalnya `Closes #42`.
+   - **Judul PR** yang singkat dan representatif.
+   - **Deskripsi PR** yang menjelaskan apa yang diubah dan alasan perubahan tersebut.
+   - Tautan ke _Issue_ yang relevan (jika ada), misalnya `Closes #42`.
 4. Tim penyunting akan meninjau PR Anda dan memberikan umpan balik jika diperlukan.
 
 Terima kasih atas kontribusi Anda dalam membangun platform manajemen DNS yang andal!

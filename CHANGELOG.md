@@ -8,8 +8,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [1.0.6] - 2026-11-21
 
-### Added — PowerDNS Native Operations, Security Toolbox, Auto-PTR, TSIG & CLI Runner
+### Added — SparkNotePad Multi-Theme Engine, Bilingual i18n, PowerDNS Native Operations & Security Hardening
 
+- **Multi-Theme / Skin Engine (SparkNotePad Reference & WCAG 2.2 AAA)**:
+  - Implemented 6-theme palette architecture: `dark` (Slate Dark), `light` (Clean Light), `midnight` (Deep Obsidian / Navy `#090d16`), `ocean` (Teal / Cyan Matrix `#061923`), `forest` (Emerald Evergreen `#0a1910`), and `high-contrast` (WCAG 2.2 AAA `#000000` / `#ffffff` / `#ffff00` / `#00ffff`).
+  - Added theme switcher dropdown menu to `app/Views/layouts/admin.php` and login screen `app/Views/auth/login.php`.
+  - Added instant theme state persistence via `localStorage` with synchronization across both `data-theme` and `data-bs-theme` attributes.
+  - Dynamically re-renders Chart.js doughnut visualizations upon theme toggle with calibrated text contrast colors.
+- **Bilingual Dynamic Internationalization Engine (`en` & `id`)**:
+  - Implemented thread-safe `App\Core\I18n` localization service with static dictionary caching and parameter interpolation (`:key` and `{key}`).
+  - Created comprehensive language resource bundles: `resources/lang/en.php` (English US) and `resources/lang/id.php` (Bahasa Indonesia).
+  - Registered global localization helpers in `app/Core/helpers.php`: `__()`, `trans()`, and `current_locale()`.
+  - Added locale switching endpoint `/locale/{lang}` and `AuthController::setLocale()` with safe redirect validation and 365-day cookie persistence (`pdns_locale`).
+  - Integrated interactive dual-language selector dropdowns in top navbar and login portal.
+- **Cross-Device, Cross-Browser & Xiaomi/Redmi/POCO Viewport Hardening**:
+  - Mitigated MIUI/HyperOS WebView bottom gesture navigation bar clipping using dynamic `--vh` JavaScript calculation coupled with CSS `100dvh` and `100svh` safe fallbacks.
+  - Standardized safe-area padding (`env(safe-area-inset-top)`, `env(safe-area-inset-bottom)`) and `min-width: 0` layout constraints preventing horizontal container overflow on narrow screens (320px–412px).
+  - Reinforced `-webkit-overflow-scrolling: touch` momentum scrolling on all DNS data tables.
 - **PowerDNS Native Operations Control Plane (AXFR Retrieve, NOTIFY & Rectify)**:
   - Added native PowerDNS endpoints in `ZoneResource.php`: `axfrRetrieve()` (`PUT /zones/{id}/axfr-retrieve`), `notify()` (`PUT /zones/{id}/notify`), and `rectify()` (`PUT /zones/{id}/rectify`).
   - Added controller methods in `ZoneController.php`: `notify()`, `axfrRetrieve()`, and `rectify()`.
@@ -53,9 +68,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
     - `php bin/pdns migrate`
 - **Database Schema Migration 003**:
   - Added `database/migrations/003_v106_features.sql` creating `zone_snapshots`, `tsig_keys`, `backups`, and `zone_notes` tables with indexes.
-- **Quality Assurance & Verification**:
-  - Full PHPUnit test suite: 41 tests, 125 assertions, 100% pass rate.
-  - Added `ValueObjectsTest`, `V106ServicesTest`, and `CliKernelTest`.
+- **Zero-Tolerance Static Analysis & Linter Resolution**:
+  - Resolved all PHPStan strict level 5 issues across `ApiToken.php`, `Webhook.php`, `ZoneTemplate.php`, and `PowerDNSClientTest.php`.
+  - Enforced PSR-12 and PER Coding Style across 105 PHP files via `phpcs` and `php-cs-fixer`.
+  - Verified 100% clean passes on Psalm (Level 4, 94.46% inference), Trunk, Prettier, and Markdownlint.
+  - Added `Tests\Unit\Core\I18nTest` bringing automated test suite to 47 tests and 135 assertions (100% pass rate).
 
 ---
 
@@ -286,7 +303,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - `app/Core/View.php`: Added nullable string type hint (`?string`) to `$layout` property and updated `setLayout(?string)`.
   - `app/Services/PowerDNS/PowerDNSClient.php`: Consolidated repeated literal `" failed: "` into `formatFailedMessage()` helper method.
   - `config/app.php` and `tests/Integration/DatabaseTest.php`: Added DevSkim suppressions for `localhost` fallback bindings (`DS162092`, `DS137138`).
-  - Standardized project version to `1.1.0` across `package.json`, `sonar-project.properties`, `docs/openapi.yaml`, `login.php`, and documentation.
+  - Standardized project version to `1.0.6` across `package.json`, `sonar-project.properties`, `docs/openapi.yaml`, `login.php`, and documentation.
 
 ---
 
@@ -301,6 +318,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Automated DNSSEC cryptographic key management (KSK / ZSK generation and DS record extraction).
 - RBAC authentication, session management, and CSRF token protection.
 
-[1.0.1]: https://github.com/alsyundawy/PHP-PDNSManager/releases/tag/v1.0.1
-[1.1.0]: https://github.com/alsyundawy/PHP-PDNSManager/compare/v1.0.0...v1.1.0
+[1.0.6]: https://github.com/alsyundawy/PHP-PDNSManager/releases/tag/v1.0.6
 [1.0.0]: https://github.com/alsyundawy/PHP-PDNSManager/releases/tag/v1.0.0

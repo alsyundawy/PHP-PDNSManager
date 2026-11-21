@@ -19,6 +19,7 @@ use App\Controllers\SearchController;
 $router->get('/login', [AuthController::class, 'showLogin']);
 $router->post('/login', [AuthController::class, 'login']);
 $router->get('/logout', [AuthController::class, 'logout']);
+$router->get('/locale/{lang}', [AuthController::class, 'setLocale']);
 
 $router->get('/dashboard', [DashboardController::class, 'index']);
 

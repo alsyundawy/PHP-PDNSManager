@@ -26,16 +26,26 @@
   });
 
   /**
-   * 1. Dark / Light Mode Theme Manager
-   * Switches theme between dark and light, syncing with localStorage and system preference.
+   * 1. Multi-Theme / Skin Engine (SparkNotePad Reference)
+   * Supports: dark, light, midnight, ocean, forest, high-contrast
    */
   function initThemeManager() {
     const themeToggleBtn = document.getElementById("themeToggleBtn");
     const themeIcon = document.getElementById("themeIcon");
+    const themeItems = document.querySelectorAll(".theme-select-item");
+
+    const validThemes = [
+      "dark",
+      "light",
+      "midnight",
+      "ocean",
+      "forest",
+      "high-contrast",
+    ];
 
     function getPreferredTheme() {
       const storedTheme = localStorage.getItem("pdns_theme");
-      if (storedTheme) {
+      if (storedTheme && validThemes.includes(storedTheme)) {
         return storedTheme;
       }
       return window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -44,16 +54,52 @@
     }
 
     function applyTheme(theme) {
-      document.documentElement.setAttribute("data-bs-theme", theme);
+      if (!validThemes.includes(theme)) {
+        theme = "dark";
+      }
+
+      const bsTheme = theme === "light" ? "light" : "dark";
+      document.documentElement.setAttribute("data-bs-theme", bsTheme);
       document.documentElement.setAttribute("data-theme", theme);
       localStorage.setItem("pdns_theme", theme);
 
       if (themeIcon) {
-        if (theme === "dark") {
-          themeIcon.className = "fas fa-sun text-warning";
-        } else {
-          themeIcon.className = "fas fa-moon text-secondary";
+        switch (theme) {
+          case "dark":
+            themeIcon.className = "fas fa-moon text-info";
+            break;
+          case "light":
+            themeIcon.className = "fas fa-sun text-warning";
+            break;
+          case "midnight":
+            themeIcon.className = "fas fa-star text-primary";
+            break;
+          case "ocean":
+            themeIcon.className = "fas fa-water text-cyan";
+            break;
+          case "forest":
+            themeIcon.className = "fas fa-tree text-success";
+            break;
+          case "high-contrast":
+            themeIcon.className =
+              "fas fa-adjust text-white bg-dark p-1 rounded";
+            break;
+          default:
+            themeIcon.className = "fas fa-palette text-info";
         }
+      }
+
+      themeItems.forEach(function (item) {
+        if (item.getAttribute("data-theme") === theme) {
+          item.classList.add("active", "fw-bold");
+        } else {
+          item.classList.remove("active", "fw-bold");
+        }
+      });
+
+      // Trigger re-render of charts with updated color tokens
+      if (typeof initZoneChart === "function") {
+        initZoneChart();
       }
     }
 
@@ -61,11 +107,22 @@
     const currentTheme = getPreferredTheme();
     applyTheme(currentTheme);
 
-    if (themeToggleBtn) {
+    // Event listeners for theme dropdown items
+    themeItems.forEach(function (item) {
+      item.addEventListener("click", function (e) {
+        e.preventDefault();
+        const selected = this.getAttribute("data-theme");
+        if (selected) {
+          applyTheme(selected);
+        }
+      });
+    });
+
+    if (themeToggleBtn && !themeItems.length) {
       themeToggleBtn.addEventListener("click", function (e) {
         e.preventDefault();
         const activeTheme =
-          document.documentElement.getAttribute("data-bs-theme") || "light";
+          document.documentElement.getAttribute("data-theme") || "light";
         const newTheme = activeTheme === "dark" ? "light" : "dark";
         applyTheme(newTheme);
       });

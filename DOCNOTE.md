@@ -1,14 +1,14 @@
 # Technical Documentation Note (DOCNOTE)
 
 **PHP-PDNSManager Enterprise Edition (v1.0.6)**
-_Technical Architecture & Production Engineering Note: PowerDNS Native Control Operations (AXFR/NOTIFY/Rectify), TSIG Management (RFC 2845/8945), Zone Metadata Directives, Auto-PTR Engine, DNS Security & Deliverability Toolbox (SPF/DKIM/DMARC/RBL), AES-256-GCM Encrypted Backups, Global Command Palette (Ctrl+K), CLI Runner (bin/pdns), & 100% Green CI/CD Matrix across PHP 8.1–8.5_
+_Technical Architecture & Production Engineering Note: SparkNotePad Multi-Theme Engine, Bilingual Dynamic i18n (en/id), Xiaomi/Redmi/POCO Viewport Hardening, PowerDNS Native Operations (AXFR/NOTIFY/Rectify), TSIG Management, Zone Metadata Directives, Auto-PTR Engine, DNS Security & Deliverability Toolbox (SPF/DKIM/DMARC/RBL), AES-256-GCM Encrypted Backups, Global Command Palette (Ctrl+K), CLI Runner (bin/pdns), & 100% Green CI/CD Matrix across PHP 8.1–8.5_
 _Date: 2026-11-21_
 
 ---
 
 ## 1. Executive Summary & Release Evolution
 
-This technical documentation note records the architectural evolution, security hardening, multi-linter CI/CD orchestration, and production engineering across **PHP-PDNSManager Enterprise Edition v1.0.5**.
+This technical documentation note records the architectural evolution, security hardening, multi-linter CI/CD orchestration, and production engineering across **PHP-PDNSManager Enterprise Edition v1.0.6**.
 
 From initial scaffolding to enterprise-grade stability, PHP-PDNSManager provides a security-hardened Web GUI, versioned REST API gateway (`/api/v1`), and zero-dependency GraphQL query engine (`/graphql`) specifically engineered for PowerDNS Authoritative Server. All implementations strictly adhere to PSR standards (PSR-7, PSR-11, PSR-14, PSR-15, PSR-17, PSR-18), zero external CDN dependencies, strict typing (`declare(strict_types=1);`), and 100% green multi-linter verification across PHP 8.1, 8.2, 8.3, 8.4, and 8.5.
 
@@ -18,12 +18,12 @@ From initial scaffolding to enterprise-grade stability, PHP-PDNSManager provides
 
 In accordance with strict enterprise air-gapped security requirements, all external CDN dependencies were removed and replaced with local offline vendor bundles stored in `public/assets/vendor/`:
 
-| Library / Asset | Version | Local Path | Purpose |
-| :--- | :--- | :--- | :--- |
-| **Bootstrap** | `5.3.3` | `public/assets/vendor/bootstrap/` | Core CSS framework (`bootstrap.min.css`) and bundle JS (`bootstrap.bundle.min.js`) |
+| Library / Asset  | Version | Local Path                          | Purpose                                                                                |
+| :--------------- | :------ | :---------------------------------- | :------------------------------------------------------------------------------------- |
+| **Bootstrap**    | `5.3.3` | `public/assets/vendor/bootstrap/`   | Core CSS framework (`bootstrap.min.css`) and bundle JS (`bootstrap.bundle.min.js`)     |
 | **Font Awesome** | `6.5.2` | `public/assets/vendor/fontawesome/` | Icon definitions (`all.min.css`) and standalone webfonts (`webfonts/*.woff2`, `*.ttf`) |
-| **jQuery** | `3.7.1` | `public/assets/vendor/jquery/` | DOM interaction & event handler fallback (`jquery.min.js`) |
-| **Chart.js** | `4.4.4` | `public/assets/vendor/chartjs/` | Authoritative analytics & zone metrics visualization (`chart.umd.min.js`) |
+| **jQuery**       | `3.7.1` | `public/assets/vendor/jquery/`      | DOM interaction & event handler fallback (`jquery.min.js`)                             |
+| **Chart.js**     | `4.4.4` | `public/assets/vendor/chartjs/`     | Authoritative analytics & zone metrics visualization (`chart.umd.min.js`)              |
 
 ### Security & Operational Impact
 
@@ -162,22 +162,22 @@ DNS Catalog Zones (RFC 9432) automate the provisioning and synchronization of me
 
 ## 10. The 14 Engineering Review Pillars Matrix
 
-| Pillar | Focus Dimension | Implementation & Status |
-| :--- | :--- | :--- |
-| **1. Bug Review** | Critical Logic Faults | Fixed `/login` redirect loop, controller route dispatch `TypeError`, and missing `catalog` extraction in `ZoneController`. |
-| **2. Syntax Review** | PHP 8.1–8.5 Standards | 100% files syntax clean (`php -l`); strict typing declared; binary microtime operand typing enforced. |
-| **3. Runtime Review** | Database & Protocol | Standardized on ANSI SQL `CURRENT_TIMESTAMP`; portable upserts across MySQL and SQLite. Verified reflection autowiring. |
-| **4. Logic Review** | RBAC & GraphQL | Corrected route action inference and implemented strict array body parsing. BIND token resolver handles apex and relative names. |
-| **5. Memory Review** | Resource Bounding | Implemented periodic key sweep in rate limiter (>1000 items) to prevent daemon memory leaks. |
-| **6. Dead Code Review** | Unused Variables | Pruned unneeded local variables and unused imports across controllers and views. |
-| **7. Duplicate Code Review** | CSS & Format Strings | Synchronized `app.css` design tokens and centralized `RECORD_FORMAT` in BIND parser. |
-| **8. Circular Dependency Review** | DI Architecture | Verified clean unidirectional container graph: `Container -> Core -> Repositories -> Services -> Controllers`. |
-| **9. Performance Review** | High-Resolution Timing | Added strict float casting for microsecond latency tracking; bounded DB queries and API timeouts (5.0s / 15.0s). |
-| **10. Security Review** | OWASP Top 25 & CWE | SSRF validation on webhooks (CWE-918), recursive payload redaction (CWE-532), nonce-based CSP, and CSRF protection. |
-| **11. Maintainability Review** | CISQ/ISO 5055 | PSR-12 standard verified (86/86 files); camelCase model properties with backward-compatible array accessors. |
-| **12. Scalability Review** | Multi-Server & Mobile | Multi-server PowerDNS routing; mobile dynamic viewport `100dvh` and safe-area insets. |
-| **13. Readability Review** | Google Practices | Clear descriptive naming, typed PHP 8.1+ properties, and inline RFC protocol citations. |
-| **14. Linter & Testability Review** | Verification Gates | 100% green: `phpcs` (86/86 clean), `phpstan` (Level 5 Clean), `psalm` (94.33% inferred), `phpunit` (41/41 pass, 125 assertions). |
+| Pillar                              | Focus Dimension        | Implementation & Status                                                                                                          |
+| :---------------------------------- | :--------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| **1. Bug Review**                   | Critical Logic Faults  | Fixed `/login` redirect loop, controller route dispatch `TypeError`, and missing `catalog` extraction in `ZoneController`.       |
+| **2. Syntax Review**                | PHP 8.1–8.5 Standards  | 100% files syntax clean (`php -l`); strict typing declared; binary microtime operand typing enforced.                            |
+| **3. Runtime Review**               | Database & Protocol    | Standardized on ANSI SQL `CURRENT_TIMESTAMP`; portable upserts across MySQL and SQLite. Verified reflection autowiring.          |
+| **4. Logic Review**                 | RBAC & GraphQL         | Corrected route action inference and implemented strict array body parsing. BIND token resolver handles apex and relative names. |
+| **5. Memory Review**                | Resource Bounding      | Implemented periodic key sweep in rate limiter (>1000 items) to prevent daemon memory leaks.                                     |
+| **6. Dead Code Review**             | Unused Variables       | Pruned unneeded local variables and unused imports across controllers and views.                                                 |
+| **7. Duplicate Code Review**        | CSS & Format Strings   | Synchronized `app.css` design tokens and centralized `RECORD_FORMAT` in BIND parser.                                             |
+| **8. Circular Dependency Review**   | DI Architecture        | Verified clean unidirectional container graph: `Container -> Core -> Repositories -> Services -> Controllers`.                   |
+| **9. Performance Review**           | High-Resolution Timing | Added strict float casting for microsecond latency tracking; bounded DB queries and API timeouts (5.0s / 15.0s).                 |
+| **10. Security Review**             | OWASP Top 25 & CWE     | SSRF validation on webhooks (CWE-918), recursive payload redaction (CWE-532), nonce-based CSP, and CSRF protection.              |
+| **11. Maintainability Review**      | CISQ/ISO 5055          | PSR-12 standard verified (86/86 files); camelCase model properties with backward-compatible array accessors.                     |
+| **12. Scalability Review**          | Multi-Server & Mobile  | Multi-server PowerDNS routing; mobile dynamic viewport `100dvh` and safe-area insets.                                            |
+| **13. Readability Review**          | Google Practices       | Clear descriptive naming, typed PHP 8.1+ properties, and inline RFC protocol citations.                                          |
+| **14. Linter & Testability Review** | Verification Gates     | 100% green: `phpcs` (86/86 clean), `phpstan` (Level 5 Clean), `psalm` (94.33% inferred), `phpunit` (41/41 pass, 125 assertions). |
 
 ---
 
@@ -186,16 +186,19 @@ DNS Catalog Zones (RFC 9432) automate the provisioning and synchronization of me
 The v1.0.6 release brings major operational capabilities designed for high-throughput, enterprise-scale PowerDNS deployments:
 
 ### 10.1 PowerDNS Native Operations Control Plane
+
 - **AXFR Retrieval** (`PUT /zones/{id}/axfr-retrieve`): Forces immediate asynchronous zone transfer pull from primary nameservers on secondary/slave zones.
 - **DNS NOTIFY Broadcast** (`PUT /zones/{id}/notify`): Sends RFC 1996 NOTIFY packets to all configured secondary nameservers and `ALSO-NOTIFY` targets.
 - **DNSSEC Rectification** (`PUT /zones/{id}/rectify`): Rectifies zone database ordering (`ordername`) and DNSSEC signing metadata across backends.
 
 ### 10.2 RFC 2845 / RFC 8945 TSIG Keys Management
+
 - Direct CRUD integration with PowerDNS REST API (`/tsigkeys`).
 - Supported HMAC algorithms: `hmac-sha256`, `hmac-sha512`, `hmac-sha384`, `hmac-sha1`, `hmac-md5`.
 - Built-in 256-bit cryptographically secure random secret generator for zero-effort key generation.
 
 ### 10.3 PowerDNS Zone Metadata Directives
+
 - Granular per-zone native configuration for 9 metadata directives:
   - `ALLOW-AXFR-FROM`: Subnet/IP access-control lists for zone transfers.
   - `TSIG-ALLOW-AXFR`: Enforces specific TSIG key authentication for transfers.
@@ -206,11 +209,13 @@ The v1.0.6 release brings major operational capabilities designed for high-throu
   - `NOTIFY-DNSUPDATE`: Triggers NOTIFY broadcasts upon RFC 2136 dynamic updates.
 
 ### 10.4 Automated Reverse DNS (Auto-PTR) & Wizard
+
 - RFC-compliant `DomainName` and `IpAddress` value objects handling canonicalization, FQDN validation, and reverse pointer generation (`in-addr.arpa`, `ip6.arpa`).
 - Automated PTR record synchronization when adding or modifying `A` or `AAAA` records.
 - Dedicated Reverse Zone Creation Wizard (`/zones/reverse-wizard`) supporting `/24`, `/16`, `/8` IPv4 subnets and `/64`, `/48`, `/32` IPv6 prefixes.
 
 ### 10.5 DNS Security & Email Deliverability Toolbox
+
 - **SPF Parser & Validator**: RFC 7208 syntax validation, mechanism breakdown, and strict 10-lookup count ceiling enforcement.
 - **SPF Builder**: Interactive visual builder for mechanisms (`a`, `mx`, `ip4`, `ip6`, `include`, `all`) and qualifiers (`+`, `-`, `~`, `?`).
 - **DKIM Inspector**: Live selector query against authoritative nameservers to inspect public keys and key types (`rsa`, `ed25519`).
@@ -218,16 +223,19 @@ The v1.0.6 release brings major operational capabilities designed for high-throu
 - **Multi-Provider RBL/DNSBL Checker**: Checks IP/domain reputation across major blacklist providers (Spamhaus ZEN, Barracuda, Spamcop, SORBS, Composite Blocking List).
 
 ### 10.6 Encrypted Cluster Backup & Restore Engine
+
 - AES-256-GCM symmetric encryption with PBKDF2 key derivation (SHA-256, 10,000 iterations), 96-bit IV, and 128-bit authentication tag.
 - SHA-256 cryptographic checksums for backup archive integrity verification.
 - Dry-run restore preview validating zone schemas and record counts prior to mutation.
 
 ### 10.7 Global Command Palette (Ctrl+K / Cmd+K)
+
 - Fast, accessible modal dialog with debounced async queries against `/api/search`.
 - Real-time search across PowerDNS zones, resource records, comments, and application quick-actions.
 - Keyboard navigation with ArrowUp/ArrowDown selection and Enter execution.
 
 ### 10.8 CLI Runner (`bin/pdns`) & Console Kernel
+
 - Standalone CLI executable `bin/pdns` for headless server administration and cron automation:
   - `php bin/pdns backup:run [--encrypt] [--passphrase=...]`
   - `php bin/pdns cluster:probe`
@@ -241,12 +249,12 @@ The v1.0.6 release brings major operational capabilities designed for high-throu
 
 All remote GitHub Actions workflows execute with 100% passing status:
 
-| Workflow | Version / Runner | Verification Scope | Status |
-| :--- | :--- | :--- | :--- |
-| **Super-Linter** | `v8.3.1` (Inclusion Mode) | PHP builtin, JavaScript, Markdown, YAML, JSON, Shell | **PASS (0 errors)** |
-| **MegaLinter** | `v9.6.0` (Automated Multi-Scan) | 50+ Linters across all repository languages and assets | **PASS (0 errors)** |
-| **CodeQL Advanced** | GitHub Advanced Security | Semantic AST security analysis for PHP and JavaScript | **PASS (0 alerts)** |
-| **PHP-CI** | Matrix PHP 8.1, 8.2, 8.3, 8.4, 8.5 | Composer validation, PHPCS, PHPStan, Psalm, PHPUnit | **PASS (0 errors)** |
+| Workflow            | Version / Runner                   | Verification Scope                                     | Status              |
+| :------------------ | :--------------------------------- | :----------------------------------------------------- | :------------------ |
+| **Super-Linter**    | `v8.3.1` (Inclusion Mode)          | PHP builtin, JavaScript, Markdown, YAML, JSON, Shell   | **PASS (0 errors)** |
+| **MegaLinter**      | `v9.6.0` (Automated Multi-Scan)    | 50+ Linters across all repository languages and assets | **PASS (0 errors)** |
+| **CodeQL Advanced** | GitHub Advanced Security           | Semantic AST security analysis for PHP and JavaScript  | **PASS (0 alerts)** |
+| **PHP-CI**          | Matrix PHP 8.1, 8.2, 8.3, 8.4, 8.5 | Composer validation, PHPCS, PHPStan, Psalm, PHPUnit    | **PASS (0 errors)** |
 
 ---
 

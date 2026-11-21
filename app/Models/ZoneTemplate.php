@@ -43,7 +43,7 @@ class ZoneTemplate
     public function __isset(string $name): bool
     {
         return match ($name) {
-            'is_default' => isset($this->isDefault),
+            'is_default' => true,
             'created_at' => isset($this->createdAt),
             'updated_at' => isset($this->updatedAt),
             default => false,

@@ -100,68 +100,68 @@ $robots = $viewVars['robots'] ?? 'noindex, nofollow';
                         <a class="nav-link <?= request()->getPath() === DASHBOARD_URI ? 'active' : '' ?>"
                             href="<?= DASHBOARD_URI ?>"
                             <?= request()->getPath() === DASHBOARD_URI ? 'aria-current="page"' : '' ?>>
-                            <i class="fas fa-tachometer-alt me-2" aria-hidden="true"></i> Dashboard
+                            <i class="fas fa-tachometer-alt me-2" aria-hidden="true"></i> <?= htmlspecialchars(__('nav_dashboard'), ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= request()->getPath() === '/zones' || (str_starts_with(request()->getPath(), '/zones/') && !str_starts_with(request()->getPath(), '/zones/bulk-records')) ? 'active' : '' ?>"
                             href="/zones"
                             <?= request()->getPath() === '/zones' ? 'aria-current="page"' : '' ?>>
-                            <i class="fas fa-globe me-2" aria-hidden="true"></i> Zones
+                            <i class="fas fa-globe me-2" aria-hidden="true"></i> <?= htmlspecialchars(__('nav_zones'), ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= request()->getPath() === '/zones/bulk-records' ? 'active' : '' ?>"
                             href="/zones/bulk-records">
-                            <i class="fas fa-layer-group me-2" aria-hidden="true"></i> Bulk Records
+                            <i class="fas fa-layer-group me-2" aria-hidden="true"></i> <?= htmlspecialchars(__('nav_bulk_records'), ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= request()->getPath() === '/zones/reverse-wizard' ? 'active' : '' ?>"
                             href="/zones/reverse-wizard">
-                            <i class="fas fa-undo-alt me-2" aria-hidden="true"></i> Reverse Wizard
+                            <i class="fas fa-undo-alt me-2" aria-hidden="true"></i> <?= htmlspecialchars(__('nav_reverse_wizard'), ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= str_starts_with(request()->getPath(), '/toolbox') ? 'active' : '' ?>"
                             href="/toolbox">
-                            <i class="fas fa-toolbox me-2" aria-hidden="true"></i> DNS Toolbox
+                            <i class="fas fa-toolbox me-2" aria-hidden="true"></i> <?= htmlspecialchars(__('nav_dns_toolbox'), ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= str_starts_with(request()->getPath(), '/tsig-keys') ? 'active' : '' ?>"
                             href="/tsig-keys">
-                            <i class="fas fa-key me-2" aria-hidden="true"></i> TSIG Keys
+                            <i class="fas fa-key me-2" aria-hidden="true"></i> <?= htmlspecialchars(__('nav_tsig_keys'), ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= str_starts_with(request()->getPath(), '/backups') ? 'active' : '' ?>"
                             href="/backups">
-                            <i class="fas fa-shield-alt me-2" aria-hidden="true"></i> Cluster Backups
+                            <i class="fas fa-shield-alt me-2" aria-hidden="true"></i> <?= htmlspecialchars(__('nav_cluster_backups'), ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= str_starts_with(request()->getPath(), '/templates') ? 'active' : '' ?>"
                             href="/templates">
-                            <i class="fas fa-file-invoice me-2" aria-hidden="true"></i> Zone Templates
+                            <i class="fas fa-file-invoice me-2" aria-hidden="true"></i> <?= htmlspecialchars(__('nav_zone_templates'), ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= str_starts_with(request()->getPath(), '/servers') ? 'active' : '' ?>"
                             href="/servers">
-                            <i class="fas fa-server me-2" aria-hidden="true"></i> Server Clusters
+                            <i class="fas fa-server me-2" aria-hidden="true"></i> <?= htmlspecialchars(__('nav_server_clusters'), ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= str_starts_with(request()->getPath(), '/audit-logs') ? 'active' : '' ?>"
                             href="/audit-logs">
-                            <i class="fas fa-history me-2" aria-hidden="true"></i> Audit Trail
+                            <i class="fas fa-history me-2" aria-hidden="true"></i> <?= htmlspecialchars(__('nav_audit_trail'), ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= str_starts_with(request()->getPath(), '/health') ? 'active' : '' ?>"
                             href="/health">
-                            <i class="fas fa-heartbeat me-2" aria-hidden="true"></i> Health Check
+                            <i class="fas fa-heartbeat me-2" aria-hidden="true"></i> <?= htmlspecialchars(__('nav_health_check'), ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     </li>
                 </ul>
@@ -171,7 +171,7 @@ $robots = $viewVars['robots'] ?? 'noindex, nofollow';
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link text-danger" href="/logout">
-                            <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i> Logout
+                            <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i> <?= htmlspecialchars(__('nav_logout'), ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     </li>
                 </ul>
@@ -194,14 +194,14 @@ $robots = $viewVars['robots'] ?? 'noindex, nofollow';
 
                         <div class="d-none d-sm-flex align-items-center">
                             <span class="badge bg-success-subtle text-success border border-success-subtle me-2">
-                                <i class="fas fa-circle fa-xs me-1" aria-hidden="true"></i> Connected
+                                <i class="fas fa-circle fa-xs me-1" aria-hidden="true"></i> <?= htmlspecialchars(__('connected'), ENT_QUOTES, 'UTF-8') ?>
                             </span>
                             <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
-                                <i class="fas fa-server fa-xs me-1" aria-hidden="true"></i> Authoritative DNS
+                                <i class="fas fa-server fa-xs me-1" aria-hidden="true"></i> <?= htmlspecialchars(__('authoritative_dns'), ENT_QUOTES, 'UTF-8') ?>
                             </span>
                         </div>
 
-                        <!-- Right Actions: Quick Search, Theme Toggle & User Profile -->
+                        <!-- Right Actions: Quick Search, Language, Theme & User Profile -->
                         <div class="navbar-text ms-auto d-flex align-items-center">
                             <!-- Quick Search Command Palette Trigger -->
                             <button class="btn btn-sm btn-outline-secondary me-2 d-none d-md-inline-flex align-items-center"
@@ -209,17 +209,58 @@ $robots = $viewVars['robots'] ?? 'noindex, nofollow';
                                     type="button"
                                     aria-label="Quick Search (Ctrl+K)"
                                     title="Quick Search (Ctrl+K)">
-                                <i class="fas fa-search me-1" aria-hidden="true"></i> Quick Search <kbd class="ms-2 px-1 py-0 text-muted border rounded" style="font-size:0.75rem;">Ctrl K</kbd>
+                                <i class="fas fa-search me-1" aria-hidden="true"></i> <?= htmlspecialchars(__('nav_quick_search'), ENT_QUOTES, 'UTF-8') ?> <kbd class="ms-2 px-1 py-0 text-muted border rounded" style="font-size:0.75rem;">Ctrl K</kbd>
                             </button>
 
-                            <!-- Theme Mode Switcher (Dark / Light) -->
-                            <button class="theme-toggle-btn me-3"
-                                    id="themeToggleBtn"
-                                    type="button"
-                                    aria-label="Toggle dark/light theme"
-                                    title="Toggle theme">
-                                <i class="fas fa-moon" id="themeIcon" aria-hidden="true"></i>
-                            </button>
+                            <!-- Language Switcher Dropdown (EN / ID) -->
+                            <div class="dropdown me-2">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center"
+                                        type="button"
+                                        id="languageDropdown"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                        title="<?= htmlspecialchars(__('language'), ENT_QUOTES, 'UTF-8') ?>">
+                                    <i class="fas fa-globe me-1" aria-hidden="true"></i>
+                                    <span class="text-uppercase fw-semibold"><?= htmlspecialchars(current_locale(), ENT_QUOTES, 'UTF-8') ?></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="languageDropdown">
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center justify-content-between <?= current_locale() === 'en' ? 'active fw-bold' : '' ?>" href="/locale/en">
+                                            <span>English (US)</span>
+                                            <?php if (current_locale() === 'en'): ?><i class="fas fa-check fa-xs ms-2"></i><?php endif; ?>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center justify-content-between <?= current_locale() === 'id' ? 'active fw-bold' : '' ?>" href="/locale/id">
+                                            <span>Bahasa Indonesia</span>
+                                            <?php if (current_locale() === 'id'): ?><i class="fas fa-check fa-xs ms-2"></i><?php endif; ?>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Theme Mode Switcher Dropdown (SparkNotePad Presets) -->
+                            <div class="dropdown me-3">
+                                <button class="theme-toggle-btn dropdown-toggle d-flex align-items-center"
+                                        id="themeToggleBtn"
+                                        type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                        title="<?= htmlspecialchars(__('toggle_theme'), ENT_QUOTES, 'UTF-8') ?>"
+                                        aria-label="<?= htmlspecialchars(__('toggle_theme'), ENT_QUOTES, 'UTF-8') ?>">
+                                    <i class="fas fa-palette me-1" id="themeIcon" aria-hidden="true"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm" id="themeDropdownMenu" aria-labelledby="themeToggleBtn">
+                                    <li><h6 class="dropdown-header text-uppercase fs-7"><i class="fas fa-paint-brush me-1"></i> <?= htmlspecialchars(__('theme'), ENT_QUOTES, 'UTF-8') ?></h6></li>
+                                    <li><a class="dropdown-item theme-select-item" href="#" data-theme="dark"><i class="fas fa-moon text-info me-2"></i> <?= htmlspecialchars(__('theme_dark'), ENT_QUOTES, 'UTF-8') ?></a></li>
+                                    <li><a class="dropdown-item theme-select-item" href="#" data-theme="light"><i class="fas fa-sun text-warning me-2"></i> <?= htmlspecialchars(__('theme_light'), ENT_QUOTES, 'UTF-8') ?></a></li>
+                                    <li><a class="dropdown-item theme-select-item" href="#" data-theme="midnight"><i class="fas fa-star text-primary me-2"></i> <?= htmlspecialchars(__('theme_midnight'), ENT_QUOTES, 'UTF-8') ?></a></li>
+                                    <li><a class="dropdown-item theme-select-item" href="#" data-theme="ocean"><i class="fas fa-water text-cyan me-2"></i> <?= htmlspecialchars(__('theme_ocean'), ENT_QUOTES, 'UTF-8') ?></a></li>
+                                    <li><a class="dropdown-item theme-select-item" href="#" data-theme="forest"><i class="fas fa-tree text-success me-2"></i> <?= htmlspecialchars(__('theme_forest'), ENT_QUOTES, 'UTF-8') ?></a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item theme-select-item" href="#" data-theme="high-contrast"><i class="fas fa-adjust text-white bg-dark p-1 rounded me-2"></i> <?= htmlspecialchars(__('theme_high_contrast'), ENT_QUOTES, 'UTF-8') ?></a></li>
+                                </ul>
+                            </div>
 
                             <i class="fas fa-user-circle fa-lg me-2 text-primary" aria-hidden="true"></i>
                             <span class="fw-semibold text-reset"><?= htmlspecialchars($user->username ?? 'Administrator', ENT_QUOTES, 'UTF-8') ?></span>

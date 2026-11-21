@@ -41,7 +41,7 @@ class DashboardController
         if ($this->clusterService !== null) {
             try {
                 $servers = $this->clusterService->getAllServers();
-                $activeServers = count(array_filter($servers, fn($s) => $s->isActive));
+                $activeServers = count(array_filter($servers, fn ($s) => $s->isActive));
                 $defaultServer = $this->clusterService->getDefaultServer();
                 $conn = $this->clusterService->testConnection(
                     $defaultServer->apiUrl,

@@ -140,7 +140,7 @@ class BackupRestoreService
             ];
         }
 
-        usort($backups, fn($a, $b) => strcmp($b['filename'], $a['filename']));
+        usort($backups, fn ($a, $b) => strcmp($b['filename'], $a['filename']));
         return $backups;
     }
 

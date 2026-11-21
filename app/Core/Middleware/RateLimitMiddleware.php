@@ -31,7 +31,7 @@ class RateLimitMiddleware implements MiddlewareInterface
             $now = time();
             $this->storage = array_filter(
                 $this->storage,
-                fn(array $entry): bool => (int) ($entry['reset'] ?? 0) > $now
+                fn (array $entry): bool => (int) ($entry['reset'] ?? 0) > $now
             );
         }
         $current = $this->storage[$key] ?? ['count' => 0, 'reset' => time() + $window];

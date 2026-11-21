@@ -160,29 +160,29 @@ modern PowerDNS administration:
 
 ## 🎯 Key Features
 
-| Capability Area             | Highlights & Implementations                                                                                                                                                 |
-| :-------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Multi-Server Clustering** | Manage multiple PowerDNS nodes (`pdns_servers`), cluster failover, connection latency testing, and dedicated REST routes (`/servers`).                                       |
-| **Zone Management**         | Native, Master, Slave, and RFC 9432 Catalog (Producer/Consumer) zones; auto-increment SOA serial (`YYYYMMDDNN`); instant search, filtering, and RFC 1035 BIND import/export. |
-| **Authoritative Records**   | Full CRUD for `A`, `AAAA`, `CNAME`, `MX`, `TXT`, `NS`, `SRV`, `CAA`, `PTR`, `NAPTR`, `SOA`, `DS`, and RFC 9460 `HTTPS` & `SVCB` with real-time FQDN syntax validation.       |
-| **DNSSEC Automation**       | Cryptographic key management (KSK / ZSK generation), automatic zone signing, key rollover, and DS record generation for parent delegation.                                   |
-| **Zone Templating Engine**  | Preconfigured DNS profiles for instant 1-click zone provisioning and record deployment (`/templates`).                                                                       |
-| **Bulk Record Operations**  | Cross-zone search and replace for batch IP/target migrations and mass record deletion (`/zones/bulk-records`).                                                               |
-| **Identity & RBAC**         | Role-Based Access Control (`admin`, `operator`, `viewer`), Multi-Tenant Organizations, TOTP Two-Factor Authentication, and scoped API tokens.                                |
-| **REST API Gateway**        | Versioned REST API (`/api/v1`) with JSON-Schema validation and Bearer token authentication for Terraform, Ansible, and CI/CD pipelines.                                      |
-| **GraphQL Endpoint**        | Zero-dependency GraphQL execution engine (`/graphql`) supporting flexible queries (`zones`, `servers`, `health`) and mutations.                                              |
-| **Signed Webhooks**         | HMAC-SHA256 payload signing with `X-PDNS-Signature` headers for event-driven integration upon zone and record modifications.                                                 |
-| **Audit Logging & Trail**   | Granular audit logs tracking user ID, IP address, exact action, target zone, HTTP status, and timestamp with CSV/JSON export (`/audit-logs`).                                |
-| **System Telemetry**        | Health telemetry dashboard (`/health`) monitoring PowerDNS latency, database connectivity, storage permissions, and PHP runtime metrics.                                     |
-| **Offline UI & Theming**    | Visual Subnet Calculator dark/light palette, 100% offline local vendor assets, glassmorphism navigation, and mobile anti-clipping viewport engine.                           |
-| **PowerDNS Native Ops**     | AXFR Retrieve (`/zones/{id}/axfr-retrieve`), DNS NOTIFY (`/zones/{id}/notify`), and Rectify (`/zones/{id}/rectify`) with one-click web actions and CLI support.              |
-| **TSIG Keys Management**    | RFC 2845 / RFC 8945 TSIG key CRUD, HMAC algorithms (`hmac-sha256`, `hmac-sha512`, etc.), and 256-bit cryptographically secure random secret generation (`/tsig-keys`).     |
-| **Zone Metadata Directives**| Native PowerDNS directives (`ALLOW-AXFR-FROM`, `TSIG-ALLOW-AXFR`, `SOA-EDIT`, `AXFR-SOURCE`, `ALSO-NOTIFY`, `NOTIFY-DNSUPDATE`) via web & API (`/zones/{id}/metadata`).  |
-| **Automated Reverse DNS**   | Auto-PTR record synchronization on record creation/update and dedicated IPv4/IPv6 Reverse Zone Creation Wizard (`/zones/reverse-wizard`).                                   |
-| **DNS Security Toolbox**    | RFC 7208 SPF syntax parser & 10-lookup limit check, SPF Builder, DKIM Selector inspector, RFC 7489 DMARC Builder, and multi-provider RBL/DNSBL checks (`/toolbox`).         |
-| **Encrypted Backup Engine** | AES-256-GCM encrypted cluster snapshots with PBKDF2 key derivation, SHA-256 integrity checksums, and dry-run restore preview (`/backups`).                                  |
-| **Global Command Palette**  | Instant `Ctrl+K` / `Cmd+K` keyboard modal with debounced live PowerDNS search (`/api/search`), arrow navigation, and quick action jumps.                                      |
-| **CLI Console Runner**      | Executable `bin/pdns` for scheduled cron backups (`backup:run`), cluster health probing (`cluster:probe`), zone NOTIFY/rectify, and database migrations (`migrate`).        |
+| Capability Area              | Highlights & Implementations                                                                                                                                                 |
+| :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Multi-Server Clustering**  | Manage multiple PowerDNS nodes (`pdns_servers`), cluster failover, connection latency testing, and dedicated REST routes (`/servers`).                                       |
+| **Zone Management**          | Native, Master, Slave, and RFC 9432 Catalog (Producer/Consumer) zones; auto-increment SOA serial (`YYYYMMDDNN`); instant search, filtering, and RFC 1035 BIND import/export. |
+| **Authoritative Records**    | Full CRUD for `A`, `AAAA`, `CNAME`, `MX`, `TXT`, `NS`, `SRV`, `CAA`, `PTR`, `NAPTR`, `SOA`, `DS`, and RFC 9460 `HTTPS` & `SVCB` with real-time FQDN syntax validation.       |
+| **DNSSEC Automation**        | Cryptographic key management (KSK / ZSK generation), automatic zone signing, key rollover, and DS record generation for parent delegation.                                   |
+| **Zone Templating Engine**   | Preconfigured DNS profiles for instant 1-click zone provisioning and record deployment (`/templates`).                                                                       |
+| **Bulk Record Operations**   | Cross-zone search and replace for batch IP/target migrations and mass record deletion (`/zones/bulk-records`).                                                               |
+| **Identity & RBAC**          | Role-Based Access Control (`admin`, `operator`, `viewer`), Multi-Tenant Organizations, TOTP Two-Factor Authentication, and scoped API tokens.                                |
+| **REST API Gateway**         | Versioned REST API (`/api/v1`) with JSON-Schema validation and Bearer token authentication for Terraform, Ansible, and CI/CD pipelines.                                      |
+| **GraphQL Endpoint**         | Zero-dependency GraphQL execution engine (`/graphql`) supporting flexible queries (`zones`, `servers`, `health`) and mutations.                                              |
+| **Signed Webhooks**          | HMAC-SHA256 payload signing with `X-PDNS-Signature` headers for event-driven integration upon zone and record modifications.                                                 |
+| **Audit Logging & Trail**    | Granular audit logs tracking user ID, IP address, exact action, target zone, HTTP status, and timestamp with CSV/JSON export (`/audit-logs`).                                |
+| **System Telemetry**         | Health telemetry dashboard (`/health`) monitoring PowerDNS latency, database connectivity, storage permissions, and PHP runtime metrics.                                     |
+| **Offline UI & Theming**     | Visual Subnet Calculator dark/light palette, 100% offline local vendor assets, glassmorphism navigation, and mobile anti-clipping viewport engine.                           |
+| **PowerDNS Native Ops**      | AXFR Retrieve (`/zones/{id}/axfr-retrieve`), DNS NOTIFY (`/zones/{id}/notify`), and Rectify (`/zones/{id}/rectify`) with one-click web actions and CLI support.              |
+| **TSIG Keys Management**     | RFC 2845 / RFC 8945 TSIG key CRUD, HMAC algorithms (`hmac-sha256`, `hmac-sha512`, etc.), and 256-bit cryptographically secure random secret generation (`/tsig-keys`).       |
+| **Zone Metadata Directives** | Native PowerDNS directives (`ALLOW-AXFR-FROM`, `TSIG-ALLOW-AXFR`, `SOA-EDIT`, `AXFR-SOURCE`, `ALSO-NOTIFY`, `NOTIFY-DNSUPDATE`) via web & API (`/zones/{id}/metadata`).      |
+| **Automated Reverse DNS**    | Auto-PTR record synchronization on record creation/update and dedicated IPv4/IPv6 Reverse Zone Creation Wizard (`/zones/reverse-wizard`).                                    |
+| **DNS Security Toolbox**     | RFC 7208 SPF syntax parser & 10-lookup limit check, SPF Builder, DKIM Selector inspector, RFC 7489 DMARC Builder, and multi-provider RBL/DNSBL checks (`/toolbox`).          |
+| **Encrypted Backup Engine**  | AES-256-GCM encrypted cluster snapshots with PBKDF2 key derivation, SHA-256 integrity checksums, and dry-run restore preview (`/backups`).                                   |
+| **Global Command Palette**   | Instant `Ctrl+K` / `Cmd+K` keyboard modal with debounced live PowerDNS search (`/api/search`), arrow navigation, and quick action jumps.                                     |
+| **CLI Console Runner**       | Executable `bin/pdns` for scheduled cron backups (`backup:run`), cluster health probing (`cluster:probe`), zone NOTIFY/rectify, and database migrations (`migrate`).         |
 
 ---
 
@@ -531,24 +531,24 @@ curl -X POST https://pdns.example.com/api/v1/zones/example.com/records \
 
 ```graphql
 query GetSystemOverview {
-    health {
-        status
-        database
-        pdnsLatencyMs
-    }
-    zones {
-        id
-        name
-        kind
-        serial
-    }
-    servers {
-        id
-        name
-        apiUrl
-        isActive
-        isDefault
-    }
+  health {
+    status
+    database
+    pdnsLatencyMs
+  }
+  zones {
+    id
+    name
+    kind
+    serial
+  }
+  servers {
+    id
+    name
+    apiUrl
+    isActive
+    isDefault
+  }
 }
 ```
 
@@ -558,15 +558,15 @@ query GetSystemOverview {
 
 Every commit of PHP-PDNSManager is validated against comprehensive automated quality gates:
 
-| Quality Gate             | Verification Engine                                               | Target / Standard                   | Pass Criteria              |       Status        |
-| :----------------------- | :---------------------------------------------------------------- | :---------------------------------- | :------------------------- | :-----------------: |
-| **Unit & Service Tests** | [`PHPUnit 10.5 / 11.0`](https://phpunit.de)                       | Core models, services, repositories | 100% assertions pass       |  **✔ 24/24 PASS**   |
-| **Static Analysis**      | [`PHPStan`](https://phpstan.org)                                  | Strict Level 5 analysis             | 0 errors                   | **✔ LEVEL 5 CLEAN** |
-| **Type Inference**       | [`Psalm`](https://psalm.dev)                                      | Level 4 strict type safety          | 0 errors (94.31% inferred) |     **✔ CLEAN**     |
-| **Coding Standards**     | [`PHP_CodeSniffer`](https://github.com/squizlabs/PHP_CodeSniffer) | PSR-12 strict compliance            | 0 errors, 0 warnings       |  **✔ PSR-12 PASS**  |
-| **MegaLinter Multi-Scan**| [`MegaLinter v9.6.0`](https://megalinter.io)                      | 50+ language and secret linters     | 0 errors, 0 secret leaks   |  **✔ 100% PASS**    |
-| **Super-Linter Engine**  | [`Super-Linter v8.3.1`](https://github.com/super-linter)          | Strict Inclusion Linter Engine      | 0 errors                   |  **✔ 100% PASS**    |
-| **Security Scanning**    | GitHub Advanced Security CodeQL & SonarLint                       | OWASP Top 25, CWE Top 50 checks     | 0 security vulnerabilities |   **✔ 0 ALERTS**    |
+| Quality Gate              | Verification Engine                                               | Target / Standard                   | Pass Criteria              |       Status        |
+| :------------------------ | :---------------------------------------------------------------- | :---------------------------------- | :------------------------- | :-----------------: |
+| **Unit & Service Tests**  | [`PHPUnit 10.5 / 11.0`](https://phpunit.de)                       | Core models, services, repositories | 100% assertions pass       |  **✔ 24/24 PASS**   |
+| **Static Analysis**       | [`PHPStan`](https://phpstan.org)                                  | Strict Level 5 analysis             | 0 errors                   | **✔ LEVEL 5 CLEAN** |
+| **Type Inference**        | [`Psalm`](https://psalm.dev)                                      | Level 4 strict type safety          | 0 errors (94.31% inferred) |     **✔ CLEAN**     |
+| **Coding Standards**      | [`PHP_CodeSniffer`](https://github.com/squizlabs/PHP_CodeSniffer) | PSR-12 strict compliance            | 0 errors, 0 warnings       |  **✔ PSR-12 PASS**  |
+| **MegaLinter Multi-Scan** | [`MegaLinter v9.6.0`](https://megalinter.io)                      | 50+ language and secret linters     | 0 errors, 0 secret leaks   |   **✔ 100% PASS**   |
+| **Super-Linter Engine**   | [`Super-Linter v8.3.1`](https://github.com/super-linter)          | Strict Inclusion Linter Engine      | 0 errors                   |   **✔ 100% PASS**   |
+| **Security Scanning**     | GitHub Advanced Security CodeQL & SonarLint                       | OWASP Top 25, CWE Top 50 checks     | 0 security vulnerabilities |   **✔ 0 ALERTS**    |
 
 ---
 

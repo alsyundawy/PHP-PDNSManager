@@ -48,7 +48,7 @@ class Webhook
     public function __isset(string $name): bool
     {
         return match ($name) {
-            'is_active' => isset($this->isActive),
+            'is_active' => true,
             'last_triggered_at' => isset($this->lastTriggeredAt),
             'created_at' => isset($this->createdAt),
             'updated_at' => isset($this->updatedAt),

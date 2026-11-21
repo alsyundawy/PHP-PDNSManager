@@ -48,7 +48,7 @@ class ZoneMetadataService
             throw new InvalidArgumentException("Unsupported metadata kind: {$kind}");
         }
 
-        $cleanValues = array_values(array_filter(array_map('trim', $values), fn($v) => $v !== ''));
+        $cleanValues = array_values(array_filter(array_map('trim', $values), fn ($v) => $v !== ''));
         $this->zoneResource->setMetadata($zoneId, $kindUpper, $cleanValues);
 
         $this->logger->info('Zone metadata updated', [

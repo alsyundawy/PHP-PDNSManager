@@ -94,3 +94,40 @@ if (!function_exists('app')) {
         return $app->getContainer()->get($abstract);
     }
 }
+if (!function_exists('__')) {
+    /**
+     * Translate the given message.
+     *
+     * @param string $key
+     * @param array<string, scalar> $replace
+     * @param string|null $locale
+     * @return string
+     */
+    function __(string $key, array $replace = [], ?string $locale = null): string
+    {
+        return \App\Core\I18n::trans($key, $replace, $locale);
+    }
+}
+if (!function_exists('trans')) {
+    /**
+     * Alias for __() helper.
+     *
+     * @param string $key
+     * @param array<string, scalar> $replace
+     * @param string|null $locale
+     * @return string
+     */
+    function trans(string $key, array $replace = [], ?string $locale = null): string
+    {
+        return \App\Core\I18n::trans($key, $replace, $locale);
+    }
+}
+if (!function_exists('current_locale')) {
+    /**
+     * Get the active locale ('en' or 'id').
+     */
+    function current_locale(): string
+    {
+        return \App\Core\I18n::getLocale();
+    }
+}

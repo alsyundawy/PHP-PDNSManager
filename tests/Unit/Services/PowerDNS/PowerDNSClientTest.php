@@ -41,7 +41,7 @@ class PowerDNSClientTest extends TestCase
     {
         $this->mockHandler->append(new Response(200, [], json_encode(['zones' => []])));
         $result = $this->client->get('zones');
-        $this->assertIsArray($result);
+        $this->assertArrayHasKey('zones', $result);
     }
     public function testErrorResponse(): void
     {
