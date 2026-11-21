@@ -116,7 +116,7 @@ class HealthCheckService
 
     public function checkSystem(): array
     {
-        $requiredExtensions = ['pdo', 'curl', 'openssl', 'json', 'mbstring', 'sodium'];
+        $requiredExtensions = ['pdo', 'curl', 'openssl', 'json', 'mbstring'];
         $missing = [];
         foreach ($requiredExtensions as $ext) {
             if (!extension_loaded($ext)) {

@@ -5,13 +5,10 @@ declare(strict_types=1);
 use App\Core\View;
 
 if (!function_exists('view')) {
-    function view(string $view, array $data = []): string
+    function view(string $view, array $data = [], ?string $layout = 'admin'): string
     {
-        static $viewRenderer = null;
-        if ($viewRenderer === null) {
-            $viewRenderer = new View(__DIR__ . '/../../');
-        }
-        return $viewRenderer->render($view, $data);
+        $viewRenderer = new View(__DIR__ . '/../../');
+        return $viewRenderer->render($view, $data, $layout);
     }
 }
 if (!function_exists('asset')) {

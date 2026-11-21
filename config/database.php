@@ -5,7 +5,7 @@ return [
     'connections' => [
         'sqlite' => [
             'driver' => 'sqlite',
-            'database' => env('DB_DATABASE', ':memory:'),
+            'database' => env('DB_DATABASE', dirname(__DIR__) . '/storage/database.sqlite'),
             'prefix' => '',
         ],
         'mysql' => [

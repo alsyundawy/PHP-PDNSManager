@@ -7,6 +7,10 @@ composer.lock
 /storage/cache/
 /storage/backups/
 /storage/logs/*
+/storage/*.sqlite
+/storage/*.sqlite3
+*.sqlite
+*.sqlite3
 !.gitkeep
 /.idea/
 /.vscode/

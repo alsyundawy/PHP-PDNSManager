@@ -23,7 +23,15 @@ class Database
         $driver = $connection['driver'] ?? 'mysql';
 
         if ($driver === 'sqlite') {
-            $dsn = sprintf('sqlite:%s', $connection['database'] ?? ':memory:');
+            $database = (string) ($connection['database'] ?? ':memory:');
+            if ($database !== ':memory:' && !file_exists($database)) {
+                $dir = dirname($database);
+                if (!is_dir($dir)) {
+                    @mkdir($dir, 0755, true);
+                }
+                @touch($database);
+            }
+            $dsn = sprintf('sqlite:%s', $database);
             $username = null;
             $password = null;
         } else {

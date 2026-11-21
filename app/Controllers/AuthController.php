@@ -22,7 +22,7 @@ class AuthController
     public function showLogin(Request $request): Response // NOSONAR
     {
         $csrfToken = $this->csrf->generateToken();
-        $html = view('auth.login', ['csrfToken' => $csrfToken]);
+        $html = view('auth.login', ['csrfToken' => $csrfToken], null);
         return (new Response())->html($html);
     }
     public function login(Request $request): Response
@@ -40,7 +40,7 @@ class AuthController
             }
             return (new Response())->redirect('/dashboard');
         } catch (ValidationException $e) {
-            $html = view('auth.login', ['error' => $e->getErrors(), 'csrfToken' => csrf_token()]);
+            $html = view('auth.login', ['error' => $e->getErrors(), 'csrfToken' => csrf_token()], null);
             return (new Response())->html($html)->withStatus(422);
         }
     }

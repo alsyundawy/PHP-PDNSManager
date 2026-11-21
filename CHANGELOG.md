@@ -8,6 +8,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [1.0.6] - 2026-11-21
 
+### Fixed — Boot, Migration, Login, Seeder & Layout Stability
+
+- **Container PSR Compliance (Fatal Boot Crash)**:
+  - Added `"psr/container": "^1.1 || ^2.0"` to `composer.json` under `require`, ensuring `App\Core\Container` boots successfully in production without requiring dev dependencies.
+- **SQLite Database Migration Compatibility (`php bin/pdns migrate`)**:
+  - Implemented `transformSqlForSqlite()` in `app/Console/Kernel.php` to parse MySQL DDL and transform queries for SQLite:
+    - Extracts inline `INDEX` and `KEY` definitions into separate `CREATE INDEX IF NOT EXISTS` statements.
+    - Translates `(INT|BIGINT) AUTO_INCREMENT PRIMARY KEY` into `INTEGER PRIMARY KEY AUTOINCREMENT`.
+    - Strips MySQL-only `ON UPDATE CURRENT_TIMESTAMP`, `ENGINE=InnoDB`, `DEFAULT CHARSET`, and `COLLATE` directives.
+    - Transforms `INSERT IGNORE` into `INSERT OR IGNORE`.
+  - Configured default SQLite database in `config/database.php` to persist to `storage/database.sqlite` (auto-creating the directory and file on first connect) rather than ephemeral `:memory:`.
+- **Login POST 500 & SQLite Function Compatibility**:
+  - Replaced MySQL-specific `NOW()` with ANSI standard `CURRENT_TIMESTAMP` in `AuditLogRepository::create()` and `UserRepository::update()`, resolving `SQLSTATE[HY000]: General error: 1 no such function: NOW`.
+  - Serialized array payloads into JSON strings in `AuditLogRepository::create()`, eliminating PHP PDO `Array to string conversion` warnings.
+- **Seeder Portability & Password Synchronization (`php bin/pdns db:seed`)**:
+  - Rewrote `database/seeders/InitialSeeder.php` with portable ANSI SQL check-then-insert queries with parameterized values (eliminating MySQL `INSERT IGNORE` and SQLite column confusion with double quotes).
+  - Aligned default administrator credentials with documentation (`README.md`): `admin` / `ChangeMe@2026!`.
+  - Hardened `AuthenticationService::hashPassword()` with graceful fallback from `PASSWORD_ARGON2ID` to `PASSWORD_BCRYPT` and `PASSWORD_DEFAULT` if Argon2id is not supported in the active PHP build.
+  - Added `"Database\\": "database/"` to `composer.json` PSR-4 autoload mapping and added class loader fallback in `Kernel.php`.
+- **Dedicated CLI Executables (`bin/migrate.php` & `bin/seed.php`)**:
+  - Created standalone executable scripts `bin/migrate.php` and `bin/seed.php` matching commands documented in `README.md`.
+  - Added `db:seed` and `seed` command handlers to unified CLI runner `bin/pdns`.
+- **Auth View Layout Isolation (Sidebar Nesting Bug)**:
+  - Updated `App\Core\View::render()` and `view()` helper to accept optional `$layout` parameter and automatically bypass layout wrapping for `auth.*` and standalone views.
+  - Updated `AuthController::showLogin()` and `AuthController::login()` to render `auth.login` directly without nesting within `layouts/admin.php`, eliminating the nested dashboard sidebar on the login screen.
+- **Dependency Cleansing & Health Check Optimization**:
+  - Replaced unused `ext-sodium` requirement in `composer.json` with `ext-openssl` (matching actual AES-256-GCM usage in `BackupRestoreService`).
+  - Removed `sodium` from mandatory extensions in `HealthCheckService.php`.
+
 ### Added — SparkNotePad Multi-Theme Engine, Bilingual i18n, PowerDNS Native Operations & Security Hardening
 
 - **Multi-Theme / Skin Engine (SparkNotePad Reference & WCAG 2.2 AAA)**:

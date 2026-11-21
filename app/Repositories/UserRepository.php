@@ -70,7 +70,7 @@ class UserRepository implements UserRepositoryInterface
         if (empty($fields)) {
             return false;
         }
-        $sql = 'UPDATE users SET ' . implode(', ', $fields) . ', updated_at = NOW() WHERE id = :id';
+        $sql = 'UPDATE users SET ' . implode(', ', $fields) . ', updated_at = CURRENT_TIMESTAMP WHERE id = :id';
         $this->db->execute($sql, $params);
         return true;
     }

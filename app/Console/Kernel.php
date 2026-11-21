@@ -44,6 +44,7 @@ class Kernel
                 'zone:notify' => $this->runZoneNotify($args[1] ?? null),
                 'zone:rectify' => $this->runZoneRectify($args[1] ?? null),
                 'migrate' => $this->runMigrate(),
+                'db:seed', 'seed' => $this->runSeed(),
                 default => $this->commandNotFound($command),
             };
         } catch (Throwable $e) {
@@ -231,11 +232,13 @@ class Kernel
                 continue;
             }
 
-            // Split into separate queries if needed
-            $queries = array_filter(
-                array_map('trim', explode(';', $sql)),
-                fn ($q) => $q !== ''
-            );
+            // Split into separate queries (transformed for SQLite compatibility when applicable)
+            $queries = ($driver === 'sqlite')
+                ? $this->transformSqlForSqlite($sql)
+                : array_filter(
+                    array_map('trim', explode(';', $sql)),
+                    fn ($q) => $q !== ''
+                );
 
             try {
                 $db->beginTransaction();
@@ -266,6 +269,128 @@ class Kernel
         return 0;
     }
 
+    /**
+     * Execute seed
+     */
+    private function runSeed(): int
+    {
+        $this->info("Seeding initial database records...");
+
+        try {
+            if (!class_exists(\Database\Seeders\InitialSeeder::class)) {
+                $seederFile = $this->app->getBasePath() . '/database/seeders/InitialSeeder.php';
+                if (file_exists($seederFile)) {
+                    require_once $seederFile;
+                }
+            }
+
+            /** @var Database $db */
+            $db = $this->app->getContainer()->get(Database::class);
+            /** @var \App\Services\Auth\AuthenticationService $auth */
+            $auth = $this->app->getContainer()->get(\App\Services\Auth\AuthenticationService::class);
+
+            $seeder = new \Database\Seeders\InitialSeeder($db, $auth);
+            $seeder->run();
+
+            $this->success("Database seeding completed successfully.");
+            return 0;
+        } catch (Throwable $e) {
+            $this->error("Seeding failed: " . $e->getMessage());
+            return 1;
+        }
+    }
+
+    /**
+     * Transform MySQL DDL/DML statements into SQLite compatible queries.
+     *
+     * @return array<int, string>
+     */
+    private function transformSqlForSqlite(string $sql): array
+    {
+        $queries = [];
+        $rawStatements = array_filter(
+            array_map('trim', explode(';', $sql)),
+            fn ($s) => $s !== ''
+        );
+
+        foreach ($rawStatements as $stmt) {
+            // Strip block comments
+            $stmt = (string) preg_replace('/\/\*.*?\*\//s', '', $stmt);
+            // Strip line comments
+            $lines = explode("\n", $stmt);
+            $cleanLines = [];
+            foreach ($lines as $line) {
+                $trimmed = trim($line);
+                if (!str_starts_with($trimmed, '--')) {
+                    $cleanLines[] = $line;
+                }
+            }
+            $stmt = trim(implode("\n", $cleanLines));
+            if ($stmt === '') {
+                continue;
+            }
+
+            // Handle MySQL INSERT IGNORE
+            if (preg_match('/^INSERT\s+IGNORE\s+INTO/i', $stmt)) {
+                $stmt = (string) preg_replace('/^INSERT\s+IGNORE\s+INTO/i', 'INSERT OR IGNORE INTO', $stmt);
+                $queries[] = $stmt;
+                continue;
+            }
+
+            // Handle CREATE TABLE
+            if (preg_match('/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?([`"]?\w+[`"]?)\s*\(/i', $stmt, $m)) {
+                $tableName = $m[1];
+                $extraQueries = [];
+
+                $firstParen = strpos($stmt, '(');
+                $lastParen = strrpos($stmt, ')');
+                if ($firstParen === false || $lastParen === false) {
+                    $queries[] = $stmt;
+                    continue;
+                }
+
+                $tableHead = substr($stmt, 0, $firstParen);
+                $tableBody = substr($stmt, $firstParen + 1, $lastParen - $firstParen - 1);
+
+                $bodyLines = explode("\n", $tableBody);
+                $newBodyLines = [];
+
+                foreach ($bodyLines as $bLine) {
+                    $trimmedBLine = trim($bLine, " \t\r\n,");
+                    // Check if line is inline INDEX or KEY definition
+                    if (preg_match('/^(UNIQUE\s+)?(?:INDEX|KEY)\s+([`"]?\w+[`"]?)\s*\(([^)]+)\)/i', $trimmedBLine, $idxMatch)) {
+                        $isUnique = !empty($idxMatch[1]) ? 'UNIQUE ' : '';
+                        $idxName = $idxMatch[2];
+                        $idxCols = $idxMatch[3];
+                        $extraQueries[] = "CREATE {$isUnique}INDEX IF NOT EXISTS {$idxName} ON {$tableName} ({$idxCols})";
+                        continue;
+                    }
+                    $newBodyLines[] = $bLine;
+                }
+
+                $cleanedBody = implode("\n", $newBodyLines);
+                // Replace AUTO_INCREMENT
+                $cleanedBody = (string) preg_replace('/\b(?:INT|BIGINT)\s+AUTO_INCREMENT\s+PRIMARY\s+KEY\b/i', 'INTEGER PRIMARY KEY AUTOINCREMENT', $cleanedBody);
+                $cleanedBody = (string) preg_replace('/\b(?:INT|BIGINT)\s+NOT\s+NULL\s+AUTO_INCREMENT\s+PRIMARY\s+KEY\b/i', 'INTEGER PRIMARY KEY AUTOINCREMENT', $cleanedBody);
+                // Remove ON UPDATE CURRENT_TIMESTAMP
+                $cleanedBody = (string) preg_replace('/\s+ON\s+UPDATE\s+CURRENT_TIMESTAMP\b/i', '', $cleanedBody);
+                // Clean trailing comma before closing paren
+                $cleanedBody = (string) preg_replace('/,\s*$/s', '', rtrim($cleanedBody));
+
+                $newStmt = $tableHead . "(\n" . $cleanedBody . "\n)";
+                $queries[] = $newStmt;
+                foreach ($extraQueries as $eq) {
+                    $queries[] = $eq;
+                }
+                continue;
+            }
+
+            $queries[] = $stmt;
+        }
+
+        return $queries;
+    }
+
     private function commandNotFound(string $command): int
     {
         $this->error("Unknown command: '{$command}'");
@@ -288,6 +413,7 @@ class Kernel
         printf("  \033[32m%-22s\033[0m %s\n", "zone:notify <zone>", "Broadcast RFC 1996 DNS NOTIFY packets to slave nameservers");
         printf("  \033[32m%-22s\033[0m %s\n", "zone:rectify <zone>", "Rectify DNSSEC order keys and metadata for the specified zone");
         printf("  \033[32m%-22s\033[0m %s\n", "migrate", "Run pending database schema migrations from database/migrations/");
+        printf("  \033[32m%-22s\033[0m %s\n", "db:seed", "Seed default roles, permissions, and administrator account");
         printf("  \033[32m%-22s\033[0m %s\n\n", "help", "Display this help message");
 
         echo "\033[1mOptions for backup:run:\033[0m\n";

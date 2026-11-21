@@ -242,6 +242,19 @@ The v1.0.6 release brings major operational capabilities designed for high-throu
   - `php bin/pdns zone:notify <zone_id>`
   - `php bin/pdns zone:rectify <zone_id>`
   - `php bin/pdns migrate`
+  - `php bin/pdns db:seed`
+- Standalone single-purpose scripts: `bin/migrate.php` and `bin/seed.php`.
+
+### 10.9 Runtime Stability, Multi-Database Portability & Layout Hardening
+
+- **PSR Container Compliance**: `psr/container` registered in `composer.json` require, preventing fatal interface errors in minimal production environments.
+- **SQLite DDL Translation Engine**: `transformSqlForSqlite` dynamically transforms MySQL migrations (stripping `ENGINE=InnoDB`, `ON UPDATE CURRENT_TIMESTAMP`, converting inline `INDEX` definitions to `CREATE INDEX IF NOT EXISTS`, and translating `AUTO_INCREMENT` to `INTEGER PRIMARY KEY AUTOINCREMENT`).
+- **ANSI Standard SQL Timestamps**: Replaced non-portable `NOW()` with `CURRENT_TIMESTAMP` across `AuditLogRepository` and `UserRepository`.
+- **Portable Initial Seeder**: Check-then-insert SQL logic compatible with SQLite and MySQL; synchronized administrator credentials with `README.md` (`admin` / `ChangeMe@2026!`).
+- **Resilient Password Hashing**: `AuthenticationService::hashPassword()` safely falls back to `PASSWORD_DEFAULT` if Argon2id is not enabled in the host PHP runtime.
+- **Standalone CLI Utilities**: Created `bin/migrate.php` and `bin/seed.php`, and added `db:seed` command to `bin/pdns`.
+- **Auth View Layout Isolation**: Automatically disables layout wrapping for `auth.*` views, eliminating nested sidebar and dashboard chrome on login.
+- **Extension Dependency Cleansing**: Removed unused `ext-sodium` from `composer.json` and health checks, retaining `ext-openssl` for AES-256-GCM encryption.
 
 ---
 

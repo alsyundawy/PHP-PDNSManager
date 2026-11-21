@@ -27,11 +27,18 @@ class AuditLogRepository implements AuditLogRepositoryInterface
     public function create(array $data): AuditLog
     {
         $sql = 'INSERT INTO audit_logs (user_id, action, payload, status_code, ip_address, created_at)
-                VALUES (:user_id, :action, :payload, :status_code, :ip_address, NOW())';
+                VALUES (:user_id, :action, :payload, :status_code, :ip_address, CURRENT_TIMESTAMP)';
+        $payload = null;
+        if (isset($data['payload'])) {
+            $payload = is_array($data['payload'])
+                ? json_encode($data['payload'], JSON_UNESCAPED_SLASHES)
+                : (string) $data['payload'];
+        }
+
         $this->db->execute($sql, [
             'user_id'     => $data['user_id'],
             'action'      => $data['action'],
-            'payload'     => $data['payload'] ?? null,
+            'payload'     => $payload,
             'status_code' => $data['status_code'] ?? 200,
             'ip_address'  => $data['ip_address'] ?? '0.0.0.0',
         ]);

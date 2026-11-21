@@ -26,13 +26,21 @@ class View
         $this->sharedData[$key] = $value;
     }
 
-    public function render(string $view, array $data = []): string
+    public function render(string $view, array $data = [], ?string $layout = 'admin'): string
     {
         $data = array_merge(self::$globalShared, $this->sharedData, $data);
         $content = $this->renderView($view, $data);
-        if ($this->layout !== null && $this->layout !== '') {
+
+        $activeLayout = ($layout !== 'admin') ? $layout : $this->layout;
+
+        // Automatically disable layout for standalone auth and error pages
+        if (str_starts_with($view, 'auth.') || str_starts_with($view, 'errors.')) {
+            $activeLayout = null;
+        }
+
+        if ($activeLayout !== null && $activeLayout !== '') {
             $layoutData = array_merge($data, ['content' => $content]);
-            return $this->renderView('layouts/' . $this->layout, $layoutData);
+            return $this->renderView('layouts/' . $activeLayout, $layoutData);
         }
         return $content;
     }
@@ -40,7 +48,10 @@ class View
     {
         extract($data, EXTR_SKIP);
         ob_start();
-        include_once $this->basePath . '/app/Views/' . str_replace('.', '/', $view) . '.php';
+        $viewPath = $this->basePath . '/app/Views/' . str_replace('.', '/', $view) . '.php';
+        if (file_exists($viewPath)) {
+            include $viewPath;
+        }
         $output = ob_get_clean();
         return is_string($output) ? $output : '';
     }

@@ -34,4 +34,8 @@ class ContainerTest extends TestCase
         $this->assertTrue($this->container->has('test'));
         $this->assertFalse($this->container->has('nonexistent'));
     }
+    public function testImplementsPsrContainerInterface(): void
+    {
+        $this->assertInstanceOf(\Psr\Container\ContainerInterface::class, $this->container);
+    }
 }

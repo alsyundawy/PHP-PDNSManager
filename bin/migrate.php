@@ -1,0 +1,26 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * PHP-PDNSManager Enterprise Edition v1.0.6
+ * Database Migration Script
+ */
+
+use App\Console\Kernel;
+use App\Core\Application;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$envFile = dirname(__DIR__) . '/.env';
+if (file_exists($envFile)) {
+    $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+    $dotenv->load();
+}
+
+$app = new Application(dirname(__DIR__));
+$kernel = new Kernel($app);
+
+$exitCode = $kernel->handle(['bin/pdns', 'migrate']);
+exit($exitCode);

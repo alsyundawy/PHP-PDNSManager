@@ -390,11 +390,13 @@ composer install --no-dev --optimize-autoloader
 ### 3. Initialize Database & Seed Administrator
 
 ```bash
-# Run database migrations (creates schema, servers, templates, organizations)
+# Option A: Standalone scripts
 php bin/migrate.php
-
-# Seed initial roles and default administrator account
 php bin/seed.php
+
+# Option B: Unified CLI Runner (bin/pdns)
+php bin/pdns migrate
+php bin/pdns db:seed
 ```
 
 > **Default Admin Credentials**:

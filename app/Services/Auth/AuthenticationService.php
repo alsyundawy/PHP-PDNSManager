@@ -58,6 +58,15 @@ class AuthenticationService
     }
     public function hashPassword(string $password): string
     {
-        return password_hash($password, PASSWORD_ARGON2ID);
+        $algo = (defined('PASSWORD_ARGON2ID') && function_exists('password_hash'))
+            ? PASSWORD_ARGON2ID
+            : (defined('PASSWORD_BCRYPT') ? PASSWORD_BCRYPT : PASSWORD_DEFAULT);
+
+        try {
+            return password_hash($password, $algo);
+        } catch (\Throwable $e) {
+            // Fallback if algorithm is not supported by runtime environment
+            return password_hash($password, PASSWORD_DEFAULT);
+        }
     }
 }
