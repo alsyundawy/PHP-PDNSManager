@@ -241,18 +241,22 @@ class Kernel
                 );
 
             try {
-                $db->beginTransaction();
+                if ($driver === 'sqlite') {
+                    $db->beginTransaction();
+                }
                 foreach ($queries as $query) {
                     $pdo->exec($query);
                 }
                 $recordStmt = $pdo->prepare("INSERT INTO migrations (migration) VALUES (?)");
                 $recordStmt->execute([$filename]);
-                $db->commit();
+                if ($pdo->inTransaction()) {
+                    $db->commit();
+                }
 
                 $this->success("Migrated:  {$filename}");
                 $count++;
             } catch (PDOException $e) {
-                if ($db->getPdo()->inTransaction()) {
+                if ($pdo->inTransaction()) {
                     $db->rollBack();
                 }
                 $this->error("Failed migrating {$filename}: " . $e->getMessage());
