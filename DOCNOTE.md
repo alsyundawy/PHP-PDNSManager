@@ -63,6 +63,20 @@ The design system incorporates the aesthetic architecture of [Visual Subnet Calc
 
 - Instant transition synchronization toggles icons (`fa-sun` / `fa-moon`) across all open views without requiring page reload.
 
+### 3.3 Login Portal Architecture & ORION-PDNS Template (`ns1.orion.net.id`)
+
+The authentication portal (`app/Views/auth/login.php`) has been re-architected to mirror the enterprise design system of `https://ns1.orion.net.id` (customized by ALSYUNDAWY IT SOLUTION):
+
+- **Eye-Friendly Dual-Dark Presets**:
+  - Slate Blue mode (`:root`) with `--bg-1: #0f172a`, `--bg-2: #020617`, `--accent-from: #38bdf8`, and `--accent-to: #0ea5e9`.
+  - Obsidian Dark mode (`[data-theme="dark"]`) with `--bg-1: #0a0518`, `--bg-2: #02010a`, `--accent-from: #818cf8`, and `--accent-to: #6366f1`.
+  - Clean Slate Light mode fallback (`[data-theme="light"]`).
+- **Zero-FOUC Floating Theme Switcher**: Dedicated floating pill button with custom SVG sun/moon glyphs and inline pre-render JavaScript executing before DOM paint.
+- **Glassmorphic Security Card**: 16px backdrop-filter blur, glowing borders, radial background gradient, and brand shield header.
+- **Anti-Bot Honeypot Protection**: Hidden honeypot field (`hp_name`) to trap automated credential stuffing bots without affecting real user accessibility.
+- **Bilingual i18n Switcher**: Dual-language selector (`EN` | `ID`) embedded directly into the login container.
+- **Backend Daemon Resiliency**: Added defensive try-catch wrappers around PowerDNS API calls across all controllers (`ZoneTemplateController`, `ZoneController`, `TsigController`, `ZoneMetadataController`, `SearchController`), preventing HTTP 500 errors when the PowerDNS daemon is disconnected or degraded.
+
 ---
 
 ## 4. Multi-Device Anti-Clipping & Responsive Engineering

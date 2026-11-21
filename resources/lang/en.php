@@ -186,6 +186,7 @@ return [
     'login_header' => 'Authoritative DNS Control Plane',
     'username' => 'Username',
     'password' => 'Password',
+    'remember_me' => 'Remember me',
     'sign_in' => 'Sign In',
     'welcome_back' => 'Enterprise Access Portal',
     'invalid_credentials' => 'Invalid username or password',

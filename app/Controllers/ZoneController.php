@@ -61,7 +61,12 @@ class ZoneController
         if ($request->has('type')) {
             $filters['type'] = $request->input('type');
         }
-        $zones = $this->zoneService->getAllZones($filters);
+        $zones = [];
+        try {
+            $zones = $this->zoneService->getAllZones($filters);
+        } catch (\Throwable) {
+            $zones = [];
+        }
         $html = view('zone.index', ['zones' => $zones, 'user' => $request->getAttribute('user'), 'csrfToken' => csrf_token()]);
         return (new Response())->html($html);
     }

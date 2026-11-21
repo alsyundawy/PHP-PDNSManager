@@ -10,6 +10,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed — Boot, Migration, Login, Seeder & Layout Stability
 
+- **Zone Templates Endpoint 500 Resolution (`/templates`)**:
+  - Resolved `HTTP 500 Internal Server Error` on `/templates` by wrapping PowerDNS API calls (`$this->zoneService->getAllZones()`) in `ZoneTemplateController::index()` within a graceful try-catch fallback, returning an empty list when the PowerDNS daemon is unreachable or operating in degraded status.
+  - Corrected record count hydration in `ZoneTemplateService::getAllTemplates()` by explicitly executing `$this->getRecordsForTemplate($template->id)`, ensuring template record badges display accurate tallies.
+  - Added resilient exception handling across `ZoneController::index()`, `TsigController::index()`, `ZoneMetadataController::index()`, and `SearchController::search()` to prevent application 500 errors during PowerDNS backend disconnects or socket timeouts.
+- **Login Portal Redesign (Modeled after `ns1.orion.net.id`)**:
+  - Re-architected `app/Views/auth/login.php` to faithfully mirror the design system of `https://ns1.orion.net.id` (PowerDNS-Admin login customized by ALSYUNDAWY IT SOLUTION).
+  - Integrated eye-friendly dual-dark modes: Default Slate Blue (`:root`) and Obsidian Dark (`[data-theme="dark"]`), accompanied by Clean Slate Light mode fallback.
+  - Implemented top-right floating theme toggle button with SVG sun/moon icons and inline flash-prevention script in `<head>` (eliminating FOUC).
+  - Built centered glassmorphic card (`.card`) featuring radial background glow, backdrop blur (`16px`), brand shield icon, and responsive viewport sizing.
+  - Added anti-bot honeypot protection (`.hp-field` / `hp_name`) and input trimming in `AuthController::login()`.
+  - Added bilingual language switcher bar (`EN` | `ID`) with active locale highlighting.
+  - Embedded provenance footer attribution: `Powered by PowerDNS-Admin | Modified by ALSYUNDAWY IT SOLUTION`.
+- **Font Awesome Webfont Path Resolution**:
+  - Established symlink `public/assets/vendor/webfonts -> fontawesome/webfonts`, resolving Nginx 404 errors for `/assets/vendor/webfonts/fa-solid-900.woff2` and `*.ttf`.
+- **Universal CSRF Token Parameter Acceptance**:
+  - Enhanced `CsrfProtectionMiddleware` to universally accept `_csrf`, `csrf_token`, and `_csrf_token` POST body attributes in addition to the `X-CSRF-TOKEN` header.
 - **Container PSR Compliance (Fatal Boot Crash)**:
   - Added `"psr/container": "^1.1 || ^2.0"` to `composer.json` under `require`, ensuring `App\Core\Container` boots successfully in production without requiring dev dependencies.
 - **SQLite Database Migration Compatibility (`php bin/pdns migrate`)**:

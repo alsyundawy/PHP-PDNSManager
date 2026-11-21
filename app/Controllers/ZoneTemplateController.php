@@ -29,7 +29,12 @@ class ZoneTemplateController
     public function index(Request $request): Response
     {
         $templates = $this->templateService->getAllTemplates();
-        $zones = $this->zoneService->getAllZones();
+        $zones = [];
+        try {
+            $zones = $this->zoneService->getAllZones();
+        } catch (\Throwable) {
+            $zones = [];
+        }
         $html = view('template.index', [
             'templates' => $templates,
             'zones' => $zones,

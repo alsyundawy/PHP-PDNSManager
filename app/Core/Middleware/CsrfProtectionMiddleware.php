@@ -28,8 +28,14 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         }
         $parsedBody = $request->getParsedBody();
         $token = null;
-        if (is_array($parsedBody) && isset($parsedBody['_csrf']) && is_string($parsedBody['_csrf'])) {
-            $token = $parsedBody['_csrf'];
+        if (is_array($parsedBody)) {
+            if (isset($parsedBody['_csrf']) && is_string($parsedBody['_csrf'])) {
+                $token = $parsedBody['_csrf'];
+            } elseif (isset($parsedBody['csrf_token']) && is_string($parsedBody['csrf_token'])) {
+                $token = $parsedBody['csrf_token'];
+            } elseif (isset($parsedBody['_csrf_token']) && is_string($parsedBody['_csrf_token'])) {
+                $token = $parsedBody['_csrf_token'];
+            }
         }
         if ($token === null) {
             $headerToken = $request->getHeaderLine('X-CSRF-TOKEN');

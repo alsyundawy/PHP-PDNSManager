@@ -31,7 +31,9 @@ class ZoneTemplateService
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $templates = [];
             foreach ($rows as $row) {
-                $templates[] = $this->hydrateTemplate($row);
+                $template = $this->hydrateTemplate($row);
+                $template->records = $this->getRecordsForTemplate($template->id);
+                $templates[] = $template;
             }
             return $templates;
         } catch (\Throwable $e) {

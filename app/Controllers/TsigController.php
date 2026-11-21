@@ -21,7 +21,12 @@ class TsigController
 
     public function index(Request $request): Response
     {
-        $keys = $this->tsigService->getAllKeys();
+        $keys = [];
+        try {
+            $keys = $this->tsigService->getAllKeys();
+        } catch (\Throwable) {
+            $keys = [];
+        }
         $algorithms = $this->tsigService->getSupportedAlgorithms();
 
         $html = view('tsig.index', [

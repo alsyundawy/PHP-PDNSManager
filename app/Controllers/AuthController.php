@@ -27,6 +27,12 @@ class AuthController
     }
     public function login(Request $request): Response
     {
+        $honeypot = (string) $request->input('hp_name', '');
+        if ($honeypot !== '') {
+            $html = view('auth.login', ['error' => 'Invalid submission.', 'csrfToken' => csrf_token()], null);
+            return (new Response())->html($html)->withStatus(422);
+        }
+
         $username = (string) $request->input('username', '');
         $password = (string) $request->input('password', '');
         $ip = (string) ($request->getServerRequest()->getServerParams()['REMOTE_ADDR'] ?? '0.0.0.0');
@@ -40,7 +46,9 @@ class AuthController
             }
             return (new Response())->redirect('/dashboard');
         } catch (ValidationException $e) {
-            $html = view('auth.login', ['error' => $e->getErrors(), 'csrfToken' => csrf_token()], null);
+            $errors = $e->getErrors();
+            $errorMessage = (string) ($errors['message'] ?? implode(', ', $errors));
+            $html = view('auth.login', ['error' => $errorMessage, 'csrfToken' => csrf_token()], null);
             return (new Response())->html($html)->withStatus(422);
         }
     }

@@ -186,6 +186,7 @@ return [
     'login_header' => 'Panel Kontrol DNS Authoritative',
     'username' => 'Nama Pengguna',
     'password' => 'Kata Sandi',
+    'remember_me' => 'Ingat saya',
     'sign_in' => 'Masuk Sistem',
     'welcome_back' => 'Portal Akses Korporat',
     'invalid_credentials' => 'Nama pengguna atau kata sandi tidak valid',

@@ -49,14 +49,18 @@ class SearchController
             }
         } catch (\Exception) {
             // Fallback to local zone matching
-            $zones = $this->zoneService->getAllZones(['name' => "*{$query}*"]);
-            foreach (array_slice($zones, 0, 10) as $zone) {
-                $results[] = [
-                    'title' => $zone['name'],
-                    'type' => 'ZONE',
-                    'subtitle' => "Kind: {$zone['kind']} | Serial: " . ($zone['serial'] ?? 'N/A'),
-                    'url' => '/zones/' . urlencode($zone['name']),
-                ];
+            try {
+                $zones = $this->zoneService->getAllZones(['name' => "*{$query}*"]);
+                foreach (array_slice($zones, 0, 10) as $zone) {
+                    $results[] = [
+                        'title' => $zone['name'],
+                        'type' => 'ZONE',
+                        'subtitle' => "Kind: {$zone['kind']} | Serial: " . ($zone['serial'] ?? 'N/A'),
+                        'url' => '/zones/' . urlencode($zone['name']),
+                    ];
+                }
+            } catch (\Throwable) {
+                // Ignore if PowerDNS is unreachable
             }
         }
 

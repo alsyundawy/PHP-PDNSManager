@@ -24,8 +24,14 @@ class ZoneMetadataController
 
     public function index(Request $request, string $zoneId): Response
     {
-        $zone = $this->zoneService->getZone($zoneId);
-        $metadata = $this->metadataService->getAllMetadata($zoneId);
+        $zone = [];
+        $metadata = [];
+        try {
+            $zone = $this->zoneService->getZone($zoneId);
+            $metadata = $this->metadataService->getAllMetadata($zoneId);
+        } catch (\Throwable) {
+            // PowerDNS unreachable
+        }
         $supportedKinds = $this->metadataService->getSupportedKinds();
 
         $html = view('metadata.index', [
